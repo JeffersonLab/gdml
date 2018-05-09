@@ -22,7 +22,7 @@
 //
 //
 // $Id: ExN02EventAction.cpp,v 1.1 2005/03/02 17:59:25 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_2_0 $
+// GEANT4 tag $Name: GDML_2_3_0 $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -9,23 +9,18 @@ endif
 
 GDMLTARDIR = ${GDMLTOP}/../downloads
 
-GDML_VERSION = 2_2_0
+GDML_VERSION = 2_3_0
 GDMLSCHEMA_VERSION = 2_1_1
 CPPGDML_VERSION = 2_2_0
-PYGDML_VERSION = 1_1_0
+PYGDML_VERSION = 1_2_0
 
 export PLATFORM=${SCRAM_ARCH}
 
 G4BIND_INC = G4Processor G4Subscribers G4Writer
 COMMON_INC = Saxana Schema Writer Processes
 
-TARFILE_G4B = "CPPGDML_${VERSION}.tgz"
 G4BIND_LIBS = ${addprefix ${GDMLTOP}/lib,${addsuffix .so,${G4BIND_INC}} }
-
-TARFILE_COM = "CPPGDML_${VERSION}.tgz"
 COMMON_LIBS = ${addprefix ${GDMLTOP}/lib,${addsuffix .so, ${COMMON_INC:}} }
-
-TARFILE_ALL = "GDML_${VERSION}.tgz"
 
 release: release-build release-install
 

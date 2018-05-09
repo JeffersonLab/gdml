@@ -1,6 +1,6 @@
 //
 // $Id: dimensionsProcess.cpp,v 1.2 2005/05/26 20:51:59 jmccormi Exp $
-// GEANT4 tag $Name: GDML_2_2_0 $
+// GEANT4 tag $Name: GDML_2_3_0 $
 #include "Processes/DimensionsTypeProcess.h"
 
 #include "Schema/dimensions.h"

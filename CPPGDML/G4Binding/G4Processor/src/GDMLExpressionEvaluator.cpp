@@ -22,7 +22,7 @@
 //
 //
 // $Id: GDMLExpressionEvaluator.cpp,v 1.2 2005/05/13 00:55:57 jmccormi Exp $
-// GEANT4 tag $Name: GDML_2_2_0 $
+// GEANT4 tag $Name: GDML_2_3_0 $
 //
 // 
 // --------------------------------------------------------------

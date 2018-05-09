@@ -173,6 +173,8 @@ class processes(object):
                           
         for subele in elem[2]:
             if subele[0] == 'physvol':
+                pos = self.bind.position(0,0,0)
+                rot = self.bind.rotation(0,0,0)
                 for subsubel in subele[2]:
                     if subsubel[0] == 'volumeref':
                         lv = self.volumes_dict[subsubel[1]['ref']]
@@ -377,9 +379,13 @@ class processes(object):
 	    elif subele[0] == 'position':
 		self.position_proc(subele)
 		pos = self.define_dict[subele[1]['name']]
+	    elif subele[0] == 'positionref':
+		pos = self.define_dict[subele[1]['ref']]
 	    elif subele[0] == 'rotation':
 		self.rotation_proc(subele)
 		rot = self.define_dict[subele[1]['name']]
+	    elif subele[0] == 'rotationref':
+		rot = self.define_dict[subele[1]['ref']]
 
 	subt = self.bind.subtraction(elem[1]['name'],
 				     first,
@@ -401,9 +407,13 @@ class processes(object):
 	    elif subele[0] == 'position':
 		self.position_proc(subele)
 		pos = self.define_dict[subele[1]['name']]
+	    elif subele[0] == 'positionref':
+		pos = self.define_dict[subele[1]['ref']]
 	    elif subele[0] == 'rotation':
 		self.rotation_proc(subele)
 		rot = self.define_dict[subele[1]['name']]
+	    elif subele[0] == 'rotationref':
+		rot = self.define_dict[subele[1]['ref']]
 
 	uni = self.bind.union(elem[1]['name'],
 				     first,
@@ -425,9 +435,13 @@ class processes(object):
 	    elif subele[0] == 'position':
 		self.position_proc(subele)
 		pos = self.define_dict[subele[1]['name']]
+	    elif subele[0] == 'positionref':
+		pos = self.define_dict[subele[1]['ref']]
 	    elif subele[0] == 'rotation':
 		self.rotation_proc(subele)
 		rot = self.define_dict[subele[1]['name']]
+	    elif subele[0] == 'rotationref':
+		rot = self.define_dict[subele[1]['ref']]
 
 	inte = self.bind.intersection(elem[1]['name'],
 				     first,

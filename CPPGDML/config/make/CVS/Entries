@@ -1,11 +1,11 @@
-/application.gmk/1.4/Thu May 12 20:35:58 2005//TGDML_2_2_0
-/check_lib.gmk/1.2/Thu May 12 20:35:58 2005//TGDML_2_2_0
-/ext_deps.gmk/1.1/Wed May  4 02:18:18 2005//TGDML_2_2_0
-/gdml_link_libs.gmk/1.1/Wed May  4 02:18:18 2005//TGDML_2_2_0
-/local_settings.gmk.in/1.2/Thu May 12 20:36:37 2005//TGDML_2_2_0
-/package.gmk/1.11/Thu May 12 20:35:58 2005//TGDML_2_2_0
-/package_deps.gmk/1.2/Wed May  4 02:22:43 2005//TGDML_2_2_0
-/project.gmk/1.1/Wed May  4 02:18:18 2005//TGDML_2_2_0
+/application.gmk/1.4/Thu May 12 20:35:58 2005//TGDML_2_3_0
+/check_lib.gmk/1.2/Thu May 12 20:35:58 2005//TGDML_2_3_0
+/ext_deps.gmk/1.1/Wed May  4 02:18:18 2005//TGDML_2_3_0
+/gdml_link_libs.gmk/1.1/Wed May  4 02:18:18 2005//TGDML_2_3_0
+/local_settings.gmk.in/1.2/Thu May 12 20:36:37 2005//TGDML_2_3_0
+/package.gmk/1.11/Thu May 12 20:35:58 2005//TGDML_2_3_0
+/package_deps.gmk/1.2/Wed May  4 02:22:43 2005//TGDML_2_3_0
+/project.gmk/1.1/Wed May  4 02:18:18 2005//TGDML_2_3_0
 D/compiler////
 D/ext////
 D/old////

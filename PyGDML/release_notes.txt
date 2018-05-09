@@ -1,3 +1,10 @@
+03.08.2005 - PyGDML_1_2_0 (compatible with GDMLSchema 2_2_0)
+-------------------------
+
+- gdml filename can now be specified as argument
+
+- added first version of ROOT->GDML writer
+
 12.04.2005 - PyGDML_1_1_0 (compatible with GDMLSchema 2_1_0)
 -------------------------
 

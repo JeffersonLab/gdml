@@ -12,7 +12,7 @@ endif
 
 $(patsubst %Dict.so,%_rflx.cpp,$(dictionary)): %_rflx.cpp: %.h
 	mkdir -p dict
-	cd dict; lcgdict ../include/$< -s ../xml/G4selection.xml \
+	cd dict; ${SEALBASE}/${PLATFORM}/bin/lcgdict ../include/$< -s ../xml/G4selection.xml \
 	--gccxmlpath ${GCCXMLPATH} \
 	--reflex -I${CLHEPINC} -I${G4INCLUDES}
 
