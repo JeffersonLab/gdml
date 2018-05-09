@@ -1,0 +1,10 @@
+# -*-Makefile-*-
+
+# Resolve the inter-package dependencies, the libs are added to test link flags as well
+ifneq ($(REQUIRED_PACKAGES),)
+CPPFLAGS                 += $(foreach package,$(REQUIRED_PACKAGES),-I$(PROJECT_TOP)/$(package) )
+CXXFLAGS                 += $(foreach package,$(REQUIRED_PACKAGES),-I$(PROJECT_TOP)/$(package) )
+LDFLAGS                  += -L$(PROJECT_TOP)/build/$(PLATFORM)/lib
+LDFLAGS                  += $(foreach package,$(REQUIRED_PACKAGES),-l$(SITE_LIB_PREFIX)$(notdir $(package)) )
+endif
+

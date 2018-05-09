@@ -1,0 +1,9 @@
+<lcgdict>
+<class name="RunManager"/>
+<class name="GeantinoPhysicsList"/>
+<class name="GeantinoGun"/>
+<class name="G4VisManager"/>
+<class name="VisManager"/>
+<class name="TrackerSD"/>
+<class name="TrackerHit"/>
+</lcgdict>

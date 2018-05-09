@@ -1,0 +1,78 @@
+<lcgdict>
+<class name="DetConstruction"/>
+<class name="BuildG4Polycone"/>
+
+<class name="std::basic_string<char>" />
+<class name="G4String"/>
+<!-- managers -->
+<class name="G4RunManager"/>
+<class name="G4EventManager"/>
+<class name="G4UImanager"/>
+<class name="G4SDManager"/>
+<class name="G4TransportationManager"/>
+<!-- volumes -->
+<class name="G4VPhysicalVolume"/>
+<class name="G4PVPlacement"/>
+<class name="G4LogicalVolume"/>     
+<class name="G4PVReplica"/>
+<class name="G4PVParameterised"/>
+<class name="G4VPVParameterisation"/>
+<!-- materials -->
+<class name="G4Material"/>
+<class name="G4Element"/>
+<class name="std::vector<G4Material*>"/>
+<class name="std::vector<G4Element*>"/>
+<!-- solids -->
+<class name="G4VSolid"/>
+<class name="G4CSGSolid"/>
+<class name="G4Cons"/>
+<class name="G4Sphere"/>
+<class name="G4Para"/>
+<class name="G4Trap"/>
+<class name="G4Trd"/>
+<class name="G4Box"/>
+<class name="G4Tubs"/>
+<class name="G4Orb"/>
+<class name="G4Torus"/>
+<class name="G4IntersectionSolid"/>
+<class name="G4SubtractionSolid"/>
+<class name="G4UnionSolid"/>
+<class name="G4Polycone"/>
+<class name="G4Polyhedra"/>
+<class name="G4Hype"/>
+<class name="G4EllipticalTube"/>
+<!-- -->
+<class name="G4UserLimits"/>
+<class name="G4Navigator"/>
+<class name="G4VUserDetectorConstruction"/>
+<class name="G4VUserPhysicsList"/>
+<class name="G4VUserPrimaryGeneratorAction"/>
+<class name="G4VSensitiveDetector"/>
+<!-- user actions -->
+<class name="G4UserStackingAction"/>
+<class name="G4UserRunAction"/>
+<class name="G4UserEventAction"/>
+<class name="G4UserTrackingAction"/>
+<class name="G4UserSteppingAction"/>
+<!-- hits -->
+<class name="G4VHitsCollection"/>
+<class name="G4HCofThisEvent"/>
+<class name="G4VHit"/>
+<!-- -->
+<class name="CLHEP::Hep3Vector"/>
+<class name="CLHEP::HepRotation"/>
+<class name="G4Event"/>
+
+<exclusion>
+  <class name="G4Event">
+    <method name="G4Event"/>
+  </class>
+</exclusion>
+
+<exclusion>
+  <class name="G4HCofThisEvent">
+    <method name="G4HCofThisEvent"/>
+  </class>
+</exclusion>
+
+</lcgdict>

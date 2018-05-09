@@ -1,0 +1,15 @@
+22.02.2005 - GDMLSchema_2_1_0
+______________________________
+
+- added 'auxiliary' element in the volume type to allow definitions of sensitive volumes,
+  visualisation attributes, etc
+- renamed the schema files by removing '_simple' from the filenames
+
+
+04.02.2005 - GDMLSchema v2_0_1
+______________________________
+
+- first release following the reorganization of the package; 
+  essentially no changes compared to v2_0_0; import from the old repository
+
+  
