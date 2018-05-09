@@ -6,7 +6,7 @@
 
 #include "Schema/SolidType.h"
 
-class sphere : public SAXObject, public SolidType
+class sphere : public SolidType
 {
   public:
     sphere() {

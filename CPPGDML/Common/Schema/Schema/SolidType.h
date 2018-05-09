@@ -3,12 +3,17 @@
 #define SOLIDTYPE_H 1
 
 #include <string>
+#include "Saxana/SAXObject.h"
 
-class SolidType {
+class SolidType : public SAXObject
+{
 public:
   SolidType() {
   }
-  ~SolidType() {
+  virtual ~SolidType() {
+  }
+  virtual SAXObject::Type type() {
+    return SAXObject::element;
   }
   
   const std::string& get_lunit() const {

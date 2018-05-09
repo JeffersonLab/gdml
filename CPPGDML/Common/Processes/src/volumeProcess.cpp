@@ -1,5 +1,5 @@
 //
-// $Id: volumeProcess.cpp,v 1.1 2005/02/28 13:21:30 witoldp Exp $
+// $Id: volumeProcess.cpp,v 1.2 2006/08/29 11:49:29 dkruse Exp $
 #ifndef GDML_PROCESS_VOLUMEPROCESS_H
 #define GDML_PROCESS_VOLUMEPROCESS_H 1
 
@@ -12,6 +12,9 @@
 #include "Saxana/SAXComponentFactory.h"
 
 #include "Schema/volume.h"
+#include "Schema/loop.h"
+
+#include <iostream>
 
 class volumeProcess : public SAXStateProcess
 {
@@ -53,10 +56,29 @@ class volumeProcess : public SAXStateProcess
   
     // Invoked whenever one of the daughter state processes has been popped-out of the state stack
     // The name passed-in as the argument is the name of the XML element for which that's been done
-    virtual void StackPopNotify( const std::string& name ) {
-      SAXObject** so = Context()->GetTopObject();
-      volume* vobj = dynamic_cast<volume*>( m_obj );
-      vobj->add_content( name, *so );
+    virtual void StackPopNotify( const std::string& name )
+    {
+      if (name!="loop")
+      {
+       SAXObject** so = Context()->GetTopObject();
+       volume* vobj = dynamic_cast<volume*>( m_obj );
+       vobj->add_content( name, *so );
+      }
+      else //loop
+      {
+       SAXObject** so = Context()->GetTopObject(); //loop object
+       loop* loop_object = dynamic_cast<loop*>(*so); //loop object after casting
+       volume* vobj = dynamic_cast<volume*>( m_obj );
+       run_loop(loop_object, vobj);
+      }
+    }
+    
+    void run_loop(loop* loop_el, volume* parent)
+    {
+     for(unsigned int i=0; i<loop_el->get_physvols_size(); i++)
+     {
+      parent->add_content( "physvol", loop_el->get_physvol(i));
+     }
     }
   
     // The name of the state this object will process

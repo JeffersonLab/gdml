@@ -1,10 +1,11 @@
 // -*- C++ -*-
-// $Id: MaterialType.h,v 1.1 2005/02/28 13:21:30 witoldp Exp $
+// $Id: MaterialType.h,v 1.2 2006/09/05 16:15:12 witoldp Exp $
 #ifndef GDML_SCHEMA_MATERIALTYPE_H
 #define GDML_SCHEMA_MATERIALTYPE_H 1
 
 #include "MaterialPropertiesGroup.h"
 #include "MaterialAttributeGroup.h"
+#include "property.h"
 
 class MaterialType
 {
@@ -22,6 +23,9 @@ class MaterialType
         delete m_mpg.m_PorPref;
     }
 
+  void add_properties( const std::string&, SAXObject* so ) {   
+    m_properties.push_back(dynamic_cast<property*>(so));
+  }
     void set_RLorRLref( const std::string& tag, SAXObject* so ) {
       if( !m_mpg.m_RLorRLref ) {
         m_mpg.m_RLorRLref = new TagorTagref;
@@ -45,6 +49,10 @@ class MaterialType
         m_mpg.m_PorPref = new TagorTagref;
       }
       m_mpg.m_PorPref->set_content( tag, so);
+    }
+
+    const std::vector<property*> get_properties() const {
+      return m_properties;
     }
 
     const SAXObject* get_RLorRLref() const {
@@ -114,6 +122,7 @@ class MaterialType
     }
 
   protected:
+  std::vector<property*> m_properties;
     MaterialPropertiesGroup m_mpg;
     MaterialAttributeGroup m_mag;
 };

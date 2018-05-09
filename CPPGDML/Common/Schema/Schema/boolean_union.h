@@ -1,6 +1,6 @@
 // -*- C++ -*-
-// $Id: boolean_union.h,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_7_0 $
+// $Id: boolean_union.h,v 1.2 2006/08/29 11:49:29 dkruse Exp $
+// GEANT4 tag $Name: GDML_2_8_0 $
 #ifndef GDML_SCHEMA_BOOLEAN_UNION_H
 #define GDML_SCHEMA_BOOLEAN_UNION_H 1
 
@@ -8,7 +8,7 @@
 
 #include "Schema/BooleanSolidType.h"
 
-class boolean_union : public SAXObject, public BooleanSolidType
+class boolean_union : public BooleanSolidType
 {
   public:
     boolean_union() {

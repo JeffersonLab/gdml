@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" version="1.0" xmlns:gdml="http://cern.ch/2001/Schemas/GDML" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:include schemaLocation="gdml_define.xsd"/>
+  <xs:include schemaLocation="gdml_extensions.xsd"/>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <xs:complexType abstract="false" name="DimensionsType">
     <xs:annotation>

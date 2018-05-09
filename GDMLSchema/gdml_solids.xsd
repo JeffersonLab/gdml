@@ -3,6 +3,7 @@
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="unqualified" version="1.0" xmlns:gdml="http://cern.ch/2001/Schemas/GDML" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:include schemaLocation="gdml_core.xsd"></xs:include>
   <xs:include schemaLocation="gdml_define.xsd"></xs:include>
+  <xs:include schemaLocation="gdml_extensions.xsd"/>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   
   <xs:complexType name="SolidType">
@@ -80,10 +81,26 @@
     </xs:complexType>
   </xs:element>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+  <xs:complexType name="SurfacePropertyType">
+    <xs:annotation>
+      <xs:documentation>Base surface type</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:ID" use="required"></xs:attribute>
+    <xs:attribute name="type" type="xs:string" default="dielectric_dielectric"></xs:attribute>
+  </xs:complexType>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   
   <xs:element abstract="true" name="Solid" type="SolidType">
     <xs:annotation>
       <xs:documentation>Abstract element for all solids substitution group</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  
+  <xs:element abstract="true" name="SurfaceProperty" type="SurfacePropertyType">
+    <xs:annotation>
+      <xs:documentation>Abstract element for surfaces substitution</xs:documentation>
     </xs:annotation>
   </xs:element>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -93,7 +110,7 @@
       <xs:documentation>Solids definitions block</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-      <xs:sequence>
+      <xs:choice maxOccurs="unbounded">
 	<xs:element minOccurs="0" name="define" type="defineType">
 	  <xs:annotation>
 	    <xs:documentation>Definitions of constants and expressions to be used for solids'
@@ -102,7 +119,9 @@
 	  </xs:annotation>
 	</xs:element>
 	<xs:element maxOccurs="unbounded" ref="Solid"></xs:element>
-      </xs:sequence>
+	<xs:element minOccurs="0" maxOccurs="unbounded" ref="SurfaceProperty"></xs:element>
+	<xs:element maxOccurs="unbounded" minOccurs="0" ref="loop"/>	
+      </xs:choice>
     </xs:complexType>
   </xs:element>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -789,6 +808,22 @@
 	  <xs:sequence>
 	    <xs:element name="Facet" minOccurs="1" maxOccurs="unbounded" type="FacetType"/>	
 	  </xs:sequence>
+	</xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->  
+
+  <xs:element name="opticalsurface" substitutionGroup="SurfaceProperty">
+    <xs:annotation>
+      <xs:documentation>Optical surface used by Geant4 optical processes</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+	<xs:extension base="SurfacePropertyType">
+	  <xs:attribute name="model" type="xs:string" default="glisur"></xs:attribute>
+	  <xs:attribute name="finish" type="xs:string" default="polished"></xs:attribute>
+	  <xs:attribute name="value" type="xs:string" default="1.0"></xs:attribute>
 	</xs:extension>
       </xs:complexContent>
     </xs:complexType>

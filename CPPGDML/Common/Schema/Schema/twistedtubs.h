@@ -6,7 +6,7 @@
 
 #include "Schema/SolidType.h"
 
-class twistedtubs : public SAXObject, public SolidType
+class twistedtubs : public SolidType
 {
 public:
   twistedtubs() {

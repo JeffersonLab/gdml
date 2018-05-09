@@ -6,7 +6,7 @@
 
 #include "Schema/SolidType.h"
 
-class torus : public SAXObject, public SolidType
+class torus : public SolidType
 {
 public:
   torus() {

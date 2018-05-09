@@ -11,6 +11,7 @@ typedef std::map< std::string, define::quantity >         PhysicalConstantsTable
 typedef std::map< std::string, define::expression >       ExpressionsTable;
 typedef std::map< std::string, define::position >         PositionsTable;
 typedef std::map< std::string, define::rotation >         RotationsTable;
+typedef std::map< std::string, define::matrix >           MatricesTable;
 
 #endif // GDML_DEFINE_TABLE
 

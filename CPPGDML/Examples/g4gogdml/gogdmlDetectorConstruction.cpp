@@ -18,6 +18,14 @@ gogdmlDetectorConstruction::gogdmlDetectorConstruction()
 
 }
 
+gogdmlDetectorConstruction::gogdmlDetectorConstruction(std::string& filename)
+{
+  sxp.Initialize();
+  config.SetURI(filename);
+  config.SetSetupName( "Default" );
+  sxp.Configure( &config );
+}
+
 gogdmlDetectorConstruction::~gogdmlDetectorConstruction()
 {
   sxp.Finalize();

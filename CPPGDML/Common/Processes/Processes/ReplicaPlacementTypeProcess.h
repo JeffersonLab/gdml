@@ -1,6 +1,6 @@
 // -*- C++ -*-
-// $Id: ReplicaPlacementTypeProcess.h,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_7_0 $
+// $Id: ReplicaPlacementTypeProcess.h,v 1.2 2006/08/29 16:44:13 witoldp Exp $
+// GEANT4 tag $Name: GDML_2_8_0 $
 #ifndef GDML_PROCESS_REPLICAPLACEMENTTYPEPROCESS_H
 #define GDML_PROCESS_REPLICAPLACEMENTTYPEPROCESS_H 1
 
@@ -29,7 +29,7 @@ public:
   }
 
   // Analogical to SAX startElement callback
-  virtual void StartElement( const std::string&, const ASCIIAttributeList& attrs) 
+  virtual void StartElement( const std::string&, const ASCIIAttributeList&) 
   {
     // this is not needed....?
     // it's all in replicavolProcess .....

@@ -6,7 +6,7 @@
 
 #include "Schema/SolidType.h"
 
-class trap : public SAXObject, public SolidType
+class trap : public SolidType
 {
   public:
     trap() {

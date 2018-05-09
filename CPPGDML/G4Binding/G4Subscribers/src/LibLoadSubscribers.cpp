@@ -32,4 +32,8 @@ void GDMLSubscriberLibLoad() {
     LOAD_COMPONENT(twistedtrapSubscriber)
     LOAD_COMPONENT(twistedtrdSubscriber)
     LOAD_COMPONENT(setupSubscriber)
+    LOAD_COMPONENT(opticalsurfaceSubscriber)
+    LOAD_COMPONENT(skinsurfaceSubscriber)
+    LOAD_COMPONENT(bordersurfaceSubscriber)
+    LOAD_COMPONENT(loopSubscriber)
 }

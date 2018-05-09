@@ -1,3 +1,31 @@
+06.09.2006 - GDML_2_8_0
+-----------------------
+
+Added support for matrices:
+
+  <matrix name="m" coldim="3" values="100000 200000 30000
+                                      100000 500000 6000
+                                      70000 8000 90000"/>
+and loops:
+ 
+  <variable name="i" value="1"/>
+  ...
+
+  <loop for="i" to="9" step="1">
+   <box aunit="radian" lunit="mm" name="LoopBox" x="k[i]/2" y="la[i]" z="i*3" />
+  </loop>
+
+(see matricesandloops.gdml file in g4gogdml example).
+
+Added support for optical surfaces as well as material property sheets 
+(see opticalsurfaces.gdml file in g4gogdml example).
+
+Improved handling of modular GDML files. It is now possible to choose
+a specific volume from the included file to be position (with all its
+daughter volumes) in the mother volume.
+Added 'namespaces' for module files avoiding clashes of names.
+
+
 14.08.2006 - GDML_2_7_0
 -----------------------
 

@@ -5,7 +5,7 @@
 #include "Saxana/SAXObject.h"
 #include "Schema/SolidType.h"
 
-class ellipsoid : public SAXObject, public SolidType
+class ellipsoid : public SolidType
 {
   public:
     ellipsoid() {

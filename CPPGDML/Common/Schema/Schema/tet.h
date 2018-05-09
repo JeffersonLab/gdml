@@ -6,7 +6,7 @@
 
 #include "Schema/SolidType.h"
 
-class tet : public SAXObject, public SolidType
+class tet : public SolidType
 {
   public:
     tet() {

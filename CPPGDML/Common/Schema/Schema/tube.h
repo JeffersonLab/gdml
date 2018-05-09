@@ -6,7 +6,7 @@
 
 #include "Schema/SolidType.h"
 
-class tube : public SAXObject, public SolidType
+class tube : public SolidType
 {
 public:
   tube() {

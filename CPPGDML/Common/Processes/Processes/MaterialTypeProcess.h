@@ -66,7 +66,9 @@ public:
     
     SAXObject** obj = Context()->GetTopObject();
     
-    if( name == "RL" || name == "RLref" ) {      
+    if( name == "property" ) {      
+      mt_obj->add_properties( name, *obj );
+    } else if( name == "RL" || name == "RLref" ) {      
       mt_obj->set_RLorRLref( name, *obj );
     } else if( name == "AL" || name == "ALref" ) {      
       mt_obj->set_ALorALref( name, *obj );

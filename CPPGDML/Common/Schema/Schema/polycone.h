@@ -5,7 +5,7 @@
 #include "Saxana/SAXObject.h"
 #include "Schema/SolidType.h"
 
-class polycone : public SAXObject, public SolidType {
+class polycone : public SolidType {
 public:
   polycone() {
   }

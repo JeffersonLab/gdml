@@ -26,7 +26,7 @@ public:
   }
 
   // Analogical to SAX startElement callback
-  virtual void StartElement( const std::string&, const ASCIIAttributeList& attrs) 
+  virtual void StartElement( const std::string&, const ASCIIAttributeList&) 
   {
     //????????????????
     //    std::string numb  = attrs.getValue( "number" );

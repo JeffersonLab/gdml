@@ -6,7 +6,7 @@
 
 #include "Schema/SolidType.h"
 
-class hype : public SAXObject, public SolidType
+class hype : public SolidType
 {
   public:
     hype() {

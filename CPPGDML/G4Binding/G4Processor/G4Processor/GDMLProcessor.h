@@ -11,13 +11,17 @@
 #include "G4Evaluator/GDMLExpressionEvaluator.h"
 
 #include "G4VSolid.hh"
+#include "G4SurfaceProperty.hh"
 #include "G4AssemblyVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4PVPlacement.hh"
 
 #include <string>
+#include <stack>
 #include <map>
+
+#include "Schema/MatrixType.h"
 
 // Added here in order to resolve properly link dependecies if G4 build system
 #include "G4BooleanSolid.hh"
@@ -32,7 +36,9 @@ class GDMLProcessor
 public:
   typedef std::map<std::string,G4ThreeVector*>     Positions;
   typedef std::map<std::string,G4RotationMatrix*>  Rotations;
+  typedef std::map<std::string,MatrixType>         Matrices;
   typedef std::map<std::string,G4VSolid*>          Solids;
+  typedef std::map<std::string,G4SurfaceProperty*> Surfaces;
   typedef std::map<std::string,G4LogicalVolume*>   LogicalVolumes;
   typedef std::map<std::string,G4AssemblyVolume*>  AssemblyVolumes;
   typedef std::map<std::string,G4VPhysicalVolume*> PhysicalVolumes;
@@ -51,8 +57,17 @@ public:
   void AddRotation( const std::string& name, G4RotationMatrix* p );
   void AddRotation( const char* name, G4RotationMatrix* p );
 
+  void AddMatrix( const std::string& name, MatrixType& m );
+  void AddMatrix( const char* name, MatrixType& m );
+
   void AddSolid( const std::string& name, G4VSolid* p );
   void AddSolid( const char* name, G4VSolid* p );
+
+  void AddSurface( const std::string& name, G4SurfaceProperty* p );
+  void AddSurface( const char* name, G4SurfaceProperty* p );
+
+  void AddSurfaceProperty( const std::string& name, G4SurfaceProperty* p );
+  void AddSurfaceProperty( const char* name, G4SurfaceProperty* p );
 
   void AddLogicalVolume( const std::string& name, G4LogicalVolume* p );
   void AddLogicalVolume( const char* name, G4LogicalVolume* p );
@@ -72,8 +87,14 @@ public:
   const G4RotationMatrix* GetRotation( const std::string& name );
   const G4RotationMatrix* GetRotation( const char* name );
 
+  const MatrixType& GetMatrix( const std::string& name );
+  const MatrixType& GetMatrix( const char* name );
+
   const G4VSolid* GetSolid( const std::string& name );
   const G4VSolid* GetSolid( const char* name );
+
+  G4SurfaceProperty* GetSurfaceProperty( const std::string& name );
+  G4SurfaceProperty* GetSurfaceProperty( const char* name );
 
   const G4LogicalVolume* GetLogicalVolume( const std::string& name );
   const G4LogicalVolume* GetLogicalVolume( const char* name );
@@ -138,7 +159,8 @@ public:
     }
     else
     {
-     std::cout << "Warning!!! Solid named: " << i->first << " was already defined in file: " << i->second << ". It will be instantiated twice!" << std::endl;
+     std::cout << "Warning!!! Solid named: " << i->first << " was already defined in file: " 
+               << i->second << ". It will be instantiated twice!" << std::endl;
     }
    }
    else
@@ -154,8 +176,13 @@ public:
   
   void currentlyParsing(const std::string& name)
   {
-   std::cout << "PARSING : " << name << std::endl;
+   //std::cout << "PARSING : " << name << std::endl;
    fileCurrentlyParsed = name;
+   std::string::size_type loc = name.find_last_of('.');
+   std::string new_name = name.substr(0,loc);
+   //std::cout<<"pushing: "<<new_name<<std::endl;
+   file_name_stack.push(new_name);
+   fCalc->setFileCurrentlyParsed(new_name);
   }
   
 protected:
@@ -165,7 +192,9 @@ private:
   GDMLExpressionEvaluator*       fCalc;
   GDMLProcessor::Positions       fPTable;
   GDMLProcessor::Rotations       fRTable;
+  GDMLProcessor::Matrices        fMTable;
   GDMLProcessor::Solids          fSolids;
+  GDMLProcessor::Surfaces        fSurfaces;
   GDMLProcessor::LogicalVolumes  fLVolumes;
   GDMLProcessor::AssemblyVolumes fAVolumes;
   GDMLProcessor::PhysicalVolumes fPVolumes;
@@ -177,6 +206,7 @@ private:
   
   std::vector<G4VPhysicalVolume*> WorldVolumes;
   std::map<std::string,G4VPhysicalVolume*> Files_Volumes_Map;
+  std::stack<std::string> file_name_stack;
 
   G4ThreeVector fIdentityPos;
 };

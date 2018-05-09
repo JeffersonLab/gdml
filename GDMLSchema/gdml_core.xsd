@@ -51,12 +51,30 @@
     <xs:attribute name="value" type="ExpressionOrIDREFType" use="required"></xs:attribute>
   </xs:complexType>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <xs:complexType name="VariableType">
+    <xs:annotation>
+      <xs:documentation>An anonymous, local scope, value</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="value" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+  </xs:complexType>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <xs:complexType name="IdentifiableConstantType">
     <xs:annotation>
       <xs:documentation>Named (referenced), global scope, constant value</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="ConstantType">
+	<xs:attribute name="name" type="xs:ID" use="required"></xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <xs:complexType name="IdentifiableVariableType">
+    <xs:annotation>
+      <xs:documentation>Named (referenced), local scope, variable value</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="VariableType">
 	<xs:attribute name="name" type="xs:ID" use="required"></xs:attribute>
       </xs:extension>
     </xs:complexContent>
@@ -97,6 +115,15 @@
     <xs:attribute default="0.0" name="x" type="ExpressionOrIDREFType"></xs:attribute>
     <xs:attribute default="0.0" name="y" type="ExpressionOrIDREFType"></xs:attribute>
     <xs:attribute default="0.0" name="z" type="ExpressionOrIDREFType"></xs:attribute>
+  </xs:complexType>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <xs:complexType name="MatrixType">
+    <xs:annotation>
+      <xs:documentation>A bi-dimensional matrix of doubles</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:ID"></xs:attribute>
+    <xs:attribute name="coldim" type="xs:nonNegativeInteger"></xs:attribute>
+    <xs:attribute name="values" type="xs:string"></xs:attribute>
   </xs:complexType>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <xs:complexType name="IdentifiableThreeVectorType">

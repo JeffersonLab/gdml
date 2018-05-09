@@ -1,6 +1,6 @@
 // -*- C++ -*-
-// $Id: SAXProcessor.h,v 1.1 2005/02/11 17:58:48 rado Exp $
-// GEANT4 tag $Name: GDML_2_7_0 $
+// $Id: SAXProcessor.h,v 1.2 2006/08/29 11:49:29 dkruse Exp $
+// GEANT4 tag $Name: GDML_2_8_0 $
 #ifndef GDML_SAXANA_SAX_PROCESSOR_H
 #define GDML_SAXANA_SAX_PROCESSOR_H 1
 
@@ -29,6 +29,8 @@ public:
   virtual const ProcessingConfigurator* GetConfig() const;
   virtual SAXObject**                   GetTopObject() const;
   virtual const char*                   GetParentState() const;
+  
+  const SAXSubscriberPool* GetSubscriberPool();
   
   StatusCode Initialize();
   StatusCode Configure( ProcessingConfigurator* config );

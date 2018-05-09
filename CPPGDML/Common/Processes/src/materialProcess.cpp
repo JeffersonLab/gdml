@@ -75,9 +75,7 @@ class materialProcess : public MaterialTypeProcess
               // Composition by fraction of mass
               //std::cout << count << " fractions" << std::endl;
             }
-          }
-      
-          //std::cout << " looks OK" << std::endl;
+          }      
         } else {
           std::cerr << "PROCESS END OF TAG:: material GOT ZERO DATA POINTER! " << std::endl;
         }
@@ -101,7 +99,7 @@ class materialProcess : public MaterialTypeProcess
        
       SAXObject** obj = Context()->GetTopObject();
       material*   mat = dynamic_cast<material*>( m_obj );
-    
+
       if( name == "atom" ) {
         mat->set_choice( name, *obj );
       } else if( name == "fraction" || name == "composite" ) {

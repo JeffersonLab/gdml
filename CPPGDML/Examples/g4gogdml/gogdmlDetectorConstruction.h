@@ -13,6 +13,7 @@ class gogdmlDetectorConstruction : public G4VUserDetectorConstruction
 {
   public:
     gogdmlDetectorConstruction();
+    gogdmlDetectorConstruction(std::string& filename);
     ~gogdmlDetectorConstruction();
 
   public:

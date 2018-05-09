@@ -69,8 +69,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   */
 
   G4LogicalVolume* logicDet = new G4LogicalVolume(solidDet , Air, "Detector",0,0,0);  
-  G4VPhysicalVolume* physiDet = new G4PVPlacement(0, G4ThreeVector(0,0,0), logicDet, "det",
-                                                  logicWorld, false, 0); 
+  //G4VPhysicalVolume* physiDet = 
+  new G4PVPlacement(0, G4ThreeVector(0,0,0), logicDet, "det", logicWorld, false, 0); 
   
   return physiWorld;
 }

@@ -5,7 +5,7 @@
 #include "Saxana/SAXObject.h"
 #include "Schema/SolidType.h"
 
-class twistedtrd : public SAXObject, public SolidType {
+class twistedtrd : public SolidType {
 public:
   twistedtrd() {
   }

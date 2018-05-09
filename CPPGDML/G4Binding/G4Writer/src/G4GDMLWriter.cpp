@@ -1,4 +1,4 @@
-// $Id: G4GDMLWriter.cpp,v 1.14 2006/07/26 13:31:01 dkruse Exp $
+// $Id: G4GDMLWriter.cpp,v 1.17 2006/08/29 10:27:12 dkruse Exp $
 // Include files
 #include <iostream>
 #include <sstream>
@@ -530,7 +530,7 @@ void G4GDMLWriter::DumpMaterial(G4Material* mat)
     }
 }
 
-void G4GDMLWriter::DumpSolid(G4VSolid* tempsol)
+void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
 {
     while(const G4DisplacedSolid* disp = dynamic_cast<const G4DisplacedSolid*>(tempsol))
     {
@@ -540,33 +540,33 @@ void G4GDMLWriter::DumpSolid(G4VSolid* tempsol)
     if( const G4TessellatedSolid* tessSolid = dynamic_cast<const G4TessellatedSolid*>(tempsol) )
     {
       int numberOfFacets = tessSolid->GetNumberOfFacets();
-      std::cout << "numberOfFacets: " << numberOfFacets << std::endl;
+      //std::cout << "numberOfFacets: " << numberOfFacets << std::endl;
       std::vector<gdml::writer::Facet> facets;
       for(int i=0; i<numberOfFacets; i++)
       {
-       G4VFacet *tempG4Facet = tessSolid->GetFacet(i);
-       int numberOfVertices = tempG4Facet->GetNumberOfVertices();
-       std::cout << "numberOfVertices: " << numberOfVertices << std::endl;
-       std::vector<std::string> verticesNames;
-       for(int j=0; j<numberOfVertices; j++)
-       {
-        G4ThreeVector currentVertex = tempG4Facet->GetVertex(j);
-	std::cout << "X: " << currentVertex.x()  << " Y: " << currentVertex.y()  << " Z: " << currentVertex.z() << std::endl;
-	verticesNames.push_back(processTessSolidVertex(currentVertex.x(),currentVertex.y(), currentVertex.z()));
-       }       
-       if(verticesNames.size()==3) //triangular facet
-       {
-        gdml::writer::Facet newFacet(verticesNames[0], verticesNames[1], verticesNames[2]);
-	facets.push_back(newFacet);
-       }
-       else if(verticesNames.size()==4) //quadrangular facet
-       {
-        gdml::writer::Facet newFacet(verticesNames[0], verticesNames[1], verticesNames[2], verticesNames[3]);
-	facets.push_back(newFacet);
-       }
+        G4VFacet *tempG4Facet = tessSolid->GetFacet(i);
+        int numberOfVertices = tempG4Facet->GetNumberOfVertices();
+        //std::cout << "numberOfVertices: " << numberOfVertices << std::endl;
+        std::vector<std::string> verticesNames;
+        for(int j=0; j<numberOfVertices; j++)
+        {
+          G4ThreeVector currentVertex = tempG4Facet->GetVertex(j);
+          //std::cout << "X: " << currentVertex.x()  << " Y: " << currentVertex.y()  << " Z: " << currentVertex.z() << std::endl;
+          verticesNames.push_back(processTessSolidVertex(currentVertex.x(),currentVertex.y(), currentVertex.z()));
+        }       
+        if(verticesNames.size()==3) //triangular facet
+        {
+          gdml::writer::Facet newFacet(verticesNames[0], verticesNames[1], verticesNames[2]);
+          facets.push_back(newFacet);
+        }
+        else if(verticesNames.size()==4) //quadrangular facet
+        {
+          gdml::writer::Facet newFacet(verticesNames[0], verticesNames[1], verticesNames[2], verticesNames[3]);
+          facets.push_back(newFacet);
+        }
       }
       solcur->addTessellated( ut->name(tessSolid),
-			      facets,
+                              facets,
                               "mm","degree");
     }    
     else if( const G4Tet* tet = dynamic_cast<const G4Tet*>(tempsol) )
@@ -579,9 +579,9 @@ void G4GDMLWriter::DumpSolid(G4VSolid* tempsol)
       
       solcur->addTetrahedron( ut->name(tet),
                               vertex1,
-			      vertex2,
-			      vertex3,
-			      vertex4,
+                              vertex2,
+                              vertex3,
+                              vertex4,
                               "mm","degree");
     }
     else if( const G4Sphere* sphere = dynamic_cast<const G4Sphere*>(tempsol) )
@@ -801,8 +801,9 @@ void G4GDMLWriter::DumpSolid(G4VSolid* tempsol)
       G4Translate3D  translation;
 
       refl->GetTransform3D().getDecomposition(scale, rotation, translation);
+      G4RotationMatrix rrr = rotation.getRotation();
 
-      getXYZ( &(rotation.getRotation()), rx, ry, rz );
+      getXYZ( &rrr, rx, ry, rz );
       
       solcur->addReflected(ut->name(refl),
                            ut->name(refl->GetConstituentMovedSolid()),
@@ -818,12 +819,10 @@ void G4GDMLWriter::DumpSolid(G4VSolid* tempsol)
       else if(boo->GetEntityType()=="G4UnionSolid") btype = "union";
       else if(boo->GetEntityType()=="G4IntersectionSolid") btype = "intersection";
 
-
-      G4VSolid* constit0 = boo->GetConstituentSolid(0);
+      G4VSolid* constit0 = const_cast <G4VSolid*> (boo->GetConstituentSolid(0));
       DumpSolid(constit0);
-      G4VSolid* constit1 = boo->GetConstituentSolid(1);
+      G4VSolid* constit1 = const_cast <G4VSolid*> (boo->GetConstituentSolid(1));
       DumpSolid(constit1);
-
 
       double dx0=0;
       double dy0=0;

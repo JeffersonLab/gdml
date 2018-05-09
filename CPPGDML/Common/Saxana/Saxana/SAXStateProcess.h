@@ -1,6 +1,6 @@
 // -*- C++ -*-
-// $Id: SAXStateProcess.h,v 1.1 2005/02/11 17:58:48 rado Exp $
-// GEANT4 tag $Name: GDML_2_7_0 $
+// $Id: SAXStateProcess.h,v 1.2 2006/08/29 11:49:29 dkruse Exp $
+// GEANT4 tag $Name: GDML_2_8_0 $
 #ifndef GDML_SAXANA_SAX_STATE_PROCESS_H
 #define GDML_SAXANA_SAX_STATE_PROCESS_H 1
 
@@ -57,7 +57,7 @@ public:
   // The name of the state this object will process
   virtual const std::string& State() const = 0;
 
-private:
+protected:
   const ProcessingContext* fContext;
 };
 

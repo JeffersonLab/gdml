@@ -6,6 +6,7 @@
   <xs:include schemaLocation="gdml_solids.xsd"/>
   <xs:include schemaLocation="gdml_replicas.xsd"/>
   <xs:include schemaLocation="gdml_parameterised.xsd"/>
+  <xs:include schemaLocation="gdml_extensions.xsd"/>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <xs:complexType abstract="true" name="IdentifiableVolumeType">
     <xs:attribute name="name" type="xs:ID" use="required"/>
@@ -30,6 +31,7 @@
 	<xs:element name="rotationref" type="ReferenceType"/>
       </xs:choice>
     </xs:sequence>
+    <xs:attribute name="name" type="xs:ID"></xs:attribute>
   </xs:complexType>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <xs:complexType name="DivisionPlacementType">
@@ -58,13 +60,14 @@
       <xs:extension base="IdentifiableVolumeType">
 	<xs:sequence>
 	  <xs:element name="materialref" type="ReferenceType"/>
-	  <xs:element name="solidref" type="ReferenceType"/>
-	  <xs:choice minOccurs="0">
+	  <xs:element name="solidref" type="ReferenceType"/>	  
+	  <xs:choice minOccurs="0">	    
 	    <xs:element maxOccurs="unbounded" name="physvol" type="SinglePlacementType"/>
 	    <xs:element maxOccurs="1" minOccurs="1" name="divisionvol" type="DivisionPlacementType"/>
 	    <xs:element maxOccurs="1" minOccurs="1" ref="replicavol"/>
 	    <xs:element maxOccurs="1" minOccurs="1" name="paramvol" type="ParameterisedPlacementType"/>
 	  </xs:choice>
+	  <xs:element maxOccurs="unbounded" minOccurs="0" ref="loop"/>
 	  <xs:element name="auxiliary" maxOccurs="unbounded" minOccurs="0" type="AuxiliaryType"/>
 	</xs:sequence>
       </xs:extension>
@@ -92,6 +95,52 @@
     </xs:complexContent>
   </xs:complexType>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <xs:complexType name="LogicalSurfaceType">
+    <xs:annotation>
+      <xs:documentation>Base type for logical surfaces (for the moment only optical)
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:ID" use="required"></xs:attribute>
+    <xs:attribute name="surfaceproperty" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+  </xs:complexType>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <xs:element abstract="true" name="Surface" type="LogicalSurfaceType">
+    <xs:annotation>
+      <xs:documentation>Abstract element for all solids substitution group</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <xs:element name="bordersurface" substitutionGroup="Surface">
+    <xs:annotation>
+      <xs:documentation>Surface between two physical volumes</xs:documentation>
+    </xs:annotation>
+      <xs:complexType>
+      <xs:complexContent>
+	<xs:extension base="LogicalSurfaceType">
+	 <xs:sequence>
+	  <xs:element name="physvolref" type="ReferenceType"/>
+	  <xs:element name="physvolref" type="ReferenceType"/>
+	 </xs:sequence>
+	</xs:extension>
+      </xs:complexContent>
+     </xs:complexType>
+  </xs:element>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <xs:element name="skinsurface" substitutionGroup="Surface">
+    <xs:annotation>
+      <xs:documentation>Surface between two physical volumes</xs:documentation>
+    </xs:annotation>
+     <xs:complexType>
+      <xs:complexContent>
+	<xs:extension base="LogicalSurfaceType">
+	  <xs:sequence>
+             <xs:element name="volumeref" type="ReferenceType"/>
+	  </xs:sequence>
+	</xs:extension>
+      </xs:complexContent>
+     </xs:complexType>
+  </xs:element>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <xs:element name="structure">
     <xs:annotation>
       <xs:documentation>Definitions of a geometrical hierarchy of a set of volumes</xs:documentation>
@@ -101,8 +150,10 @@
 	<xs:choice maxOccurs="unbounded">
 	  <xs:element name="volume" type="VolumeType"/>
 	  <xs:element name="assembly" type="AssemblyVolumeType"/>
+	  <xs:element maxOccurs="unbounded" minOccurs="0" ref="loop"/>
 	  <xs:element ref="ParameterisationAlgorithm"/>
 	</xs:choice>
+	<xs:element minOccurs="0" maxOccurs="unbounded" ref="Surface"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -134,7 +185,7 @@
 	  </xs:complexType>
 	</xs:element>
       </xs:sequence>
-      <xs:attribute fixed="2.3.0" name="version" type="xs:string">
+      <xs:attribute fixed="2.8.0" name="version" type="xs:string">
 	<xs:annotation>
 	  <xs:documentation>The GDML Schema version consists of 3 digits X.Y.Z
             where these mean:

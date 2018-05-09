@@ -5,7 +5,7 @@
 #include "Saxana/SAXObject.h"
 #include "Schema/SolidType.h"
 
-class eltube : public SAXObject, public SolidType {
+class eltube : public SolidType {
 public:
   eltube() {
   }

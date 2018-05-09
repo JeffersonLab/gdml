@@ -6,7 +6,7 @@
 
 #include "Schema/BooleanSolidType.h"
 
-class boolean_intersection : public SAXObject, public BooleanSolidType
+class boolean_intersection : public BooleanSolidType
 {
   public:
     boolean_intersection() {

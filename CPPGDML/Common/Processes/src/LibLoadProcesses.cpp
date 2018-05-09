@@ -1,11 +1,8 @@
 //
 #include "Saxana/SAXComponentFactory.h"
 
-//extern "C" 
-//{
-
-  void GDMLProcessLibLoad() {
-    LOAD_COMPONENT(defineProcess)
+void GDMLProcessLibLoad() {
+  LOAD_COMPONENT(defineProcess)
     LOAD_COMPONENT(constantProcess)
     LOAD_COMPONENT(quantityProcess)
     LOAD_COMPONENT(expressionProcess)
@@ -22,6 +19,7 @@
     LOAD_COMPONENT(elementProcess)
     LOAD_COMPONENT(materialProcess)
     LOAD_COMPONENT(fractionProcess)
+    LOAD_COMPONENT(propertyProcess)
     LOAD_COMPONENT(compositeProcess)    
     LOAD_COMPONENT(firstProcess)    
     LOAD_COMPONENT(secondProcess)    
@@ -68,12 +66,15 @@
     LOAD_COMPONENT(materialrefProcess)    
     LOAD_COMPONENT(solidrefProcess)    
     LOAD_COMPONENT(volumerefProcess)
+    LOAD_COMPONENT(physvolrefProcess)
     LOAD_COMPONENT(worldProcess)    
     LOAD_COMPONENT(twistedboxProcess)
     LOAD_COMPONENT(twistedtrapProcess)
     LOAD_COMPONENT(twistedtrdProcess)
     LOAD_COMPONENT(twistedtubsProcess)
+    LOAD_COMPONENT(opticalsurfaceProcess)
+    LOAD_COMPONENT(skinsurfaceProcess)
+    LOAD_COMPONENT(bordersurfaceProcess)
     LOAD_COMPONENT(setupProcess)    
-      }
+    }
 
-//};

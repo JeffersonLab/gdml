@@ -15,14 +15,14 @@ public:
   typedef std::vector<Subscriber>                           Subscribers;
   typedef std::map<SAXSubscriber::Subscription,Subscribers> Pool;
   
-  SAXSubscriberPool();
+  SAXSubscriberPool();    
   ~SAXSubscriberPool();
 
   void AddSubscriber( const SAXSubscriber::Subscription& type, Subscriber client );
   void RemoveSubscriber( const SAXSubscriber::Subscription& type, Subscriber client );
   const Subscribers* GetSubscribers( const SAXSubscriber::Subscription& subscription );
   void Initialize();
-  void Reset();
+  void Reset();  
   
 private:
   SAXSubscriberPool::Pool fPool;

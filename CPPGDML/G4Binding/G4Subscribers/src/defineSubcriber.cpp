@@ -3,7 +3,6 @@
 #include "Saxana/SAXComponentFactory.h"
 
 #include "G4Processor/GDMLProcessor.h"
-//#include "G4Processor/GDMLExpressionEvaluator.h"
 
 #include "Schema/define.h"
 
@@ -11,6 +10,7 @@
 #include "G4RotationMatrix.hh"
 
 #include <iostream>
+#include <string>
 
 class defineSubscriber : virtual public SAXSubscriber
 {
@@ -50,6 +50,10 @@ class defineSubscriber : virtual public SAXSubscriber
                   define::constant* c = dynamic_cast<define::constant*>(item.object);
                   //std::cout << "GOT constant " << c->get_name() << " = " << c->get_value() << std::endl;
                   calc->RegisterConstant( c );
+                } else if( item.tag == "variable" ) {
+                  define::variable* v = dynamic_cast<define::variable*>(item.object);
+                  double vvalue = calc->EvaluateString( v->get_value() );
+                  calc->RegisterVariable( v->get_name(), vvalue );
                 } else if( item.tag == "quantity" ) {
                   define::quantity* q = dynamic_cast<define::quantity*>(item.object);
                   //std::cout << "GOT quantity " << q->get_name() << " = " << q->get_value() << q->get_unit() << std::endl;
@@ -104,6 +108,13 @@ class defineSubscriber : virtual public SAXSubscriber
 //                                              << rm4.getTheta() << ","
 //                                              << rm4.getPsi() << ")"
 //                                              << r->get_unit() << std::endl;
+                } else if( item.tag == "matrix" ) {		  	  		  
+                  MatrixType* mt = dynamic_cast<MatrixType*>(item.object);
+                  define::matrix* m = dynamic_cast<define::matrix*>(item.object);
+
+                  GDMLProcessor::GetInstance()->AddMatrix(m->get_name(), *mt);
+
+                  calc->RegisterMatrix( m );
                 } else {
                   // Problem, nothing else can appear in define element
                   std::cerr << "define SUBSCRIBER:: Incorrect content model found!\a" << std::endl;

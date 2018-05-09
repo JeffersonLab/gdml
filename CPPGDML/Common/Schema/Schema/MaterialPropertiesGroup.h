@@ -21,7 +21,7 @@ struct  MaterialPropertiesGroup
   TagorTagref* m_PorPref;
 
   MaterialPropertiesGroup()
-  : m_RLorRLref(0), m_ALorALref(0), m_TorTref(0), m_PorPref(0) {
+  : m_RLorRLref(0), m_ALorALref(0), m_TorTref(0), m_PorPref(0){
   }
 };
 

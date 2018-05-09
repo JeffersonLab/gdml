@@ -6,7 +6,7 @@
 
 #include "Schema/SolidType.h"
 
-class orb : public SAXObject, public SolidType
+class orb : public SolidType
 {
   public:
     orb() {

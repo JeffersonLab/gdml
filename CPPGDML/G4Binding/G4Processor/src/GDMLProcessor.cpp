@@ -17,13 +17,15 @@ GDMLProcessor* GDMLProcessor::GetInstance()
   if( sProcessor == 0 )
   {
     sProcessor = new GDMLProcessor();
-  }
-  
+    std::string no_filename = "";
+    sProcessor->currentlyParsing(no_filename);
+  }  
   return sProcessor;
 }
 
 void GDMLProcessor::SetDuplicationWarning(const std::string& firstFileName)
 {
+ file_name_stack.pop(); //removing no_filename entry
  currentlyParsing(firstFileName); //It's not nice to call this method here, this is due to backward compatibility issues
  duplicationWarning = true;
 }
@@ -105,7 +107,7 @@ GDMLProcessor::~GDMLProcessor()
 
 void GDMLProcessor::AddPosition( const std::string& name, G4ThreeVector* p )
 {
-  fPTable[name] = p;
+  fPTable[name+file_name_stack.top()] = p;
 }
 
 void GDMLProcessor::AddPosition( const char* name, G4ThreeVector* p )
@@ -116,7 +118,7 @@ void GDMLProcessor::AddPosition( const char* name, G4ThreeVector* p )
 
 void GDMLProcessor::AddRotation( const std::string& name, G4RotationMatrix* p )
 {
-  fRTable[name] = p;
+  fRTable[name+file_name_stack.top()] = p;
 }
 
 void GDMLProcessor::AddRotation( const char* name, G4RotationMatrix* p )
@@ -125,9 +127,20 @@ void GDMLProcessor::AddRotation( const char* name, G4RotationMatrix* p )
   AddRotation( key, p );
 }
 
+void GDMLProcessor::AddMatrix( const std::string& name, MatrixType& p )
+{
+  fMTable[name+file_name_stack.top()] = p;
+}
+
+void GDMLProcessor::AddMatrix( const char* name, MatrixType& p )
+{
+  std::string key = name;
+  AddMatrix( key, p );
+}
+
 void GDMLProcessor::AddSolid( const std::string& name, G4VSolid* p )
 {
-  fSolids[name] = p;
+  fSolids[name+file_name_stack.top()] = p;
   if(duplicationWarning)
   {
    checkDuplication(name);
@@ -139,9 +152,23 @@ void GDMLProcessor::AddSolid( const char* name, G4VSolid* p )
   AddSolid( key, p );
 }
 
+void GDMLProcessor::AddSurfaceProperty( const std::string& name, G4SurfaceProperty* p )
+{
+  fSurfaces[name] = p;
+  if(duplicationWarning)
+  {
+   checkDuplication(name);
+  }
+}
+void GDMLProcessor::AddSurfaceProperty( const char* name, G4SurfaceProperty* p )
+{
+  std::string key = name;
+  AddSurfaceProperty( key, p );
+}
+
 void GDMLProcessor::AddLogicalVolume( const std::string& name, G4LogicalVolume* p )
 {
-  fLVolumes[name] = p;
+  fLVolumes[name+file_name_stack.top()] = p;
 }
 void GDMLProcessor::AddLogicalVolume( const char* name, G4LogicalVolume* p )
 {
@@ -152,6 +179,15 @@ void GDMLProcessor::AddLogicalVolume( const char* name, G4LogicalVolume* p )
 void GDMLProcessor::AddParsedFile( const std::string& name, G4VPhysicalVolume* p )
 {
   Files_Volumes_Map[name] = p;
+  std::string::size_type loc = name.find_last_of('.');
+  std::string new_name = name.substr(0,loc);
+  if(new_name!=file_name_stack.top())
+  {
+   std::cout<<"[ERROR] FILE NAME STACK !!! file_name_stack.top(): " << file_name_stack.top() << " name: " << new_name <<std::endl;
+   return;
+  }
+  file_name_stack.pop();
+  fCalc->setFileCurrentlyParsed(file_name_stack.top());
 }
 void GDMLProcessor::AddParsedFile( const char* name, G4VPhysicalVolume* p )
 {
@@ -161,7 +197,7 @@ void GDMLProcessor::AddParsedFile( const char* name, G4VPhysicalVolume* p )
 
 void GDMLProcessor::AddAssemblyVolume( const std::string& name, G4AssemblyVolume* p )
 {
-  fAVolumes[name] = p;
+  fAVolumes[name+file_name_stack.top()] = p;
 }
 void GDMLProcessor::AddAssemblyVolume( const char* name, G4AssemblyVolume* p )
 {
@@ -171,7 +207,7 @@ void GDMLProcessor::AddAssemblyVolume( const char* name, G4AssemblyVolume* p )
 
 void GDMLProcessor::AddPhysicalVolume( const std::string& name, G4VPhysicalVolume* p )
 {
-  fPVolumes[name] = p;
+  fPVolumes[name+file_name_stack.top()] = p;
 }
 void GDMLProcessor::AddPhysicalVolume( const char* name, G4VPhysicalVolume* p )
 {
@@ -181,7 +217,7 @@ void GDMLProcessor::AddPhysicalVolume( const char* name, G4VPhysicalVolume* p )
 
 const G4ThreeVector*    GDMLProcessor::GetPosition( const std::string& name )
 {
-  return fPTable[name];
+  return fPTable[name+file_name_stack.top()];
 }
 
 const G4ThreeVector*    GDMLProcessor::GetPosition( const char* name )
@@ -192,7 +228,7 @@ const G4ThreeVector*    GDMLProcessor::GetPosition( const char* name )
 
 const G4RotationMatrix* GDMLProcessor::GetRotation( const std::string& name )
 {
-  return fRTable[name];
+  return fRTable[name+file_name_stack.top()];
 }
 
 const G4RotationMatrix* GDMLProcessor::GetRotation( const char* name )
@@ -201,9 +237,20 @@ const G4RotationMatrix* GDMLProcessor::GetRotation( const char* name )
   return GetRotation( key );
 }
 
+const MatrixType& GDMLProcessor::GetMatrix( const std::string& name )
+{
+  return fMTable[name+file_name_stack.top()];
+}
+
+const MatrixType& GDMLProcessor::GetMatrix( const char* name )
+{
+  std::string key = name;
+  return GetMatrix( key );
+}
+
 const G4VSolid* GDMLProcessor::GetSolid( const std::string& name )
 {
-  return fSolids[name];
+  return fSolids[name+file_name_stack.top()];
 }
 
 const G4VSolid* GDMLProcessor::GetSolid( const char* name )
@@ -212,9 +259,20 @@ const G4VSolid* GDMLProcessor::GetSolid( const char* name )
   return GetSolid( key );
 }
 
+G4SurfaceProperty* GDMLProcessor::GetSurfaceProperty( const std::string& name )
+{
+  return fSurfaces[name];
+}
+
+G4SurfaceProperty* GDMLProcessor::GetSurfaceProperty( const char* name )
+{
+  std::string key = name;
+  return GetSurfaceProperty( key );
+}
+
 const G4LogicalVolume* GDMLProcessor::GetLogicalVolume( const std::string& name )
 {
-  return fLVolumes[name];
+  return fLVolumes[name+file_name_stack.top()];
 }
 
 const G4LogicalVolume* GDMLProcessor::GetLogicalVolume( const char* name )
@@ -225,7 +283,7 @@ const G4LogicalVolume* GDMLProcessor::GetLogicalVolume( const char* name )
 
 const G4AssemblyVolume* GDMLProcessor::GetAssemblyVolume( const std::string& name )
 {
-  return fAVolumes[name];
+  return fAVolumes[name+file_name_stack.top()];
 }
 
 const G4AssemblyVolume* GDMLProcessor::GetAssemblyVolume( const char* name )
@@ -236,7 +294,7 @@ const G4AssemblyVolume* GDMLProcessor::GetAssemblyVolume( const char* name )
 
 const G4VPhysicalVolume* GDMLProcessor::GetPhysicalVolume( const std::string& name )
 {
-  return fPVolumes[name];
+  return fPVolumes[name+file_name_stack.top()];
 }
 
 const G4VPhysicalVolume* GDMLProcessor::GetPhysicalVolume( const char* name )

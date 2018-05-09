@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: G4GDMLWriter.h,v 1.7 2006/07/26 13:31:01 dkruse Exp $
+// $Id: G4GDMLWriter.h,v 1.8 2006/08/15 12:09:21 witoldp Exp $
 #ifndef INCLUDE_G4GDMLWRITER_H 
 #define INCLUDE_G4GDMLWRITER_H 1
 
@@ -58,7 +58,7 @@ private:
   std::string processTetVertex(double x, double y, double z);
   
   void DumpMaterial(G4Material* mat);
-  void DumpSolid(G4VSolid* tempsol);
+  void DumpSolid(const G4VSolid* tempsol);
   void DumpGeoTree2(G4VPhysicalVolume* physvol, std::vector<int> levels, int currentLevel);
   void DumpGeoTree2(G4VPhysicalVolume* physvol, std::vector<std::string> volnames);
   

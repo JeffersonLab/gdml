@@ -69,8 +69,10 @@ class elementSubscriber : virtual public SAXSubscriber
               sA += ae->get_unit();
               a = calc->Eval( sA );
 
-              G4Element* enew = 
-              new G4Element( Util::generateName(obj->get_name()), f, z, a );
+              G4Element* enew = new G4Element( Util::generateName(obj->get_name()), f, z, a );
+#ifdef GDML_VERBOSE
+              std::cout << *enew << std::endl;
+#endif
             } else {
               // Must be the sequence of fractions
               const ContentSequence* seq = dynamic_cast<const ContentSequence*>( cg );

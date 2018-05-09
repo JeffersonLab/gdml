@@ -1,6 +1,6 @@
 //
-// $Id: physvolProcess.cpp,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_7_0 $
+// $Id: physvolProcess.cpp,v 1.2 2006/08/29 09:47:20 witoldp Exp $
+// GEANT4 tag $Name: GDML_2_8_0 $
 #include "Processes/SinglePlacementTypeProcess.h"
 
 #include "Schema/physvol.h"
@@ -16,12 +16,13 @@ public:
   }
 
   // Analogical to SAX startElement callback
-  virtual void StartElement( const std::string&, const ASCIIAttributeList& ) {
+  virtual void StartElement( const std::string&, const ASCIIAttributeList& attrs) {
     //std::cout << "PROCESS::START OF TAG  : " << name << std::endl;
 
     SAXObject** obj = Context()->GetTopObject();
 
     physvol* physvol_lement = new physvol;
+    physvol_lement->set_name( attrs.getValue( "name" ) );
 
     m_obj = physvol_lement;
     *obj  = physvol_lement;

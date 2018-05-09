@@ -35,7 +35,7 @@ public:
   {    
     std::string lunit  = attrs.getValue( "lunit" );
     std::string aunit  = attrs.getValue( "aunit" );
-    std::string sname   = attrs.getValue( "name" );
+    std::string sname  = attrs.getValue( "name"  );
     
     SolidType* sobj  = dynamic_cast<SolidType*>( m_obj );
     

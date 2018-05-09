@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: SinglePlacementType.h,v 1.2 2006/07/19 14:57:50 dkruse Exp $
+// $Id: SinglePlacementType.h,v 1.5 2006/08/29 16:44:13 witoldp Exp $
 #ifndef GDML_SCHEMA_SINGLEPLACEMENTTYPE_H
 #define GDML_SCHEMA_SINGLEPLACEMENTTYPE_H 1
 
@@ -84,7 +84,13 @@ class SinglePlacementType
     }
     ~SinglePlacementType() {
     }
-  
+    
+  private:
+    SinglePlacementType(const SinglePlacementType&) 
+  { //private copy-constructor, no copies allowed!
+  }
+    
+  public:
     const ContentSequence* get_content() const {
       return &m_sequence;
     }
@@ -92,10 +98,33 @@ class SinglePlacementType
     void add_content( const std::string& tag, SAXObject* so ) {
       ContentGroup::ContentItem ci = { tag, so };
       m_sequence.add_content( ci );
+      if(tag=="volumeref")
+      {
+       vol_ref = so;
+      }
+    }
+    
+    SAXObject* get_vol_ref()
+    {
+     return vol_ref;
+    }
+    
+    void set_vol_ref(SAXObject* set)
+    {
+     vol_ref = set;
     }
 
+  const std::string& get_name() const {
+    return name;
+  }
+  void set_name( const std::string& n ) {
+    name = n;
+  }
+  
   private:
     ContentSequence m_sequence;
+    SAXObject* vol_ref;
+    std::string name;
 };
 
 //  We need to resolve the problem of conlifting non-terminals in grammar

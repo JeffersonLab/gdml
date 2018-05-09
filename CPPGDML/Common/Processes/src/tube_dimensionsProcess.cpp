@@ -1,6 +1,6 @@
 //
 // $Id: tube_dimensionsProcess.cpp,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_7_0 $
+// GEANT4 tag $Name: GDML_2_8_0 $
 #include "Processes/DimensionsTypeProcess.h"
 
 #include "Schema/tube_dimensions.h"

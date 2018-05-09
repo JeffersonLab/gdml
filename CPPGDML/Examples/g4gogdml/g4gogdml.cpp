@@ -14,13 +14,16 @@
 //g4 writer
 #include "G4Writer/G4GDMLWriter.h"
 
-int main()
+int main(int argc, char** argv)
 {
   // Construct the default run manager
   G4RunManager* runManager = new G4RunManager;
 
+  std::string filename("geo.gdml");
+  if (argc>1) filename = argv[1];
+
   // set mandatory initialization classes
-  runManager->SetUserInitialization(new gogdmlDetectorConstruction);
+  runManager->SetUserInitialization(new gogdmlDetectorConstruction(filename));
   runManager->SetUserInitialization(new gogdmlPhysicsList);
 
   // set mandatory user action class

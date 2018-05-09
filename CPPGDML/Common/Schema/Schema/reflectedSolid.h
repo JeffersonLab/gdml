@@ -4,7 +4,7 @@
 #include "Saxana/SAXObject.h"
 #include "Schema/SolidType.h"
 
-class reflectedSolid : public SAXObject, public SolidType {
+class reflectedSolid : public SolidType {
 public:
   reflectedSolid() {
   }

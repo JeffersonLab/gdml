@@ -7,10 +7,12 @@
 
 #include "Schema/defineType.h"
 #include "Schema/IdentifiableConstantType.h"
+#include "Schema/IdentifiableVariableType.h"
 #include "Schema/IdentifiableQuantityType.h"
 #include "Schema/IdentifiableExpressionType.h"
 #include "Schema/positionType.h"
 #include "Schema/rotationType.h"
+#include "Schema/MatrixType.h"
 
 class define : public SAXObject, public defineType
 {
@@ -29,6 +31,17 @@ public:
       constant() {
       }
       virtual ~constant() {
+      }
+      virtual SAXObject::Type type() {
+        return SAXObject::element;
+      }
+    };
+    class variable : public SAXObject, public IdentifiableVariableType
+    {
+    public:
+      variable() {
+      }
+      virtual ~variable() {
       }
       virtual SAXObject::Type type() {
         return SAXObject::element;
@@ -78,6 +91,18 @@ public:
         return SAXObject::element;
       }
     };
+    class matrix : public SAXObject, public MatrixType
+    {
+     public:
+       matrix() {
+       }
+       virtual ~matrix() {
+       }
+       virtual SAXObject::Type type() {
+         return SAXObject::element;
+       }
+    };
+
 };
 
 #endif // DEFINE_H

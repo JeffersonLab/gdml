@@ -5,7 +5,7 @@
 #include "Saxana/SAXObject.h"
 #include "Schema/SolidType.h"
 
-class tessellated : public SAXObject, public SolidType {
+class tessellated : public SolidType {
 public:
   tessellated() {
   }

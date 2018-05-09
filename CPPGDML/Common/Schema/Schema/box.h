@@ -5,7 +5,7 @@
 #include "Saxana/SAXObject.h"
 #include "Schema/SolidType.h"
 
-class box : public SAXObject, public SolidType {
+class box : public SolidType {
 public:
   box() {
   }

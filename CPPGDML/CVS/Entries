@@ -1,15 +1,15 @@
-/CERNConfigure.csh/1.12/Mon Aug 14 16:05:36 2006//TGDML_2_7_0
-/CERNConfigure.sh/1.7/Mon Aug 14 16:05:36 2006//TGDML_2_7_0
-/ChangeLog/1.16/Wed Jul 26 14:03:15 2006//TGDML_2_7_0
-/GNUmakefile/1.25/Thu Jul 13 09:53:04 2006//TGDML_2_7_0
-/README/1.2/Fri May 13 22:53:04 2005//TGDML_2_7_0
-/SLACConfigure.sh/1.5/Thu Nov  3 10:15:27 2005//TGDML_2_7_0
-/ac.sh/1.1/Wed May  4 02:25:35 2005//TGDML_2_7_0
-/aclocal.m4/1.2/Tue Nov 22 19:14:16 2005//TGDML_2_7_0
-/configure.in/1.4/Thu Jul 13 10:31:16 2006//TGDML_2_7_0
+/CERNConfigure.csh/1.12/Mon Aug 14 16:05:36 2006//TGDML_2_8_0
+/CERNConfigure.sh/1.7/Mon Aug 14 16:05:36 2006//TGDML_2_8_0
+/ChangeLog/1.19/Tue Sep  5 16:15:11 2006//TGDML_2_8_0
+/GNUmakefile/1.25/Thu Jul 13 09:53:04 2006//TGDML_2_8_0
+/README/1.2/Fri May 13 22:53:04 2005//TGDML_2_8_0
+/SLACConfigure.sh/1.5/Thu Nov  3 10:15:27 2005//TGDML_2_8_0
+/ac.sh/1.1/Wed May  4 02:25:35 2005//TGDML_2_8_0
+/aclocal.m4/1.2/Tue Nov 22 19:14:16 2005//TGDML_2_8_0
+/configure/1.16/Tue Sep  5 16:15:11 2006//TGDML_2_8_0
+/configure.in/1.5/Tue Sep  5 16:15:11 2006//TGDML_2_8_0
 D/Common////
 D/Examples////
 D/G4Binding////
 D/STEPBinding////
 D/config////
-/configure/1.14/Mon Aug 14 16:10:35 2006//TGDML_2_7_0

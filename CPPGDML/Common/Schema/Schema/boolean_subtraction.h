@@ -6,7 +6,7 @@
 
 #include "Schema/BooleanSolidType.h"
 
-class boolean_subtraction : public SAXObject, public BooleanSolidType
+class boolean_subtraction : public BooleanSolidType
 {
   public:
     boolean_subtraction() {

@@ -6,7 +6,7 @@
 
 #include "Schema/SolidType.h"
 
-class cone : public SAXObject, public SolidType {
+class cone : public SolidType {
 public:
   cone() {
   }

@@ -1,5 +1,5 @@
-// $Id: SAXProcessor.cpp,v 1.3 2006/02/09 10:58:25 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_7_0 $
+// $Id: SAXProcessor.cpp,v 1.4 2006/08/29 11:49:29 dkruse Exp $
+// GEANT4 tag $Name: GDML_2_8_0 $
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 
@@ -51,6 +51,11 @@ SAXProcessor::~SAXProcessor()
     delete fNotifyStack;
     fStack = 0;
   }
+}
+
+const SAXSubscriberPool* SAXProcessor::GetSubscriberPool()
+{
+ return fPool;
 }
 
 // Mandatory interface from ProcessingContext
@@ -281,7 +286,7 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
         // delete the object because all subscribers should have been called 
         if ( didSub ) {
           //	  std::cout << "deleting object <" << ev->Name() << "> = *objectRef: " << *objectRef << std::endl;	
-          delete *objectRef;
+          //delete *objectRef;
         }
 
         // delete the object reference

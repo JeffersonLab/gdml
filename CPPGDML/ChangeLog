@@ -1,3 +1,12 @@
+2006-09-05 Witek Pokorski <Witold.Pokorski@cern.ch>
+     *added support for material properties sheets
+
+2006-08-29 Daniele Francesco Kruse <k.master@fastwebnet.it>
+	* CPPGDML: added support for <variable>, <loop> & <matrix>
+
+2006-08-29 Witek Pokorski <Witold.Pokorski@cern.ch>
+     *added support for optical surfaces
+	
 2006-07-26 Daniele Francesco Kruse <k.master@fastwebnet.it>
 	* CPPGDML: added support for modularised GDML output
 

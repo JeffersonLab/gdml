@@ -6,7 +6,7 @@
 
 #include "Schema/SolidType.h"
 
-class trd : public SAXObject, public SolidType
+class trd : public SolidType
 {
   public:
     trd() {

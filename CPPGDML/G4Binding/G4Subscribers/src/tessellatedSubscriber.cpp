@@ -51,7 +51,7 @@ class tessellatedSubscriber : public SAXSubscriber
           for( int i = 0; i < numberOfFaces; i++ )
           {
             G4VFacet* facet=0;
-            G4FacetVertexType type;
+            G4FacetVertexType type = ABSOLUTE;
             
             if(seq->content(i).tag=="triangular")
             {
