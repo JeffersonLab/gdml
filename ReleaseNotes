@@ -1,3 +1,10 @@
+18.11.2014 - GDML_3_1_1
+-----------------------
+
+- Updated GDML schema:
+  o Corrected MultiUnion structure specification.
+- Updated documentation accordingly (GDML Guide v.2.4).
+
 26.11.2013 - GDML_3_1_0
 -----------------------
 
