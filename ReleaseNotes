@@ -1,3 +1,10 @@
+09.10.2015 - GDML_3_1_3
+-----------------------
+
+- Updated GDML schema:
+  o Added support for specifying copy-numbers associated to
+    normal volume placements.
+
 12.06.2015 - GDML_3_1_2
 -----------------------
 
