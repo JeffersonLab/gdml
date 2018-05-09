@@ -140,5 +140,29 @@ namespace gdml
       m_cursor.appendChild( p );
       }
     }
+    
+    void DefinitionsCursor::addScale(const std::string& id,double x,double y, double z) {
+
+        std::ostringstream os;
+        os.precision(15);
+
+        os << x; std::string sx = os.str(); os.str("");
+        os << y; std::string sy = os.str(); os.str("");
+        os << z; std::string sz = os.str(); os.str("");
+      
+        if(ok(id)) {
+            
+	    add(id);
+
+            Element p("scale");
+            p.addAttribute("name",id);
+            p.addAttribute("x",sx);
+            p.addAttribute("y",sy);
+            p.addAttribute("z",sz);
+
+            m_cursor.appendChild( p );
+        }
+    }
+    
   }
 }

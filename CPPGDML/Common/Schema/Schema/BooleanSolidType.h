@@ -1,6 +1,6 @@
 // -*- C++ -*-
-// $Id: BooleanSolidType.h,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_9_0 $
+// $Id: BooleanSolidType.h,v 1.2 2007/08/23 11:05:33 ztorzsok Exp $
+// GEANT4 tag $Name:  $
 #ifndef GDML_SCHEMA_BOOLEANSOLIDTYPE_H
 #define GDML_SCHEMA_BOOLEANSOLIDTYPE_H 1
 
@@ -11,6 +11,7 @@
 #include "Schema/ReferenceType.h"
 #include "Schema/positionType.h"
 #include "Schema/rotationType.h"
+#include "Schema/scaleType.h"
 
 class BooleanSolidType : public SolidType
 {
@@ -77,6 +78,28 @@ class BooleanSolidType : public SolidType
         rotationref() {
         }
         virtual ~rotationref() {
+        }
+        virtual SAXObject::Type type() {
+          return SAXObject::element;
+        }
+    };
+
+    class scale : public SAXObject, public scaleType {
+      public:
+        scale() {
+        }
+        virtual ~scale() {
+        }
+        virtual SAXObject::Type type() {
+          return SAXObject::element;
+        }
+    };
+
+    class scaleref : public SAXObject, public ReferenceType {
+      public:
+        scaleref() {
+        }
+        virtual ~scaleref() {
         }
         virtual SAXObject::Type type() {
           return SAXObject::element;

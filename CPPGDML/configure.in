@@ -1,4 +1,4 @@
-# $Header: /cvs/simu/simu/GDML2/CPPGDML/configure.in,v 1.7 2007/03/14 14:28:55 witoldp Exp $
+# $Header: /cvs/simu/simu/GDML2/CPPGDML/configure.in,v 1.8 2007/09/14 19:12:47 mccormi Exp $
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)

@@ -1,4 +1,4 @@
-// $Id: MaterialLocator.h,v 1.1 2006/12/01 01:28:35 mccormi Exp $
+// $Id: MaterialLocator.h,v 1.2 2007/07/30 14:30:48 ztorzsok Exp $
 #ifndef G4PROCESSOR_MATERIALLOCATOR_H
 #define G4PROCESSOR_MATERIALLOCATOR_H 1
 
@@ -63,7 +63,7 @@ class MaterialLocator
 #endif
 				);
 
- private:
+ public:
 
   /**
    * Find a material in the G4MaterialTable.

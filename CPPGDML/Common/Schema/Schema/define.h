@@ -12,6 +12,7 @@
 #include "Schema/IdentifiableExpressionType.h"
 #include "Schema/positionType.h"
 #include "Schema/rotationType.h"
+#include "Schema/scaleType.h"
 #include "Schema/MatrixType.h"
 
 class define : public SAXObject, public defineType
@@ -86,6 +87,17 @@ public:
       rotation() {
       }
       virtual ~rotation() {
+      }
+      virtual SAXObject::Type type() {
+        return SAXObject::element;
+      }
+    };
+    class scale : public SAXObject, public scaleType
+    {
+    public:
+      scale() {
+      }
+      virtual ~scale() {
       }
       virtual SAXObject::Type type() {
         return SAXObject::element;

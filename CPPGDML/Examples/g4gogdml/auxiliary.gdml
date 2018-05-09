@@ -30,7 +30,7 @@
   <volume name="Boxvol" >
    <materialref ref="Air" />
    <solidref ref="Box" />
-   <auxiliary auxtype="SensDet" auxvalue="veloSD1111"/>
+   <auxiliary auxtype="SensDet" auxvalue="veloSD"/>
   </volume>
   <volume name="World" >
    <materialref ref="Air" />
@@ -40,9 +40,6 @@
     <positionref ref="R"  />
     <rotationref ref="V" />
    </physvol>
-   <auxiliary auxtype="SensDet" auxvalue="veloSD1"/>
-   <auxiliary auxtype="Sensdet" auxvalue="veloSD2"/>
-   <auxiliary auxtype="SensDet" auxvalue="veloSD3"/>
   </volume>
  </structure>
 

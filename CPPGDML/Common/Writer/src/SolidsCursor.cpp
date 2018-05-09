@@ -487,6 +487,7 @@ namespace gdml
 
       Element s( "twistedtubs" );
 
+      s.addAttribute( "name" , id);
       s.addAttribute( "twistedangle"    , sphitwist        );
       s.addAttribute( "endinnerrad"       , srinner        );
       s.addAttribute( "endouterrad"    , srouter     );
@@ -1163,6 +1164,56 @@ namespace gdml
       
       m_cursor.appendChild( bs );
       }
+    }
+
+    void SolidsCursor::addXtru(const std::string& id,
+                               const std::string& lunit,
+                               int numVertex,
+                               double* vertex,
+			       int numSection,
+                               double* section) {
+		 
+        if (!ok(id)) {
+
+            std::string msg = "Attempt to add duplicated solid xtru " + id;
+            throw std::logic_error(msg);	
+	    return;
+	}
+
+        add(id);
+
+        std::ostringstream os;
+        os.precision(15);
+
+        Element elementXtru("xtru");
+        elementXtru.addAttribute("name",id);
+        elementXtru.addAttribute("lunit",lunit);
+
+        for (int i=0;i<numVertex;i++) {
+
+	    Element elementVertex("twoDimVertex");
+
+            os.str(""); os << vertex[2*i+0]; elementVertex.addAttribute("x",os.str());
+            os.str(""); os << vertex[2*i+1]; elementVertex.addAttribute("y",os.str());
+
+            elementXtru.appendChild(elementVertex);
+	}
+    
+        for (int i=0;i<numSection;i++) {
+	
+	    Element elementSection("section");
+
+            os.str(""); os << i; elementSection.addAttribute("zOrder",os.str());	// zOrder is the zero-based index for every section
+
+            os.str(""); os << section[4*i+0]; elementSection.addAttribute("zPosition",os.str());
+            os.str(""); os << section[4*i+1]; elementSection.addAttribute("xOffset",os.str());
+            os.str(""); os << section[4*i+2]; elementSection.addAttribute("yOffset",os.str());
+            os.str(""); os << section[4*i+3]; elementSection.addAttribute("scalingFactor",os.str());
+
+            elementXtru.appendChild(elementSection);
+        }
+    
+        m_cursor.appendChild(elementXtru);
     }
   }
 }

@@ -148,7 +148,7 @@ public:
             sA += "*";
             sA += am->get_unit();
             a = calc->Eval( sA );
-            G4Material* existing = G4Material::GetMaterial(Util::generateName(obj->get_name()), false);
+            G4Material* existing = MaterialLocator::FindMaterial(Util::generateName(obj->get_name() ) );
             if(!existing)
             {
               mnew = new G4Material( Util::generateName(obj->get_name()), z, a, d, s, t, p );	      
@@ -160,7 +160,7 @@ public:
             std::string tag = cseq->content( 0 ).tag;
             if( tag == "composite" ) {
               // Composition by atoms of elements
-              G4Material* existing = G4Material::GetMaterial(Util::generateName(obj->get_name()), false);
+              G4Material* existing = MaterialLocator::FindMaterial(Util::generateName(obj->get_name() ) );
               if(!existing)
               {
                 mnew = new G4Material( Util::generateName(obj->get_name()), d, count, s, t, p );
@@ -190,7 +190,7 @@ public:
             else
             {
               // Composition by fraction of mass
-              G4Material* existing = G4Material::GetMaterial(Util::generateName(obj->get_name()), false);
+              G4Material* existing = MaterialLocator::FindMaterial(Util::generateName(obj->get_name() ) );
               if(!existing)
               {
                 mnew = new G4Material( Util::generateName(obj->get_name()), d, count, s, t, p );
@@ -242,7 +242,7 @@ public:
             int numbofentries = matrix.size()/matrix.get_coldim();
 
             for(int p=1;p<numbofentries+1;p++)
-              propvect->AddElement(matrix.get_value(1,p), matrix.get_value(2,p));           
+              propvect->AddElement(matrix.get_value(p,1), matrix.get_value(p,2));           
 
             matprop->AddProperty((obj->get_properties()[i]->get_name()).c_str(), propvect);
           }

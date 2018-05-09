@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // $Id: ParameterisationAlgTypeProcess.h,v 1.2 2006/08/29 16:44:13 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_9_0 $
+// GEANT4 tag $Name:  $
 #ifndef GDML_PROCESS_PARAMETERISATIONALGTYPEPROCESS_H
 #define GDML_PROCESS_PARAMETERISATIONALGTYPEPROCESS_H 1
 

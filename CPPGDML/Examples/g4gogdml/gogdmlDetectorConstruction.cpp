@@ -12,7 +12,7 @@
 gogdmlDetectorConstruction::gogdmlDetectorConstruction()
 {
   sxp.Initialize();
-  config.SetURI( "geo.gdml" );
+  config.SetURI( "opticalsurfaces.gdml" );
   config.SetSetupName( "Default" );
   sxp.Configure( &config );
 

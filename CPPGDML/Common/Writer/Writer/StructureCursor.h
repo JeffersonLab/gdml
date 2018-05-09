@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: StructureCursor.h,v 1.5 2006/07/26 13:31:00 dkruse Exp $
+// $Id: StructureCursor.h,v 1.6 2007/08/31 11:23:35 ztorzsok Exp $
 #ifndef GDML_WRITER_STRUCTURECURSOR_H
 #define GDML_WRITER_STRUCTURECURSOR_H 1
 
@@ -75,7 +75,8 @@ namespace gdml
       void addChild( const std::string& motherVolumeRef,
                      const std::string& volumeRef,
                      const std::string& positionRef,
-                     const std::string& rotationRef );
+                     const std::string& rotationRef,
+		     const std::string& scaleRef );
       /// Add a child defined in a external module (GDML file) into a mother volume with name 
       /// motherVolumeRef. The mother volume can ONLY be either an ordinary volume.
       /// @param motherVolumeRef The IDREF of the mother volume
@@ -88,7 +89,8 @@ namespace gdml
       void addChildFile( const std::string& motherVolumeRef,
                          const std::string& file,
                          const std::string& positionRef,
-                         const std::string& rotationRef );
+                         const std::string& rotationRef,
+			 const std::string& scaleRef );
       /// Add a child with name volumeRef into a mother volume with name motherVolumeRef.
       /// The names must be different otherwise an exception is thrown.
       /// This method creates children volumes with inlined position and rotation defintions.
@@ -123,7 +125,8 @@ namespace gdml
       void addChild( Element&           motherVolume,
                      const std::string& volumeRef,
                      const std::string& positionRef,
-                     const std::string& rotationRef );
+                     const std::string& rotationRef,
+		     const std::string& scaleRef );
       /// Add a child with name volumeRef into the motherVolume Element.
       /// The mother voluem can be obtained by calling findVolume() method.
       /// @param motherVolume    The mother volume Element reference
@@ -234,10 +237,12 @@ namespace gdml
       Element buildChild( const std::string& idRef,
                           const std::string& positionRef,
                           const std::string& rotationRef,
+                          const std::string& scaleRef,
                           const std::string& uniqueHint="" );
       Element buildChildFile( const std::string& file,
                               const std::string& positionRef,
                               const std::string& rotationRef,
+                              const std::string& scaleRef,
                               const std::string& uniqueHint="" );
       Element buildChild( const std::string& idRef,
                           double             x=0.0,

@@ -77,7 +77,11 @@ void GDMLProcessLibLoad() {
     LOAD_COMPONENT(skinsurfaceProcess)
     LOAD_COMPONENT(bordersurfaceProcess)
     LOAD_COMPONENT(setupProcess)    
-
-
+    LOAD_COMPONENT(matrixProcess)
+    LOAD_COMPONENT(xtruProcess)
+    LOAD_COMPONENT(sectionProcess)
+    LOAD_COMPONENT(twoDimVertexProcess)
+    LOAD_COMPONENT(scaleProcess)
+    LOAD_COMPONENT(scalerefProcess)
     }
 

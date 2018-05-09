@@ -14,9 +14,6 @@
 
 #include <iostream>
 
-namespace CLHEP {}
-using namespace CLHEP;
-
 class reflectedSolidSubscriber : public SAXSubscriber
 {
 public:
@@ -47,13 +44,18 @@ public:
 
         G4VSolid* solid = const_cast<G4VSolid*>
           (GDMLProcessor::GetInstance()->GetSolid(solidname));
+
+        std::cout << std::endl;
+        std::cout << "WARNING! Reflected solid is obsolete!" << std::endl;
+        std::cout << "Use scaling transformation to create reflection!" << std::endl;
+        std::cout << std::endl;
         
         if( solid == 0 ) 
         {
           // We're in trouble we can't create reflected solid
-          std::cerr << "BOOLEAN SOLID SUBSCRIBER:: solid "
+          std::cerr << "REFLECTED SOLID SUBSCRIBER:: solid "
                     << solidname << " not found!" << std::endl;
-          std::cerr << "Boolean solid " << obj->get_name() << " can't be created!" << std::endl;
+          std::cerr << "Reflected solid " << obj->get_name() << " can't be created!" << std::endl;
           std::cerr << "Please, re-order your solids or add the missing one..."
                     << std::endl;
           G4Exception( "Shutting-down due to error(s) in GDML input..." );
@@ -92,12 +94,12 @@ public:
         sval += obj->get_lunit();
         double dz = calc->Eval( sval );
         
-        CLHEP::HepRotation rot;
+	G4RotationMatrix rot;
         rot.rotateX(rx);
         rot.rotateY(ry);
         rot.rotateZ(rz);
 
-        CLHEP::Hep3Vector trans(dx, dy, dz);
+        G4ThreeVector trans(dx, dy, dz);
 
         G4Scale3D scale(sx, sy, sz);
 

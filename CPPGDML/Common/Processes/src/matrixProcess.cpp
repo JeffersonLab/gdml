@@ -27,8 +27,8 @@ class matrixProcess : public SAXStateProcess
     }
 
     // Analogical to SAX startElement callback
-    virtual void StartElement( const std::string&, const ASCIIAttributeList& attrs ) {
-      //std::cout << "PROCESS::START OF TAG  : " << name << std::endl;
+    virtual void StartElement( const std::string& elementname, const ASCIIAttributeList& attrs ) {
+      //std::cout << "PROCESS::START OF TAG  : " << elementname << std::endl;
 
       std::string name    = attrs.getValue( "name"   );
       std::string coldim  = attrs.getValue( "coldim" );

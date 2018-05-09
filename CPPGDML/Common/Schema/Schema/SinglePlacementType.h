@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: SinglePlacementType.h,v 1.5 2006/08/29 16:44:13 witoldp Exp $
+// $Id: SinglePlacementType.h,v 1.6 2007/08/23 11:05:33 ztorzsok Exp $
 #ifndef GDML_SCHEMA_SINGLEPLACEMENTTYPE_H
 #define GDML_SCHEMA_SINGLEPLACEMENTTYPE_H 1
 
@@ -8,6 +8,7 @@
 #include "FileReferenceType.h"
 #include "Schema/positionType.h"
 #include "Schema/rotationType.h"
+#include "Schema/scaleType.h"
 
 class SinglePlacementType
 {
@@ -73,6 +74,28 @@ class SinglePlacementType
         rotationref() {
         }
         virtual ~rotationref() {
+        }
+        virtual SAXObject::Type type() {
+          return SAXObject::element;
+        }
+    };
+
+    class scale : public SAXObject, public scaleType {
+      public:
+        scale() {
+        }
+        virtual ~scale() {
+        }
+        virtual SAXObject::Type type() {
+          return SAXObject::element;
+        }
+    };
+
+    class scaleref : public SAXObject, public ReferenceType {
+      public:
+        scaleref() {
+        }
+        virtual ~scaleref() {
         }
         virtual SAXObject::Type type() {
           return SAXObject::element;

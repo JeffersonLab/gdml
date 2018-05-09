@@ -1,3 +1,60 @@
+27.09.2007 - GDML_2_10-0
+------------------------
+
+Scaling was not considered in STEPWriter, caused compilation error.
+The modified 'StructureCursor::addChild()' function has one more argument, the scaleRef what was
+omitted.
+
+31.08.2007 - GDML_2_10_0
+------------------------
+Scaling transformation added. With the help of scaling transformation, for example,
+any kind of reflection can be implemented:
+
+   <scale name="ScaleNPP" x="-1" y="+1" z="+1"/>   // Planar reflection with the local "X" plane
+   <scale name="ScalePNN" x="+1" y="-1" z="-1"/>   // Axial reflection with the local "X" axis
+   <scale name="ScaleNNN" x="-1" y="-1" z="-1"/>   // Point reflection with the local origin
+   ...
+
+Scaling transformation has the same properties like any other geometrical transformation
+in GDML (rotation and translation respectively):
+- it is done per volume
+- it propagates down to the geometrical hierarchy
+- it is done in the local coordinate system of the volume
+- can be directly put into a physical volume or referenced, like:
+     
+   <scaleref ref="MyScale"/>
+
+An example file is added ("scale.gdml") where an extruded solid is reflected into all octants 
+of the local coordinate system, creating a diamond-like shape. This shape is driven trough a
+complex transformation pipeline, involving multiple reflections, rotation and translation.
+
+NOTE:
+At the moment in Geant4 scaling can be used only for reflection!
+
+30.07.2007 - GDML_2_9_0
+-----------------------
+
+>>GDML with Geant4 issues<<
+
+This version of GDML must be linked with Geant4 9.0!
+I have modified the "GDMLSetup" script, so Geant4 9.0
+is linked by default.
+
+(1)
+Extruded solid ("xtru") added.
+
+(2)
+The following problem with the tessellated solid ("tessellated") is fixed:
+It wasn't checked if the referenced vertices are defined or not. In 
+case of undefined vertices a "Segmentation fault" message was displayed, 
+what was quite helpless if we want to find the problem.
+Now it looks, for example:
+	"Error! Vertex "vertex0" is not defined in 'MyPyramid'!"
+
+(3)
+The warning messages regarding the materials are supressed now.
+
+
 14.03.2007 - GDML_2_9_0
 -----------------------
 

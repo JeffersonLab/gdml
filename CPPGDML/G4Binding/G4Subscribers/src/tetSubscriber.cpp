@@ -1,4 +1,6 @@
 //
+#ifdef HAVE_G4TET
+
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 
@@ -54,5 +56,7 @@ class tetSubscriber : public SAXSubscriber
 };
 
 DECLARE_SUBSCRIBER_FACTORY(tetSubscriber)
+
+#endif
 
   

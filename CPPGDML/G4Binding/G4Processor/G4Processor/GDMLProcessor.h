@@ -34,7 +34,7 @@ extern const double defaultPress;
 class GDMLProcessor
 {
 public:
-  typedef std::map<std::string,G4ThreeVector*>     Positions;
+  typedef std::map<std::string,G4ThreeVector*>     Vectors;
   typedef std::map<std::string,G4RotationMatrix*>  Rotations;
   typedef std::map<std::string,MatrixType>         Matrices;
   typedef std::map<std::string,G4VSolid*>          Solids;
@@ -57,6 +57,9 @@ public:
 
   void AddRotation( const std::string& name, G4RotationMatrix* p );
   void AddRotation( const char* name, G4RotationMatrix* p );
+
+  void AddScale( const std::string& name, G4ThreeVector* p );
+  void AddScale( const char* name, G4ThreeVector* p );
 
   void AddMatrix( const std::string& name, MatrixType& m );
   void AddMatrix( const char* name, MatrixType& m );
@@ -90,6 +93,9 @@ public:
 
   const G4RotationMatrix* GetRotation( const std::string& name );
   const G4RotationMatrix* GetRotation( const char* name );
+
+  const G4ThreeVector*    GetScale( const std::string& name );
+  const G4ThreeVector*    GetScale( const char* name );
 
   const MatrixType& GetMatrix( const std::string& name );
   const MatrixType& GetMatrix( const char* name );
@@ -200,8 +206,9 @@ protected:
 
 private:
   GDMLExpressionEvaluator*       fCalc;
-  GDMLProcessor::Positions       fPTable;
+  GDMLProcessor::Vectors         fPTable;
   GDMLProcessor::Rotations       fRTable;
+  GDMLProcessor::Vectors         fSTable;
   GDMLProcessor::Matrices        fMTable;
   GDMLProcessor::Solids          fSolids;
   GDMLProcessor::AuxiliaryPairs  fAux;

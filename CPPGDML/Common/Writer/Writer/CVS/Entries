@@ -1,14 +1,14 @@
-/Cursor.h/1.1/Tue Mar  1 09:17:12 2005//TGDML_2_9_0
-/DefinitionsCursor.h/1.1/Tue Mar  1 09:17:12 2005//TGDML_2_9_0
-/Document.h/1.1/Tue Mar  1 09:17:12 2005//TGDML_2_9_0
-/DocumentBuilder.h/1.1/Tue Mar  1 09:17:12 2005//TGDML_2_9_0
-/EditableDocument.h/1.1/Tue Mar  1 09:17:12 2005//TGDML_2_9_0
-/EditableDocumentRegistry.h/1.1/Tue Mar  1 09:17:12 2005//TGDML_2_9_0
-/Element.h/1.1/Tue Mar  1 09:17:12 2005//TGDML_2_9_0
-/Facet.h/1.1/Wed Jul  5 13:46:13 2006//TGDML_2_9_0
-/MaterialsCursor.h/1.1/Tue Mar  1 09:17:12 2005//TGDML_2_9_0
-/SetupCursor.h/1.1/Tue Mar  1 09:17:12 2005//TGDML_2_9_0
-/SolidsCursor.h/1.5/Wed Jul 19 15:37:24 2006//TGDML_2_9_0
-/StructureCursor.h/1.5/Wed Jul 26 13:31:00 2006//TGDML_2_9_0
-/Vertex.h/1.1/Thu Jul 13 08:01:29 2006//TGDML_2_9_0
+/Cursor.h/1.1/Tue Mar  1 09:17:12 2005//
+/DefinitionsCursor.h/1.2/Fri Aug 31 11:23:35 2007//
+/Document.h/1.1/Tue Mar  1 09:17:12 2005//
+/DocumentBuilder.h/1.1/Tue Mar  1 09:17:12 2005//
+/EditableDocument.h/1.1/Tue Mar  1 09:17:12 2005//
+/EditableDocumentRegistry.h/1.1/Tue Mar  1 09:17:12 2005//
+/Element.h/1.1/Tue Mar  1 09:17:12 2005//
+/Facet.h/1.1/Wed Jul  5 13:46:13 2006//
+/MaterialsCursor.h/1.1/Tue Mar  1 09:17:12 2005//
+/SetupCursor.h/1.1/Tue Mar  1 09:17:12 2005//
+/SolidsCursor.h/1.6/Wed Aug 15 10:56:55 2007//
+/StructureCursor.h/1.6/Fri Aug 31 11:23:35 2007//
+/Vertex.h/1.1/Thu Jul 13 08:01:29 2006//
 D

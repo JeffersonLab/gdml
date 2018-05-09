@@ -21,19 +21,46 @@ void GDMLSubscriberLibLoad() {
     LOAD_COMPONENT(orbSubscriber)
     LOAD_COMPONENT(hypeSubscriber)
     LOAD_COMPONENT(eltubeSubscriber)
-    LOAD_COMPONENT(ellipsoidSubscriber)
     LOAD_COMPONENT(polyhedraSubscriber)
-    LOAD_COMPONENT(tessellatedSubscriber)
-    LOAD_COMPONENT(tetSubscriber)
     LOAD_COMPONENT(volumeSubscriber)
     LOAD_COMPONENT(assemblySubscriber)
-    LOAD_COMPONENT(twistedboxSubscriber)
-    LOAD_COMPONENT(twistedtubsSubscriber)
-    LOAD_COMPONENT(twistedtrapSubscriber)
-    LOAD_COMPONENT(twistedtrdSubscriber)
     LOAD_COMPONENT(setupSubscriber)
     LOAD_COMPONENT(opticalsurfaceSubscriber)
     LOAD_COMPONENT(skinsurfaceSubscriber)
     LOAD_COMPONENT(bordersurfaceSubscriber)
     LOAD_COMPONENT(loopSubscriber)
+
+// Following subscribers are only enabled if the Geant4 version supports them.
+
+#ifdef HAVE_G4EXTRUDEDSOLID
+    LOAD_COMPONENT(xtruSubscriber)    
+#endif
+
+#ifdef HAVE_G4ELLIPSOID
+    LOAD_COMPONENT(ellipsoidSubscriber)
+#endif
+
+#ifdef HAVE_G4TESSELLATEDSOLID
+    LOAD_COMPONENT(tessellatedSubscriber)
+#endif
+
+#ifdef HAVE_G4TET
+    LOAD_COMPONENT(tetSubscriber)
+#endif
+
+#ifdef HAVE_G4TWISTEDBOX
+    LOAD_COMPONENT(twistedboxSubscriber)
+#endif
+
+#ifdef HAVE_G4TWISTEDTUBS
+    LOAD_COMPONENT(twistedtubsSubscriber)
+#endif
+
+#ifdef HAVE_G4TWISTEDTRAP
+    LOAD_COMPONENT(twistedtrapSubscriber)
+#endif
+
+#ifdef HAVE_G4TWISTEDTRD
+    LOAD_COMPONENT(twistedtrdSubscriber)
+#endif
 }

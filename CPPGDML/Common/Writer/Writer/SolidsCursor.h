@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: SolidsCursor.h,v 1.5 2006/07/19 15:37:24 blloyd Exp $
+// $Id: SolidsCursor.h,v 1.6 2007/08/15 10:56:55 ztorzsok Exp $
 #ifndef GDML_WRITER_SOLIDSCURSOR_H
 #define GDML_WRITER_SOLIDSCURSOR_H 1
 
@@ -442,6 +442,13 @@ namespace gdml
                      double             rx0=0.0,
                      double             ry0=0.0,
                      double             rz0=0.0 );
+
+    void addXtru(const std::string& id,
+                 const std::string& lunit,
+                 int numVertex,
+                 double* vertex,
+                 int numSection,
+                 double* section);
   };
 }
 }

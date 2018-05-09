@@ -6,6 +6,11 @@
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/framework/URLInputSource.hpp>
 
+// This header is required when building with the Xerces 2.8.0 release.
+#if ((XERCES_VERSION_MAJOR == 2) && (XERCES_VERSION_MINOR == 8))
+#include <xercesc/sax2/Attributes.hpp>
+#endif
+
 #include "Saxana/SAXProcessor.h"
 #include "Saxana/SAXEvents.h"
 #include "Saxana/ASCIIAttributeList.h"

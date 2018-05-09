@@ -5,14 +5,25 @@ dnl
 # call all the Geant4 macros
 AC_DEFUN( GDML_SETUP_GEANT4, [
 
-#GDML_CREATE_GEANT4_SETTINGS_FILE
 GDML_WITH_GEANT4
+AC_GEANT4_VERSION
 GDML_WITH_G4SYSTEM
 GDML_WITH_GEANT4_INCLUDE
 GDML_WITH_GEANT4_LIBDIR
-GDML_ENABLE_NIST
 GDML_ENABLE_GEANT4_GRANULAR_LIBS
 GDML_SUBST_GEANT4
+
+GDML_CHECK_NIST
+GDML_ENABLE_NIST
+
+AC_HAVE_G4TESSELLATED
+AC_HAVE_G4TET
+AC_HAVE_G4TWISTEDBOX
+AC_HAVE_G4TWISTEDTRD
+AC_HAVE_G4TWISTEDTRAP
+AC_HAVE_G4TWISTEDTUBS
+AC_HAVE_G4ELLIPSOID
+AC_HAVE_G4EXTRUDEDSOLID
 
 ])
 
@@ -28,8 +39,8 @@ AC_ARG_WITH(geant4,
 
 AC_MSG_RESULT([$GEANT4_PREFIX])
 
-GDML_CHECK_PKG_DIR( [$GEANT4_PREFIX],
-	[Geant4])
+GDML_CHECK_PKG_DIR( [$GEANT4_PREFIX], [Geant4])
+
 ])
 
 # macro to set G4SYSTEM
@@ -125,22 +136,14 @@ fi
 
 ])
 
-# macro to regenerate the Geant4 settings file
-#AC_DEFUN( GDML_CREATE_GEANT4_SETTINGS_FILE, [
-
-#g4config_file=${srcdir}/config/make/geant4_settings.gmk
-#rm -f ${g4config_file}
-#touch $g4config_file
-#echo "# Local Geant4 Settings." >> $g4config_file
-
-#])
-
 # macro to check whether NIST is supported by the current Geant4 version
 AC_DEFUN(GDML_CHECK_NIST, [
 
-AC_CHECK_FILE([$G4INSTALL/source/materials/include/G4NistManager.hh],have_nist=yes)
+HAVE_NIST=no
 
-if test "$have_nist" = "yes"
+AC_CHECK_FILE([$GEANT4_PREFIX/source/materials/include/G4NistManager.hh],HAVE_NIST=yes)
+
+if test "$HAVE_NIST" = "yes"
 then
   AC_DEFINE(HAVE_NIST)
 fi
@@ -150,7 +153,8 @@ fi
 # macro to enable/disable NIST support
 AC_DEFUN(GDML_ENABLE_NIST, [
 
-AC_REQUIRE([GDML_CHECK_NIST])dnl
+dnl Removed because this is somehow getting put in front of GEANT4_PREFIX setting, which breaks NIST config.
+dnl AC_REQUIRE([GDML_CHECK_NIST])
 
 AC_MSG_CHECKING(whether to enable Geant4 NIST support for material lookup)
 
@@ -165,14 +169,191 @@ fi
 
 if test "X$enable_nist" = "Xyes"
 then
-  if test "X$have_nist" = "Xyes"
+  if test "X$HAVE_NIST" = "Xyes"
   then
     AC_MSG_RESULT(yes)
     AC_DEFINE(GDML_USE_NIST)
   else
     AC_MSG_RESULT(no)
-    AC_MSG_WARN(NIST was selected, but your Geant4 installation does not support it.)
+    AC_MSG_WARN(NIST was selected but your version of Geant4 does not support it)
   fi
+else
+  AC_MSG_RESULT(no)
+fi
+
+])
+
+dnl Macro to extract the Geant4 version from G4Version.hh or G4RunManagerKernel.hh, if the former file does not exist.
+AC_DEFUN(AC_GEANT4_VERSION, [
+
+AC_MSG_CHECKING(for Geant4 full version)
+
+if test -n "$GEANT4_PREFIX"
+then
+
+  if ! test -d $GEANT4_PREFIX; then
+    AC_MSG_ERROR(G4INSTALL does not point to a directory)
+  fi
+
+  if ! test -e $GEANT4_PREFIX/source/run/include/G4RunManager.hh; then
+    AC_MSG_ERROR(G4INSTALL does not appear to contain the Geant4 source code)
+  fi
+
+  if test -e "$GEANT4_PREFIX/source/global/management/include/G4Version.hh"
+  then
+    GEANT4_FULL_VERSION=$(sed -n -e '/#define G4VERSION_NUMBER/s/#define G4VERSION_NUMBER  //p' $GEANT4_PREFIX/source/global/management/include/G4Version.hh | \
+                          awk 'BEGIN { FS="" } ; { print [$]1"."[$]2"."[$]3 }')
+  elif test -e "$GEANT4_PREFIX/source/run/src/G4RunManagerKernel.cc"
+  then
+    GEANT4_FULL_VERSION=$(sed -n -e '/\/\/ GEANT4 tag /s/.*\(geant4-[[0-9]]*-[[0-9]]*[[0-9a-z-]]*\).*/\1/p' \
+                          $GEANT4_PREFIX/source/run/src/G4RunManagerKernel.cc | sed -e 's/geant4-//g' -e 's/patch-//g' -e 's/-/./g')
+  else
+    AC_MSG_ERROR(could not determine Geant4 version because G4Version.hh or G4RunManagerKernel.hh was not found in $GEANT4_PREFIX)
+  fi
+else
+  AC_MSG_ERROR(G4INSTALL is not set in the environment)
+fi
+
+GEANT4_MAJOR_VERSION=$(echo "$GEANT4_FULL_VERSION" | awk 'BEGIN{ FS="." } { print [$]1 }' | sed 's/0*//')
+GEANT4_MINOR_VERSION=$(echo "$GEANT4_FULL_VERSION" | awk 'BEGIN{ FS="." } { print [$]2 }' | sed 's/0*//')
+GEANT4_PATCH_VERSION=$(echo "$GEANT4_FULL_VERSION" | awk 'BEGIN{ FS="." } { print [$]3 }' | sed 's/0*//')
+
+if test -z "$GEANT4_MINOR_VERSION";
+then
+  GEANT4_MINOR_VERSION=0
+fi
+
+if test -z "$GEANT4_PATCH_VERSION";
+then
+  GEANT4_PATCH_VERSION=0
+fi
+
+GEANT4_FULL_VERSION=$GEANT4_MAJOR_VERSION"."$GEANT4_MINOR_VERSION"."$GEANT4_PATCH_VERSION
+
+AC_MSG_RESULT($GEANT4_FULL_VERSION)
+
+AC_MSG_CHECKING(for Geant4 major version level)
+AC_MSG_RESULT($GEANT4_MAJOR_VERSION)
+
+AC_MSG_CHECKING(for Geant4 minor version level)
+AC_MSG_RESULT($GEANT4_MINOR_VERSION)
+
+AC_MSG_CHECKING(for Geant4 patch level)
+AC_MSG_RESULT($GEANT4_PATCH_VERSION)
+
+AC_SUBST(GEANT4_FULL_VERSION)
+AC_SUBST(GEANT4_MAJOR_VERSION)
+AC_SUBST(GEANT4_MINOR_VERSION)
+AC_SUBST(GEANT4_PATCH_VERSION)
+
+])
+
+# Macro to set HAVE_G4TESSELLATED if G4TessellatedSolid.hh exists.
+AC_DEFUN(AC_HAVE_G4TESSELLATED, [
+
+AC_MSG_CHECKING(whether to enable G4TessellatedSolid)
+
+if test -e $GEANT4_PREFIX/source/geometry/solids/specific/include/G4TessellatedSolid.hh; then
+  AC_DEFINE(HAVE_G4TESSELLATEDSOLID)
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+])
+
+# Macro to set HAVE_G4TET if G4Tet.hh exists.
+AC_DEFUN(AC_HAVE_G4TET, [
+
+AC_MSG_CHECKING(whether to enable G4Tet)
+
+if test -e $GEANT4_PREFIX/source/geometry/solids/specific/include/G4Tet.hh; then
+  AC_DEFINE(HAVE_G4TET)
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+])
+
+# Macro to set HAVE_G4TWISTEDBOX if G4TwistedBox.hh exists.
+AC_DEFUN(AC_HAVE_G4TWISTEDBOX, [
+
+AC_MSG_CHECKING(whether to enable G4TwistedBox)
+
+if test -e $GEANT4_PREFIX/source/geometry/solids/specific/include/G4TwistedBox.hh; then
+  AC_DEFINE(HAVE_G4TWISTEDBOX)
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+])
+
+# Macro to set HAVE_G4TWISTEDTRD if G4TwistedTrd.hh exists.
+AC_DEFUN(AC_HAVE_G4TWISTEDTRD, [
+
+AC_MSG_CHECKING(whether to enable G4TwistedTrd)
+
+if test -e $GEANT4_PREFIX/source/geometry/solids/specific/include/G4TwistedTrd.hh; then
+  AC_DEFINE(HAVE_G4TWISTEDTRD)
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+])
+
+# Macro to set HAVE_G4TWISTEDTRAP if G4TwistedTrap.hh exists.
+AC_DEFUN(AC_HAVE_G4TWISTEDTRAP, [
+
+AC_MSG_CHECKING(whether to enable G4TwistedTrap)
+
+if test -e $GEANT4_PREFIX/source/geometry/solids/specific/include/G4TwistedTrap.hh; then
+  AC_DEFINE(HAVE_G4TWISTEDTRAP)
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+])
+
+# Macro to set HAVE_G4TWISTEDTUBS if G4TwistedTubs.hh exists.
+AC_DEFUN(AC_HAVE_G4TWISTEDTUBS, [
+
+AC_MSG_CHECKING(whether to enable G4TwistedTubs)
+
+if test -e $GEANT4_PREFIX/source/geometry/solids/specific/include/G4TwistedTubs.hh; then
+  AC_DEFINE(HAVE_G4TWISTEDTUBS)
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+])
+
+# Macro to set HAVE_G4ELLIPSOID if G4Ellipsoid.hh exists.
+AC_DEFUN(AC_HAVE_G4ELLIPSOID, [
+
+AC_MSG_CHECKING(whether to enable G4Ellipsoid)
+
+if test -e $GEANT4_PREFIX/source/geometry/solids/specific/include/G4Ellipsoid.hh; then
+  AC_DEFINE(HAVE_G4ELLIPSOID)
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+])
+
+# Macro to set HAVE_G4EXTRUDEDSOLID if G4ExtrudedSolid.hh exists.
+AC_DEFUN(AC_HAVE_G4EXTRUDEDSOLID, [
+
+AC_MSG_CHECKING(whether to enable G4ExtrudedSolid)
+
+if test -e $GEANT4_PREFIX/source/geometry/solids/specific/include/G4ExtrudedSolid.hh; then
+  AC_DEFINE(HAVE_G4EXTRUDEDSOLID)
+  AC_MSG_RESULT(yes)
 else
   AC_MSG_RESULT(no)
 fi

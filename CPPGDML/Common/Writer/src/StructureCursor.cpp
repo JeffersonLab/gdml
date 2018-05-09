@@ -105,7 +105,8 @@ namespace gdml
     void StructureCursor::addChild( const std::string& motherVolumeRef,
                                     const std::string& volumeRef,
                                     const std::string& positionRef,
-                                    const std::string& rotationRef )
+                                    const std::string& rotationRef,
+				    const std::string& scaleRef )
     {
       Element& mvol = findVolume( motherVolumeRef );
 
@@ -118,7 +119,7 @@ namespace gdml
         throw std::logic_error( msg );
       }
       */
-      mvol.appendChild( buildChild( volumeRef, positionRef, rotationRef, motherVolumeRef ) );
+      mvol.appendChild(buildChild(volumeRef,positionRef,rotationRef,scaleRef,motherVolumeRef));
     }
     void StructureCursor::addChild( const std::string& motherVolumeRef,
                                     const std::string& volumeRef,
@@ -144,7 +145,8 @@ namespace gdml
     void StructureCursor::addChild( Element&           motherVolume,
                                     const std::string& volumeRef,
                                     const std::string& positionRef,
-                                    const std::string& rotationRef )
+                                    const std::string& rotationRef,
+				    const std::string& scaleRef )
     {
       /*
       if( ok( volumeRef ) || ok( positionRef ) || ok( rotationRef ) )
@@ -155,12 +157,14 @@ namespace gdml
         throw std::logic_error( msg );
       }
       */
-      motherVolume.appendChild( buildChild( volumeRef, positionRef, rotationRef ) );
+      
+      motherVolume.appendChild(buildChild(volumeRef,positionRef,rotationRef,scaleRef));
     }
     void StructureCursor::addChildFile( const std::string& motherVolumeRef,
                                         const std::string& file,
                                         const std::string& positionRef,
-                                        const std::string& rotationRef )
+                                        const std::string& rotationRef,
+					const std::string& scaleRef )
     {
       Element& motherVolume = findVolume( motherVolumeRef );
       /*
@@ -172,7 +176,7 @@ namespace gdml
         throw std::logic_error( msg );
       }
       */
-      motherVolume.appendChild( buildChildFile( file, positionRef, rotationRef ) );
+      motherVolume.appendChild(buildChildFile(file,positionRef,rotationRef,scaleRef));
     }
     void StructureCursor::addChild( Element&           motherVolume,
                                     const std::string& volumeRef,
@@ -208,49 +212,76 @@ namespace gdml
     Element StructureCursor::buildChild( const std::string& idRef,
                                          const std::string& positionRef,
                                          const std::string& rotationRef,
-                                         const std::string& /* uniquenessHint */ )
+                                         const std::string& scaleRef,
+				         const std::string& /* uniquenessHint */ )
     {
-      Element vref( "volumeref" );
-      vref.addAttribute( "ref", idRef );
-      Element pref( "positionref" );
-      pref.addAttribute( "ref", positionRef );
 
-      Element child( "physvol" );
-      child.appendChild( vref );
-      child.appendChild( pref );
+      Element child("physvol");
 
-      if (rotationRef !="")
-      {
-        Element rref( "rotationref" );
-        rref.addAttribute( "ref", rotationRef );
-        child.appendChild( rref );
+      Element vref("volumeref");
+      vref.addAttribute("ref",idRef);
+      child.appendChild(vref);
+
+      if (positionRef != "") {
+      
+         Element pref("positionref");
+         pref.addAttribute("ref",positionRef);
+         child.appendChild(pref);
+      }
+
+      if (rotationRef != "") {
+
+         Element rref("rotationref");
+         rref.addAttribute("ref",rotationRef);
+         child.appendChild(rref);
+      }
+
+      if (scaleRef != "") {
+      
+         Element sref("scaleref");
+	 sref.addAttribute("ref",scaleRef);
+         child.appendChild(sref);
       }
 
       return child;
     }
+
     Element StructureCursor::buildChildFile( const std::string& file,
                                              const std::string& positionRef,
                                              const std::string& rotationRef,
+                                             const std::string& scaleRef,
                                              const std::string& /* uniquenessHint */ )
     {
-      Element vref( "file" );
-      vref.addAttribute( "name", file );
-      Element pref( "positionref" );
-      pref.addAttribute( "ref", positionRef );
-
       Element child( "physvol" );
-      child.appendChild( vref );
-      child.appendChild( pref );
 
-      if (rotationRef !="")
-      {
+      Element vref("file");
+      vref.addAttribute("name",file);
+      child.appendChild( vref );
+
+      if (positionRef != "") {
+      
+         Element pref("positionref");
+         pref.addAttribute("ref",positionRef);
+         child.appendChild(pref);
+      }
+
+      if (rotationRef !="") {
+
         Element rref( "rotationref" );
         rref.addAttribute( "ref", rotationRef );
         child.appendChild( rref );
       }
 
+      if (scaleRef != "") {
+      
+         Element sref("scaleref");
+	 sref.addAttribute("ref",scaleRef);
+         child.appendChild(sref);
+      }
+
       return child;
     }
+
     Element StructureCursor::buildChild( const std::string& idRef,
                                          double             x,
                                          double             y,

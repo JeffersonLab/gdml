@@ -1,13 +1,13 @@
-/application.gmk/1.7/Fri Dec  1 02:04:38 2006//TGDML_2_9_0
-/application_ext_deps.gmk/1.2/Wed Mar 29 22:07:53 2006//TGDML_2_9_0
-/ext_deps.gmk/1.1/Wed May  4 02:18:18 2005//TGDML_2_9_0
-/gdml_link_libs.gmk/1.3/Fri Dec  1 02:04:38 2006//TGDML_2_9_0
-/local_settings.gmk.in/1.8/Thu Feb  8 15:12:44 2007//TGDML_2_9_0
-/package.gmk/1.14/Fri Dec  1 02:04:38 2006//TGDML_2_9_0
-/package_deps.gmk/1.3/Fri Dec  1 02:04:38 2006//TGDML_2_9_0
-/package_ext_deps.gmk/1.1/Tue Aug 30 19:25:19 2005//TGDML_2_9_0
-/project.gmk/1.1/Wed May  4 02:18:18 2005//TGDML_2_9_0
+/application.gmk/1.7/Fri Dec  1 02:04:38 2006//
+/application_ext_deps.gmk/1.2/Wed Mar 29 22:07:53 2006//
+/ext_deps.gmk/1.1/Wed May  4 02:18:18 2005//
+/gdml_link_libs.gmk/1.3/Fri Dec  1 02:04:38 2006//
+/package.gmk/1.14/Fri Dec  1 02:04:38 2006//
+/package_deps.gmk/1.3/Fri Dec  1 02:04:38 2006//
+/package_ext_deps.gmk/1.1/Tue Aug 30 19:25:19 2005//
+/project.gmk/1.1/Wed May  4 02:18:18 2005//
 D/compiler////
 D/ext////
 D/old////
 D/platform////
+/local_settings.gmk.in/1.9/Mon Sep 17 14:51:38 2007//

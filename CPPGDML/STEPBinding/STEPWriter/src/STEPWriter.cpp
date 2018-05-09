@@ -111,7 +111,7 @@ void STEPWriter::DumpGeoTree()
  
  for(unsigned int i=0; i<physicalVolumes.size(); i++)
  {
-  strcur->addChild("World", physicalVolumes[i].getLogicalVolumeRef(), physicalVolumes[i].getPositionRef(), physicalVolumes[i].getRotationRef());
+  strcur->addChild("World", physicalVolumes[i].getLogicalVolumeRef(), physicalVolumes[i].getPositionRef(), physicalVolumes[i].getRotationRef(),physicalVolumes[i].getScaleRef());
  }
  //std::cout << "[GEOMETRY TREE DUMPED]" << std::endl;
 }

@@ -1,12 +1,12 @@
-/DetectorConstruction.cpp/1.7/Tue Aug 29 16:44:13 2006//TGDML_2_9_0
-/DetectorConstruction.hh/1.1/Fri Jan 27 16:20:10 2006//TGDML_2_9_0
-/ExN02PhysicsList.cpp/1.2/Tue Mar 14 17:42:00 2006//TGDML_2_9_0
-/ExN02PhysicsList.hh/1.2/Tue Mar 14 17:42:00 2006//TGDML_2_9_0
-/ExN02PrimaryGeneratorAction.cpp/1.3/Tue May 30 14:50:22 2006//TGDML_2_9_0
-/ExN02PrimaryGeneratorAction.hh/1.2/Fri Jan 27 16:20:10 2006//TGDML_2_9_0
-/GNUmakefile/1.3/Wed Mar 29 00:51:19 2006//TGDML_2_9_0
-/History/1.1/Wed Mar  2 17:59:25 2005//TGDML_2_9_0
-/README/1.4/Fri Feb  9 15:33:02 2007//TGDML_2_9_0
-/g4N02gdml.cpp/1.10/Wed Mar 14 14:28:55 2007//TGDML_2_9_0
-/run.mac/1.1/Thu Jul 13 13:44:59 2006//TGDML_2_9_0
+/DetectorConstruction.cpp/1.8/Thu Jul 12 18:03:47 2007//
+/DetectorConstruction.hh/1.1/Fri Jan 27 16:20:10 2006//
+/ExN02PhysicsList.cpp/1.2/Tue Mar 14 17:42:00 2006//
+/ExN02PhysicsList.hh/1.2/Tue Mar 14 17:42:00 2006//
+/ExN02PrimaryGeneratorAction.cpp/1.3/Tue May 30 14:50:22 2006//
+/ExN02PrimaryGeneratorAction.hh/1.2/Fri Jan 27 16:20:10 2006//
+/GNUmakefile/1.3/Wed Mar 29 00:51:19 2006//
+/History/1.1/Wed Mar  2 17:59:25 2005//
+/README/1.4/Fri Feb  9 15:33:02 2007//
+/g4N02gdml.cpp/1.11/Tue Sep 11 12:23:53 2007//
+/run.mac/1.1/Thu Jul 13 13:44:59 2006//
 D

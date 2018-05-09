@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: GNUmakefile,v 1.28 2007/02/08 15:12:43 blloyd Exp $
+# $Id: GNUmakefile,v 1.30 2007/09/17 14:49:26 ztorzsok Exp $
 #
 # /\/\/\/\ C++ GDML Build System /\/\/\/\
 #
@@ -48,9 +48,15 @@ define MakeApp
 
 endef
 
+gdml_build_targets := build_gdml_prolog build_gdml_libs build_gdml_lib
+
+ifdef GDML_BUILD_EXAMPLES
+gdml_build_targets := $(gdml_build_targets) build_gdml_examples 
+endif
+
 # Build Targets
 .PHONY: build_gdml
-build_gdml: build_gdml_prolog build_gdml_libs build_gdml_lib build_gdml_examples
+build_gdml: $(gdml_build_targets)
 
 .PHONY: build_gdml_libs
 build_gdml_libs:

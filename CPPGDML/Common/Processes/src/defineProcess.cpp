@@ -73,7 +73,7 @@ public:
     // We can expect the 5 inner elements: constant, quantity, expression, position, rotation
     // Whenever one of these appears we have to add it as a choice content group into define element
     SAXObject** so = Context()->GetTopObject();
-    if( name == "constant" || name == "variable" || name == "quantity" || name == "expression" || name == "position" || name == "rotation" || name == "matrix") {
+    if( name == "constant" || name == "variable" || name == "quantity" || name == "expression" || name == "position" || name == "rotation" || name == "scale" || name == "matrix") {
       // Add the element into choice content group of define element
       define_element->add_to_content( name, *so );
     } else {

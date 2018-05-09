@@ -1,4 +1,4 @@
-# $Header: /cvs/simu/simu/GDML2/CPPGDML/config/make/local_settings.gmk.in,v 1.8 2007/02/08 15:12:44 blloyd Exp $
+# $Header: /cvs/simu/simu/GDML2/CPPGDML/config/make/local_settings.gmk.in,v 1.9 2007/09/14 23:03:13 mccormi Exp $
 #
 # All the local settings for GDML build
 # defined by Autoconf configure script.
@@ -51,6 +51,7 @@ GDML_USE_SINGLE_LIB   := @GDML_USE_SINGLE_LIB@
 GDML_USE_GRANULAR_LIB := @GDML_USE_GRANULAR_LIB@
 GDML_USE_STATIC_LIB   := @GDML_USE_STATIC_LIB@
 GDML_USE_SHARED_LIB   := @GDML_USE_SHARED_LIB@
+GDML_BUILD_EXAMPLES   := @GDML_BUILD_EXAMPLES@
 
 # Override the configuration setting for shared libs
 # if the platform does not support them.

@@ -1,4 +1,4 @@
-// $Id: G4GDMLWriter.cpp,v 1.17 2006/08/29 10:27:12 dkruse Exp $
+// $Id: G4GDMLWriter.cpp,v 1.22 2007/09/14 19:12:48 mccormi Exp $
 // Include files
 #include <iostream>
 #include <sstream>
@@ -20,23 +20,44 @@
 
 #include "G4Cons.hh"
 #include "G4Box.hh"
+
+#ifdef HAVE_G4TWISTEDBOX
 #include "G4TwistedBox.hh"
+#endif
+
+#ifdef HAVE_G4TWISTEDTRAP
 #include "G4TwistedTrap.hh"
+#endif
+
+#ifdef HAVE_G4TWISTEDTRD
 #include "G4TwistedTrd.hh"
+#endif
+
 #include "G4Sphere.hh"
 #include "G4Tubs.hh"
+
+#ifdef HAVE_G4TWISTEDTUBS
 #include "G4TwistedTubs.hh"
+#endif
+
 #include "G4Polycone.hh"
 #include "G4Para.hh"
 #include "G4Trap.hh"
 #include "G4Trd.hh"
+
+#ifdef HAVE_G4TET
 #include "G4Tet.hh"
+#endif
+
 #include "G4Hype.hh"
 #include "G4Torus.hh"
 #include "G4Orb.hh"
 #include "G4Polyhedra.hh"
 #include "G4EllipticalTube.hh"
+
+#ifdef HAVE_G4TESSELLATEDSOLID
 #include "G4TessellatedSolid.hh"
+#endif
 
 #include "G4ReflectedSolid.hh"
 
@@ -44,13 +65,15 @@
 #include "G4SubtractionSolid.hh"
 #include "G4DisplacedSolid.hh"
 
+#ifdef HAVE_G4EXTRUDEDSOLID
+#include "G4ExtrudedSolid.hh"
+#endif
+
 // local
 #include "G4Writer/G4GDMLWriter.h"
 
 // common
 #include "Writer/Facet.h"
-
-
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : G4GDMLWriter
@@ -105,6 +128,7 @@ void G4GDMLWriter::DumpMaterials()
   }
 }
 
+#ifdef HAVE_G4TESSELLATEDSOLID
 std::string G4GDMLWriter::processTessSolidVertex(double x, double y, double z) // with searching
 { 
  std::string vertexName;
@@ -127,6 +151,7 @@ std::string G4GDMLWriter::processTessSolidVertex(double x, double y, double z) /
   return vertexName;
  }  
 }
+#endif
 
 std::string G4GDMLWriter::processTetVertex(double x, double y, double z) // without searching
 { 
@@ -210,15 +235,17 @@ void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
 
   G4VSolid* ts = logvol->GetSolid();
 
-  while(const G4DisplacedSolid* dis =
-        dynamic_cast<const G4DisplacedSolid*>(ts))
-  {
-    ts = dis->GetConstituentMovedSolid();
+  while (const G4DisplacedSolid* dis = dynamic_cast<const G4DisplacedSolid*>(ts)) {
+
+      ts = dis->GetConstituentMovedSolid();
   }
 
-  strcur->addVolume(lvname,
-                    ut->name(logvol->GetMaterial()),
-                    ut->name(ts));
+  if (const G4ReflectedSolid* ref = dynamic_cast<const G4ReflectedSolid*>(ts)) {
+
+      ts = ref->GetConstituentMovedSolid();
+  }
+
+  strcur->addVolume(lvname,ut->name(logvol->GetMaterial()),ut->name(ts));
 
   while( !volstack.empty() )
   {
@@ -360,61 +387,77 @@ void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
                          ut->name(pv->GetLogicalVolume()),// replicated volume
                          nrep, axi, width, offset);
     }
-    else //normal volume
-    {
+    else { // Normal volume
+    
       std::string pvname = ut->name(pv);
-      
-      double dx=0;
-      double dy=0;
-      double dz=0;
-      double drx=0;
-      double dry=0;
-      double drz=0;
-
       G4VSolid* tsol = pv->GetLogicalVolume()->GetSolid();
 
-      while(const G4DisplacedSolid* displ =
-            dynamic_cast<const G4DisplacedSolid*>(tsol))
-	    {
-	      dx += displ->GetObjectTranslation().x()/mm;
-	      dy += displ->GetObjectTranslation().y()/mm;
-	      dz += displ->GetObjectTranslation().z()/mm;
+      G4Transform3D transform(pv->GetObjectRotationValue().inverse(),pv->GetObjectTranslation());
 
-	      const G4RotationMatrix r = displ->GetObjectRotation();
-	      double tdrx=0; double tdry=0; double tdrz=0;
-	      getXYZ( &r, tdrx, tdry, tdrz );
-	      drx+=tdrx; dry+=tdry; drz+=tdrz;
-        
-	      tsol = displ->GetConstituentMovedSolid();
-	    }
+      while (const G4DisplacedSolid* displ = dynamic_cast<const G4DisplacedSolid*>(tsol)) {
       
-      defcur->addPosition( pvname+"in"+lvname+"p",
-                           pv->GetObjectTranslation().getX()+dx,
-                           pv->GetObjectTranslation().getY()+dy,
-                           pv->GetObjectTranslation().getZ()+dz );
-      
-      double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
-      const G4RotationMatrix* r = pv->GetFrameRotation();
-
-      std::string rotname("");
-
-      if (r) 
-      {
-        rotname = pvname+"in"+lvname+"r";
-        getXYZ( r, rx, ry, rz );
-        defcur->addRotation( pvname+"in"+lvname+"r",
-                             (rx+drx)/deg, (ry+dry)/deg, (rz+drz)/deg, "degree" );
+         transform = transform*G4Transform3D(displ->GetObjectRotation(),displ->GetObjectTranslation());
+	 tsol = displ->GetConstituentMovedSolid();
       }
 
-      strcur->addChild(lvname,
-                       ut->name(pv->GetLogicalVolume()),
-                       pvname+"in"+lvname+"p",
-                       rotname);
+      double dx = transform(0,3);
+      double dy = transform(1,3);
+      double dz = transform(2,3);
+
+      G4RotationMatrix rotation;
+      
+      rotation.setRows(G4ThreeVector(transform(0,0),transform(0,1),transform(0,2)),   // Our transformation must be a pure rotation!
+                       G4ThreeVector(transform(1,0),transform(1,1),transform(1,2)),
+		       G4ThreeVector(transform(2,0),transform(2,1),transform(2,2)));
+
+      double rx,ry,rz;
+      getXYZ(&rotation,rx,ry,rz);
+
+      double sx = 1.0;
+      double sy = 1.0;
+      double sz = 1.0;   
+
+      if (pv->GetLogicalVolume()->GetNoDaughters()==0) { // The referenced volume is a LEAF...
+      
+         if (const G4ReflectedSolid* refl = dynamic_cast<const G4ReflectedSolid*>(tsol)) { //.. and it is reflected
+
+            G4Transform3D scale = refl->GetTransform3D();
+      	 
+	    sx = scale(0,0);  // We assume that this is a pure scaling transformation!!!
+	    sy = scale(1,1);
+	    sz = scale(2,2);
+	 }
+      }
+
+      std::string posname("");
+      std::string rotname("");
+      std::string sclname("");
+
+      if (dx != 0.0 || dy != 0.0 || dz != 0.0) {
+      
+         posname = pvname+"in"+lvname+"p";
+         defcur->addPosition(posname,dx/mm,dy/mm,dz/mm,"mm");
+      }
+
+      if (rx != 0.0 || ry != 0.0 || rz != 0.0) {
+      
+         rotname = pvname+"in"+lvname+"r";
+         defcur->addRotation(rotname,rx/deg,ry/deg,rz/deg,"degree");
+      }
+
+      if (sx != 1.0 || sy != 1.0 || sz != 1.0) {
+
+         sclname = pvname+"in"+lvname+"s";
+         defcur->addScale(sclname,sx,sy,sz);
+      }
+
+      strcur->addChild(lvname,ut->name(pv->GetLogicalVolume()),posname,rotname,sclname);
     }
     volstack.pop();
   }
 }
 
+#ifdef HAVE_G4TESSELLATEDSOLID
 void G4GDMLWriter::DumpTessellatedSolidsDefinitions()
 {
  for(unsigned int i=0; i<tessellatedSolidsVertices.size(); i++)
@@ -422,6 +465,7 @@ void G4GDMLWriter::DumpTessellatedSolidsDefinitions()
   defcur->addPosition(tessellatedSolidsVertices[i].getName(), tessellatedSolidsVertices[i].getX(), tessellatedSolidsVertices[i].getY(), tessellatedSolidsVertices[i].getZ());
  }
 }
+#endif
 
 void G4GDMLWriter::DumpTetrahedronSolidsDefinitions()
 {
@@ -448,7 +492,9 @@ void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV)
 
   DumpMaterials();
   DumpSolids();
+#ifdef HAVE_G4TESSELLATEDSOLID
   DumpTessellatedSolidsDefinitions();
+#endif
   DumpTetrahedronSolidsDefinitions();
 
   // Traverse the geometry hierarchy and write it down to the file
@@ -480,7 +526,9 @@ void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV, std::vector<int>
   // Traverse the geometry hierarchy and write it down to the file
   //std::cout << "Examining the logical tree" << std::endl;
   DumpGeoTree2(worldPV, levels, currentLevel);
+#ifdef HAVE_G4TESSELLATEDSOLID
   DumpTessellatedSolidsDefinitions();
+#endif
   DumpTetrahedronSolidsDefinitions();
 
   // Finalize with the setup pointing to the world volume
@@ -536,8 +584,49 @@ void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
     {
       tempsol = disp->GetConstituentMovedSolid();
     }
-    
-    if( const G4TessellatedSolid* tessSolid = dynamic_cast<const G4TessellatedSolid*>(tempsol) )
+
+    if( const G4Box* box = dynamic_cast<const G4Box*>(tempsol) )
+    {
+      solcur->addBox( ut->name(box),
+                      2*box->GetXHalfLength()/mm,
+                      2*box->GetYHalfLength()/mm,
+                      2*box->GetZHalfLength()/mm,"mm" );
+    }    
+#ifdef HAVE_G4EXTRUDEDSOLID
+    else if (const G4ExtrudedSolid *xtru = dynamic_cast<const G4ExtrudedSolid*>(tempsol)) 
+    {
+        G4int numVertex = xtru->GetNofVertices();
+	G4int numSection = xtru->GetNofZSections();
+
+        double *vertex_ptr = new double[numVertex*2];
+        double *section_ptr = new double[numSection*4];
+
+        for (int i=0;i<numVertex;i++) {
+	
+	    G4TwoVector V = xtru->GetVertex(i);
+
+           vertex_ptr[2*i+0] = V.x()/mm;
+	   vertex_ptr[2*i+1] = V.y()/mm;
+	}
+
+        for (int i=0;i<numSection;i++) {
+	
+	    G4ExtrudedSolid::ZSection zsect = xtru->GetZSection(i);
+	
+            section_ptr[4*i+0] = zsect.fZ/mm;
+            section_ptr[4*i+1] = zsect.fOffset.x()/mm;
+            section_ptr[4*i+2] = zsect.fOffset.y()/mm;
+            section_ptr[4*i+3] = zsect.fScale;			// Scaling factor is without dimension!!!
+	}
+
+        solcur->addXtru(ut->name(xtru),"mm",numVertex,vertex_ptr,numSection,section_ptr);
+
+        if (section_ptr!=NULL) delete [] section_ptr;
+	if (vertex_ptr!=NULL) delete [] vertex_ptr;
+    }
+#endif
+#ifdef HAVE_G4TESSELLATEDSOLID
+    else if( const G4TessellatedSolid* tessSolid = dynamic_cast<const G4TessellatedSolid*>(tempsol) )
     {
       int numberOfFacets = tessSolid->GetNumberOfFacets();
       //std::cout << "numberOfFacets: " << numberOfFacets << std::endl;
@@ -569,6 +658,8 @@ void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
                               facets,
                               "mm","degree");
     }    
+#endif
+#ifdef HAVE_G4TET
     else if( const G4Tet* tet = dynamic_cast<const G4Tet*>(tempsol) )
     {
       std::vector<G4ThreeVector> tetVertices = tet->GetVertices();
@@ -584,6 +675,7 @@ void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
                               vertex4,
                               "mm","degree");
     }
+#endif
     else if( const G4Sphere* sphere = dynamic_cast<const G4Sphere*>(tempsol) )
     {
       solcur->addSphere( ut->name(sphere),
@@ -595,14 +687,7 @@ void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
                          sphere->GetDeltaThetaAngle()/deg,
                          "mm","degree");
     }
-    else if( const G4Box* box = dynamic_cast<const G4Box*>(tempsol) )
-    {
-      solcur->addBox( ut->name(box),
-                      2*box->GetXHalfLength()/mm,
-                      2*box->GetYHalfLength()/mm,
-                      2*box->GetZHalfLength()/mm,"mm" );
-    }
-
+#ifdef HAVE_G4TWISTEDTRAP
       else if( const G4TwistedTrap* twistedtrap = dynamic_cast<const G4TwistedTrap*>(tempsol) )
     {
       solcur->addTwistedTrap( ut->name(twistedtrap),
@@ -618,7 +703,8 @@ void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
 		      twistedtrap->GetPolarAngleTheta()/deg,
 		      twistedtrap->GetAzimuthalAnglePhi()/deg, "mm", "degree");
     }
-
+#endif
+#ifdef HAVE_G4TWISTEDTRD
     else if( const G4TwistedTrd* twistedtrd = dynamic_cast<const G4TwistedTrd*>(tempsol) )
     {
       solcur->addTwistedTrd( ut->name(twistedtrd),
@@ -630,8 +716,8 @@ void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
                       2*twistedtrd->GetZHalfLength()/mm,
 		      twistedtrd->GetPhiTwist()/deg,"mm", "rad");
     }
-
-
+#endif
+#ifdef HAVE_G4TWISTEDBOX
     else if( const G4TwistedBox* twistedbox = dynamic_cast<const G4TwistedBox*>(tempsol) )
     {
       solcur->addTwistedBox( ut->name(twistedbox),
@@ -640,7 +726,7 @@ void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
                       2*twistedbox->GetZHalfLength()/mm,
 		      twistedbox->GetPhiTwist()/deg, "mm", "degree");
     }
-
+#endif
 
     else if( const G4Tubs* tubs = dynamic_cast<const G4Tubs*>(tempsol) )
     {
@@ -652,7 +738,7 @@ void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
                       tubs->GetDeltaPhiAngle()/deg
                       ,"mm","degree");
     }
-
+#ifdef HAVE_G4TWISTEDTUBS
        else if( const G4TwistedTubs* twistedtubs = dynamic_cast<const G4TwistedTubs*>(tempsol) )
     {
       solcur->addTwistedTubs(ut->name(twistedtubs),
@@ -662,7 +748,7 @@ void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
                       2*twistedtubs->GetZHalfLength()/mm,
                       twistedtubs->GetDPhi()/deg,"mm","degree");
     }
-
+#endif
     else if( const G4Cons* cons = dynamic_cast<const G4Cons*>(tempsol) )
     {
       solcur->addCone(ut->name(cons),
@@ -795,22 +881,12 @@ void G4GDMLWriter::DumpSolid(const G4VSolid* tempsol)
     }
     else if(const G4ReflectedSolid* refl = dynamic_cast<const G4ReflectedSolid*>(tempsol) )
     {
-      double rx, ry, rz;
-      G4Scale3D  scale;
-      G4Rotate3D rotation;
-      G4Translate3D  translation;
+      // We do not use the reflected solid anymore!
+      // We are using scaling transfomrmation to implement any kind of reflection
+      // However, the case of the reflected solid is still handled like doing
+      // nothing in order to prevent the "Unknown solid" message (Zoli)
 
-      refl->GetTransform3D().getDecomposition(scale, rotation, translation);
-      G4RotationMatrix rrr = rotation.getRotation();
-
-      getXYZ( &rrr, rx, ry, rz );
-      
-      solcur->addReflected(ut->name(refl),
-                           ut->name(refl->GetConstituentMovedSolid()),
-                           scale.xx(), scale.yy(), scale.zz(),
-                           rx, ry, rz,
-                           translation.dx()/mm, translation.dy()/mm, translation.dz()/mm,
-                           "mm","degree");      
+      refl = 0;
     }
     else if( const G4BooleanSolid* boo = dynamic_cast<const G4BooleanSolid*>(tempsol) )
     {
@@ -941,15 +1017,17 @@ void G4GDMLWriter::DumpGeoTree2(G4VPhysicalVolume* physvol, std::vector<int> lev
 
   G4VSolid* ts = logvol->GetSolid();
 
-  while(const G4DisplacedSolid* dis =
-        dynamic_cast<const G4DisplacedSolid*>(ts))
-  {
+  while(const G4DisplacedSolid* dis = dynamic_cast<const G4DisplacedSolid*>(ts)) {
+
     ts = dis->GetConstituentMovedSolid();
   }
 
-  strcur->addVolume(lvname,
-                    ut->name(logvol->GetMaterial()),
-                    ut->name(ts));
+  if (const G4ReflectedSolid* ref = dynamic_cast<const G4ReflectedSolid*>(ts)) {
+
+      ts = ref->GetConstituentMovedSolid();
+  }
+
+  strcur->addVolume(lvname,ut->name(logvol->GetMaterial()),ut->name(ts));
 
   while( !volstack.empty() )
   {
@@ -1094,69 +1172,80 @@ void G4GDMLWriter::DumpGeoTree2(G4VPhysicalVolume* physvol, std::vector<int> lev
     else //normal volume
     {
       std::string pvname = ut->name(pv);
-      
-      double dx=0;
-      double dy=0;
-      double dz=0;
-      double drx=0;
-      double dry=0;
-      double drz=0;
-
       G4VSolid* tsol = pv->GetLogicalVolume()->GetSolid();
 
-      while(const G4DisplacedSolid* displ =
-            dynamic_cast<const G4DisplacedSolid*>(tsol))
-	    {
-	      dx += displ->GetObjectTranslation().x()/mm;
-	      dy += displ->GetObjectTranslation().y()/mm;
-	      dz += displ->GetObjectTranslation().z()/mm;
+      G4Transform3D transform(pv->GetObjectRotationValue().inverse(),pv->GetObjectTranslation());
 
-	      const G4RotationMatrix r = displ->GetObjectRotation();
-	      double tdrx=0; double tdry=0; double tdrz=0;
-	      getXYZ( &r, tdrx, tdry, tdrz );
-	      drx+=tdrx; dry+=tdry; drz+=tdrz;
-        
-	      tsol = displ->GetConstituentMovedSolid();
-	    }
+      while (const G4DisplacedSolid* displ = dynamic_cast<const G4DisplacedSolid*>(tsol)) {
       
-      defcur->addPosition( pvname+"in"+lvname+"p",
-                           pv->GetObjectTranslation().getX()+dx,
-                           pv->GetObjectTranslation().getY()+dy,
-                           pv->GetObjectTranslation().getZ()+dz );
-      
-      double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
-      const G4RotationMatrix* r = pv->GetFrameRotation();
+         transform = transform*G4Transform3D(displ->GetObjectRotation(),displ->GetObjectTranslation());
+	 tsol = displ->GetConstituentMovedSolid();
+      }
 
+      double dx = transform(0,3);
+      double dy = transform(1,3);
+      double dz = transform(2,3);
+
+      G4RotationMatrix rotation;
+      
+      rotation.setRows(G4ThreeVector(transform(0,0),transform(0,1),transform(0,2)),   // Our transformation must be a pure rotation!
+                       G4ThreeVector(transform(1,0),transform(1,1),transform(1,2)),
+		       G4ThreeVector(transform(2,0),transform(2,1),transform(2,2)));
+
+      double rx,ry,rz;
+      getXYZ(&rotation,rx,ry,rz);
+
+      double sx = 1.0;
+      double sy = 1.0;
+      double sz = 1.0;   
+
+      if (pv->GetLogicalVolume()->GetNoDaughters()==0) { // The referenced volume is a LEAF...
+      
+         if (const G4ReflectedSolid* refl = dynamic_cast<const G4ReflectedSolid*>(tsol)) { //.. and it is reflected
+
+            G4Transform3D scale = refl->GetTransform3D();
+      	 
+	    sx = scale(0,0);  // We assume that this is a pure scaling transformation!!!
+	    sy = scale(1,1);
+	    sz = scale(2,2);
+	 }
+      }
+
+      std::string posname("");
       std::string rotname("");
+      std::string sclname("");
 
-      if (r) 
-      {
-        rotname = pvname+"in"+lvname+"r";
-        getXYZ( r, rx, ry, rz );
-        defcur->addRotation( pvname+"in"+lvname+"r",
-                             (rx+drx)/deg, (ry+dry)/deg, (rz+drz)/deg, "degree" );
+      if (dx != 0.0 || dy != 0.0 || dz != 0.0) {
+      
+         posname = pvname+"in"+lvname+"p";
+         defcur->addPosition(posname,dx/mm,dy/mm,dz/mm,"mm");
       }
 
-      if(!modularize)
-      {
-       strcur->addChild(lvname,
-                       ut->name(pv->GetLogicalVolume()),
-                       pvname+"in"+lvname+"p",
-                       rotname);
+      if (rx != 0.0 || ry != 0.0 || rz != 0.0) {
+      
+         rotname = pvname+"in"+lvname+"r";
+         defcur->addRotation(rotname,rx/deg,ry/deg,rz/deg,"degree");
       }
-      else
-      {
-       std::string filename = (ut->name(pv->GetLogicalVolume()))+".gdml";
-       strcur->addChildFile(lvname,
-                            filename,
-                            pvname+"in"+lvname+"p",
-                            rotname);
+
+      if (sx != 1.0 || sy != 1.0 || sz != 1.0) {
+
+         sclname = pvname+"in"+lvname+"s";
+         defcur->addScale(sclname,sx,sy,sz);
+      }
+
+      if(!modularize) {
+       
+          strcur->addChild(lvname,ut->name(pv->GetLogicalVolume()),posname,rotname,sclname);
+      }
+      else {
+       
+          std::string filename = (ut->name(pv->GetLogicalVolume()))+".gdml";
+          strcur->addChildFile(lvname,filename,posname,rotname,sclname);
       }      
     }
     volstack.pop();
   }
 }
-
 
 void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV, std::vector<std::string> volnames)
 {
@@ -1173,7 +1262,9 @@ void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV, std::vector<std:
   // Traverse the geometry hierarchy and write it down to the file
   //std::cout << "Examining the logical tree" << std::endl;
   DumpGeoTree2(worldPV, volnames);
+#ifdef HAVE_G4TESSELLATEDSOLID
   DumpTessellatedSolidsDefinitions();
+#endif
   DumpTetrahedronSolidsDefinitions();
 
   // Finalize with the setup pointing to the world volume
@@ -1243,15 +1334,17 @@ void G4GDMLWriter::DumpGeoTree2(G4VPhysicalVolume* physvol, std::vector<std::str
 
   G4VSolid* ts = logvol->GetSolid();
 
-  while(const G4DisplacedSolid* dis =
-        dynamic_cast<const G4DisplacedSolid*>(ts))
-  {
+  while(const G4DisplacedSolid* dis = dynamic_cast<const G4DisplacedSolid*>(ts)) {
+
     ts = dis->GetConstituentMovedSolid();
   }
 
-  strcur->addVolume(lvname,
-                    ut->name(logvol->GetMaterial()),
-                    ut->name(ts));
+  while (const G4ReflectedSolid* ref = dynamic_cast<const G4ReflectedSolid*>(ts)) {
+
+      ts = ref->GetConstituentMovedSolid();
+  }
+
+  strcur->addVolume(lvname,ut->name(logvol->GetMaterial()),ut->name(ts));
 
   while( !volstack.empty() )
   {
@@ -1406,63 +1499,75 @@ void G4GDMLWriter::DumpGeoTree2(G4VPhysicalVolume* physvol, std::vector<std::str
     else //normal volume
     {
       std::string pvname = ut->name(pv);
-      
-      double dx=0;
-      double dy=0;
-      double dz=0;
-      double drx=0;
-      double dry=0;
-      double drz=0;
-
       G4VSolid* tsol = pv->GetLogicalVolume()->GetSolid();
 
-      while(const G4DisplacedSolid* displ =
-            dynamic_cast<const G4DisplacedSolid*>(tsol))
-	    {
-	      dx += displ->GetObjectTranslation().x()/mm;
-	      dy += displ->GetObjectTranslation().y()/mm;
-	      dz += displ->GetObjectTranslation().z()/mm;
+      G4Transform3D transform(pv->GetObjectRotationValue().inverse(),pv->GetObjectTranslation());
 
-	      const G4RotationMatrix r = displ->GetObjectRotation();
-	      double tdrx=0; double tdry=0; double tdrz=0;
-	      getXYZ( &r, tdrx, tdry, tdrz );
-	      drx+=tdrx; dry+=tdry; drz+=tdrz;
-        
-	      tsol = displ->GetConstituentMovedSolid();
-	    }
+      while (const G4DisplacedSolid* displ = dynamic_cast<const G4DisplacedSolid*>(tsol)) {
       
-      defcur->addPosition( pvname+"in"+lvname+"p",
-                           pv->GetObjectTranslation().getX()+dx,
-                           pv->GetObjectTranslation().getY()+dy,
-                           pv->GetObjectTranslation().getZ()+dz );
-      
-      double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
-      const G4RotationMatrix* r = pv->GetFrameRotation();
+         transform = transform*G4Transform3D(displ->GetObjectRotation(),displ->GetObjectTranslation());
+	 tsol = displ->GetConstituentMovedSolid();
+      }
 
+      double dx = transform(0,3);
+      double dy = transform(1,3);
+      double dz = transform(2,3);
+
+      G4RotationMatrix rotation;
+      
+      rotation.setRows(G4ThreeVector(transform(0,0),transform(0,1),transform(0,2)),   // Our transformation must be a pure rotation!
+                       G4ThreeVector(transform(1,0),transform(1,1),transform(1,2)),
+		       G4ThreeVector(transform(2,0),transform(2,1),transform(2,2)));
+
+      double rx,ry,rz;
+      getXYZ(&rotation,rx,ry,rz);
+
+      double sx = 1.0;
+      double sy = 1.0;
+      double sz = 1.0;   
+
+      if (pv->GetLogicalVolume()->GetNoDaughters()==0) { // The referenced volume is a LEAF...
+      
+         if (const G4ReflectedSolid* refl = dynamic_cast<const G4ReflectedSolid*>(tsol)) { //.. and it is reflected
+
+            G4Transform3D scale = refl->GetTransform3D();
+      	 
+	    sx = scale(0,0);  // We assume that this is a pure scaling transformation!!!
+	    sy = scale(1,1);
+	    sz = scale(2,2);
+	 }
+      }
+
+      std::string posname("");
       std::string rotname("");
+      std::string sclname("");
 
-      if (r) 
-      {
-        rotname = pvname+"in"+lvname+"r";
-        getXYZ( r, rx, ry, rz );
-        defcur->addRotation( pvname+"in"+lvname+"r",
-                             (rx+drx)/deg, (ry+dry)/deg, (rz+drz)/deg, "degree" );
+      if (dx != 0.0 || dy != 0.0 || dz != 0.0) {
+      
+         posname = pvname+"in"+lvname+"p";
+         defcur->addPosition(posname,dx/mm,dy/mm,dz/mm,"mm");
       }
 
-      if(!modularize)
-      {
-       strcur->addChild(lvname,
-                       ut->name(pv->GetLogicalVolume()),
-                       pvname+"in"+lvname+"p",
-                       rotname);
+      if (rx != 0.0 || ry != 0.0 || rz != 0.0) {
+      
+         rotname = pvname+"in"+lvname+"r";
+         defcur->addRotation(rotname,rx/deg,ry/deg,rz/deg,"degree");
       }
-      else
-      {
-       std::string filename = (ut->name(pv->GetLogicalVolume()))+".gdml";
-       strcur->addChildFile(lvname,
-                            filename,
-                            pvname+"in"+lvname+"p",
-                            rotname);
+
+      if (sx != 1.0 || sy != 1.0 || sz != 1.0) {
+
+         sclname = pvname+"in"+lvname+"s";
+         defcur->addScale(sclname,sx,sy,sz);
+      }
+
+      if(!modularize) {
+       
+          strcur->addChild(lvname,ut->name(pv->GetLogicalVolume()),posname,rotname,sclname);
+      }
+      else {
+       
+          std::string filename = (ut->name(pv->GetLogicalVolume()))+".gdml";
+          strcur->addChildFile(lvname,filename,posname,rotname,sclname);
       }      
     }
     volstack.pop();

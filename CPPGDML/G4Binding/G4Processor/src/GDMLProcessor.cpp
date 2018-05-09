@@ -1,4 +1,3 @@
-//
 #include "G4Processor/GDMLProcessor.h"
 
 // Declare the external component system initialization routines
@@ -40,20 +39,21 @@ GDMLExpressionEvaluator* GDMLProcessor::GetEvaluator()
   return fCalc;
 }
   
-GDMLProcessor::~GDMLProcessor()
-{
-  if( fCalc != 0 )
-  {
-    delete fCalc;
-    fCalc = 0;
-  }
-  
-  GDMLProcessor::Positions::iterator       pit;
-  GDMLProcessor::Rotations::iterator       rit;
-  GDMLProcessor::Solids::iterator          sit;
-  GDMLProcessor::LogicalVolumes::iterator  lvit;
-  GDMLProcessor::AssemblyVolumes::iterator avit;
-  GDMLProcessor::PhysicalVolumes::iterator pvit;
+GDMLProcessor::~GDMLProcessor() {
+
+	if( fCalc != 0 ) {
+
+		delete fCalc;
+		fCalc = 0;
+	}
+	
+	GDMLProcessor::Vectors::iterator         pit;
+	GDMLProcessor::Rotations::iterator       rit;
+	GDMLProcessor::Vectors::iterator        scit;
+	GDMLProcessor::Solids::iterator          sit;
+	GDMLProcessor::LogicalVolumes::iterator  lvit;
+	GDMLProcessor::AssemblyVolumes::iterator avit;
+	GDMLProcessor::PhysicalVolumes::iterator pvit;
   
   for( pit = fPTable.begin(); pit != fPTable.end(); pit++ )
   {
@@ -63,6 +63,7 @@ GDMLProcessor::~GDMLProcessor()
       delete victim;
     }
   }
+
   for( rit = fRTable.begin(); rit != fRTable.end(); rit++ )
   {
     G4RotationMatrix* victim = (*rit).second;
@@ -71,6 +72,13 @@ GDMLProcessor::~GDMLProcessor()
       delete victim;
     }
   }
+
+	for( scit = fSTable.begin(); scit != fSTable.end(); scit++ ) {
+		
+		G4ThreeVector* victim = (*scit).second;
+		if( victim != 0 ) delete victim;
+	}
+
   for( sit = fSolids.begin(); sit != fSolids.end(); sit++ )
   {
     G4VSolid* victim = (*sit).second;
@@ -125,6 +133,17 @@ void GDMLProcessor::AddRotation( const char* name, G4RotationMatrix* p )
 {
   std::string key = name;
   AddRotation( key, p );
+}
+
+void GDMLProcessor::AddScale( const std::string& name, G4ThreeVector* p )
+{
+  fSTable[name+file_name_stack.top()] = p;
+}
+
+void GDMLProcessor::AddScale( const char* name, G4ThreeVector* p )
+{
+  std::string key = name;
+  AddScale( key, p );
 }
 
 void GDMLProcessor::AddMatrix( const std::string& name, MatrixType& p )
@@ -245,6 +264,17 @@ const G4RotationMatrix* GDMLProcessor::GetRotation( const char* name )
 {
   std::string key = name;
   return GetRotation( key );
+}
+
+const G4ThreeVector*    GDMLProcessor::GetScale( const std::string& name )
+{
+  return fSTable[name+file_name_stack.top()];
+}
+
+const G4ThreeVector*    GDMLProcessor::GetScale( const char* name )
+{
+  std::string key = name;
+  return GetScale( key );
 }
 
 const MatrixType& GDMLProcessor::GetMatrix( const std::string& name )

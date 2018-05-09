@@ -1,3 +1,7 @@
+2007-09-11 Zoltan Torzsok
+           * Scaling transformation added
+	   * Extruded solid added
+	   * Vertex referencing problem in tessellated solid is fixed
 2007-02-09 Ben Lloyd <ben.lloyd@cern.ch>
         * config/make/ext/geant4_granular_libs.gmk: Update for Geant4 8.2
         * Examples: Slight modification to README instructions.

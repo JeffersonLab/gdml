@@ -1,3 +1,5 @@
+#ifdef HAVE_G4TWISTEDTRD
+
 //
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
@@ -83,6 +85,8 @@ public:
 };
 
 DECLARE_SUBSCRIBER_FACTORY(twistedtrdSubscriber)
+
+#endif
 
 
 

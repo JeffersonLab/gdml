@@ -1,3 +1,5 @@
+#ifdef HAVE_G4TWISTEDTRAP
+
 //
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
@@ -108,6 +110,8 @@ public:
 };
 
 DECLARE_SUBSCRIBER_FACTORY(twistedtrapSubscriber)
+
+#endif
 
 
 

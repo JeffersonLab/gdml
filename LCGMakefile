@@ -7,7 +7,7 @@ endif
 
 GDMLTARDIR = ${GDMLTOP}/../downloads
 
-GDML_VERSION = 2_9_0
+GDML_VERSION = 2_10_0
 
 export PLATFORM=${SCRAM_ARCH}
 

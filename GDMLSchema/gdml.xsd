@@ -30,6 +30,10 @@
 	<xs:element name="rotation" type="rotationType"/>
 	<xs:element name="rotationref" type="ReferenceType"/>
       </xs:choice>
+      <xs:choice minOccurs="0">
+	<xs:element name="scale" type="scaleType"/>
+	<xs:element name="scaleref" type="ReferenceType"/>
+      </xs:choice>
     </xs:sequence>
     <xs:attribute name="name" type="xs:ID"></xs:attribute>
   </xs:complexType>
@@ -185,7 +189,7 @@
 	  </xs:complexType>
 	</xs:element>
       </xs:sequence>
-      <xs:attribute fixed="2.9.0" name="version" type="xs:string">
+      <xs:attribute fixed="2.10.0" name="version" type="xs:string">
 	<xs:annotation>
 	  <xs:documentation>The GDML Schema version consists of 3 digits X.Y.Z
             where these mean:

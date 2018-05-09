@@ -124,7 +124,7 @@ echo '            '--with-clhep="$clhep" \\ >> $filecsh
 echo '            '--with-clhep="$clhep" \\ >> $filesh
 
 
-set geant4 = ${lcgext}/geant4/8.2.p01/${platform}
+set geant4 = ${lcgext}/geant4/9.0/share
 echo
 echo "GEANT4: Accept [ $geant4 ] or Introduce?"
 set answer = $<
@@ -135,7 +135,7 @@ echo '            '--with-geant4="$geant4" \\ >> $filecsh
 echo '            '--with-geant4="$geant4" \\ >> $filesh
 
 
-set geant4inc = ${lcgext}/geant4/8.2.p01/share/include
+set geant4inc = ${lcgext}/geant4/9.0/share/include
 echo
 echo "GEANT4 INCLUDES: Accept [ $geant4inc ] or Introduce?"
 set answer = $<
@@ -146,7 +146,7 @@ echo '            '--with-geant4-include="$geant4inc" \\ >> $filecsh
 echo '            '--with-geant4-include="$geant4inc" \\ >> $filesh
 
 
-set geant4lib = ${lcgext}/geant4/8.2.p01/${platform}/lib
+set geant4lib = ${lcgext}/geant4/9.0/${platform}/lib
 echo
 echo "GEANT4 LIBRARIES: Accept [ $geant4lib ] or Introduce?"
 set answer = $<

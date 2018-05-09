@@ -36,7 +36,7 @@ int main(int argc, char** argv)
   UI->ApplyCommand("/control/execute run.mac"); 
 
   // start a run
-  int numberOfEvent = 1;
+  int numberOfEvent = 50;
   runManager->BeamOn(numberOfEvent);
 
 

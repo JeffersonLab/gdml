@@ -14,7 +14,7 @@
 #include "G4ReflectedSolid.hh"
 #include "G4UserLimits.hh"
 
-#include "G4TessellatedSolid.hh"
+//#include "G4TessellatedSolid.hh"
 #include "G4QuadrangularFacet.hh"
 
 #include "G4VisAttributes.hh"

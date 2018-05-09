@@ -11,6 +11,8 @@
                                           4.0 -9.4
                                           5.0 -11.1"/>
 
+  <matrix name="RINDEX" coldim="2" values="1.65 1.58" />
+
  </define>
  <materials>
   <element Z="7" formula="N" name="Nitrogen" >
@@ -23,6 +25,7 @@
   <material formula=" " name="Air" >
    <property name="myproperty1" ref="prop1"/>
    <property name="myproperty2" ref="prop2"/>
+   <property name="RINDEX" ref="RINDEX"/>  
    <D value="0.00129" />
    <fraction n="0.7" ref="Nitrogen" />
    <fraction n="0.3" ref="Oxygen" />

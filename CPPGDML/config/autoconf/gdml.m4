@@ -27,6 +27,9 @@ GDML_ENABLE_GDML_VERBOSE
 GDML_ENABLE_BUILD_STEPWRT
 
 GDML_ENABLE_FLAT_INCLUDE
+
+GDML_ENABLE_EXAMPLES
+
 ])
 
 # Macro to check whether to use shared libraries.
@@ -349,5 +352,24 @@ if test "${GDML_VERBOSE_USE}" = "yes"; then
 fi
 
 AC_MSG_RESULT($GDML_VERBOSE_USE)
+
+])
+
+# Macro to enable/disable compilation of examples.  Enabled by default.
+AC_DEFUN(GDML_ENABLE_EXAMPLES, [
+
+AC_MSG_CHECKING(whether to compile the examples)
+
+AC_ARG_ENABLE([examples],
+    AC_HELP_STRING([--enable-examples=<setting>], [Turn off compilation of examples.]))
+
+if test "$enable_examples" != "no"; then
+  AC_MSG_RESULT(yes)
+  GDML_BUILD_EXAMPLES=1
+else
+  AC_MSG_RESULT(no)
+fi
+
+AC_SUBST(GDML_BUILD_EXAMPLES)
 
 ])

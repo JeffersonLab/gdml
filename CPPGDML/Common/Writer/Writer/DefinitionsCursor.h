@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: DefinitionsCursor.h,v 1.1 2005/03/01 09:17:12 witoldp Exp $
+// $Id: DefinitionsCursor.h,v 1.2 2007/08/31 11:23:35 ztorzsok Exp $
 #ifndef GDML_WRITER_DEFINITIONSCURSOR_H
 #define GDML_WRITER_DEFINITIONSCURSOR_H 1
 
@@ -44,6 +44,8 @@ namespace gdml
                           double y=0.0,
                           double z=0.0,
                           const std::string& unit="radian" );
+
+        void addScale(const std::string& id,double x=1.0,double y=1.0,double z=1.0);
     };
   }
 }
