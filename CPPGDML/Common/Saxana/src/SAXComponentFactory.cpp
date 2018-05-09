@@ -1,4 +1,0 @@
-//
-#include "Saxana/SAXComponentFactory.h"
-
-
