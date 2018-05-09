@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // $Id: BooleanSolidTypeProcess.h,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// GEANT4 tag $Name: GDML_2_2_0 $
 #ifndef GDML_PROCESS_BOOLEANSOLIDTYPEPROCESS_H
 #define GDML_PROCESS_BOOLEANSOLIDTYPEPROCESS_H 1
 

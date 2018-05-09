@@ -1,5 +1,5 @@
 //
-// $Id: assemblySubscriber.cpp,v 1.1 2005/03/02 10:50:37 witoldp Exp $
+// $Id: assemblySubscriber.cpp,v 1.2 2005/04/22 17:43:09 jmccormi Exp $
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 
@@ -176,7 +176,7 @@ class assemblySubscriber : virtual public SAXSubscriber
           } // end of if-obj
         } catch(...) { std::cerr << "ASSEMBLY VOLUME SUBSCRIBER:: GOT INTO BAD_CAST TROUBLE!" << std::endl; }
       } else { std::cerr << "ASSEMBLY VOLUME SUBSCRIBER:: GOT ZERO DATA POINTER!" << std::endl; }
-      delete object;
+      //delete object;
     } // end of Activate method
 };
 

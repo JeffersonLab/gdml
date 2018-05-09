@@ -1,11 +1,99 @@
-# -*-Makefile-*-
-# $Id: local_settings.gmk,v 1.1 2005/03/03 15:13:38 witoldp Exp $
+# $Header: /cvs/simu/simu/GDML2/CPPGDML/config/make/local_settings.gmk.in,v 1.2 2005/05/12 20:36:37 jmccormi Exp $
+#
+# All the local settings for GDML build
+# defined by Autoconf configure script.
+#
 
-# local build settings - need to be customised for the given local environment
+# include guard
+ifndef LOCAL_SETTINGS_INCLUDED
 
-SITE_EXTSW_BASE := /CERN/LCG_external
-SITE_LIB_PREFIX := lcg_
+LOCAL_SETTINGS_INCLUDED := 1
 
-#include external software
-include $(PROJECT_TOP)/config/make/ext_$(SITE)_*.gmk
+#
+# PLATFORM Var
+#
 
+# PLATFORM.
+PLATFORM        := slc3_ia32_gcc323
+
+#
+# Autoconf's Canonical Installation Directories
+#
+
+# Prefix vars.
+prefix          := /usr/local
+exec_prefix     := /usr/local
+
+# Install dirs derived from prefix and exec_prefix.
+libdir          := ${exec_prefix}/lib
+includedir      := ${prefix}/include
+bindir          := ${exec_prefix}/bin
+srcdir          := .
+
+#
+# Library Settings
+#
+
+BUILD_SHARED_LIBS := yes
+BUILD_STATIC_LIBS := no
+
+TARGET_LIB_PREFIX := 
+
+#
+# Platform Settings
+#
+
+# PLATFORM setting
+PLATFORM          := slc3_ia32_gcc323
+
+# gmk file to include
+PLATFORM_GMK_FILE := $(PROJECT_TOP)/config/make/platform/slc3_ia32_gcc323.gmk
+
+# include the platform file 
+include $(PLATFORM_GMK_FILE)
+
+#
+# Compiler Settings
+#
+
+# compiler, with configure defaulting to g++
+COMPILER             := g++
+
+# The compiler gmk file to include
+COMPILER_GMK_FILE    := $(PROJECT_TOP)/config/make/compiler/g++.gmk
+
+# include gmk for this compiler, which sets the main CXXFLAGS
+include $(COMPILER_GMK_FILE) 
+
+# add in additional CXXFLAGS from configure plus the preprecessor DEFS
+CXXFLAGS             +=  -DPACKAGE_NAME=\"CPPGDML\" -DPACKAGE_TARNAME=\"cppgdml\" -DPACKAGE_VERSION=\"2.1.0\" -DPACKAGE_STRING=\"CPPGDML\ 2.1.0\" -DPACKAGE_BUGREPORT=\"jeremym@slac.stanford.edu\" -DGDML_VERBOSE=1 -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE__BOOL=1 -DHAVE_STDBOOL_H=1 
+
+# 
+# External Dependencies
+#
+
+# Xerces-C++
+XERCESC_BASE       := /afs/cern.ch/sw/lcg/external/XercesC/2.3.0/slc3_ia32_gcc323
+XERCESC_INCLUDE    := /afs/cern.ch/sw/lcg/external/XercesC/2.3.0/slc3_ia32_gcc323/include
+XERCESC_LIBDIR     := /afs/cern.ch/sw/lcg/external/XercesC/2.3.0/slc3_ia32_gcc323/lib
+
+# name of Xerces library without prefix or extension
+XERCESC_LIBNAME    := xerces-c
+
+# CLHEP
+CLHEP_BASE         := /afs/cern.ch/sw/lcg/external/clhep/1.9.1.2/slc3_ia32_gcc323 
+CLHEP_INCLUDE      := /afs/cern.ch/sw/lcg/external/clhep/1.9.1.2/slc3_ia32_gcc323/include
+CLHEP_LIBDIR       := /afs/cern.ch/sw/lcg/external/clhep/1.9.1.2/slc3_ia32_gcc323/lib
+
+# name of CLHEP library without prefix or extension
+CLHEP_LIBNAME      := CLHEP
+
+# Geant4
+GEANT4_BASE        := /afs/cern.ch/sw/lcg/external/geant4/7.0.p01/slc3_ia32_gcc323
+GEANT4_INCLUDE     := /afs/cern.ch/sw/lcg/external/geant4/7.0.p01/share/include
+GEANT4_LIBDIR      := /afs/cern.ch/sw/lcg/external/geant4/7.0.p01/slc3_ia32_gcc323/lib
+
+# Geant4 UI/Vis/Granular settings
+include $(PROJECT_TOP)/config/make/geant4_settings.gmk
+
+endif

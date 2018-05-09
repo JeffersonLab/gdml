@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: StateProcessMap.cpp,v 1.1 2005/02/11 17:58:48 rado Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: StateProcessMap.cpp,v 1.2 2005/05/13 00:55:57 jmccormi Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 //
 // 
 // --------------------------------------------------------------
@@ -38,7 +38,9 @@
 
 StateProcessMap::StateProcessMap()
 {
+#ifdef GDML_VERBOSE
   std::cout << "State process map created" << std::endl;
+#endif
 }
 
 StateProcessMap::~StateProcessMap()
@@ -60,11 +62,15 @@ void StateProcessMap::Initialize()
   {
     process = dynamic_cast<SAXStateProcess*>( (*pit)->Build() );
     
+#ifdef GDML_VERBOSE
     std::cout << "Adding state process for tag: " << process->State() << std::endl;
+#endif
     
     AddProcess( process->State(), process );
   }
+#ifdef GDML_VERBOSE
   std::cout << "========================================================" << std::endl;
+#endif
 }
 
 void StateProcessMap::Reset()

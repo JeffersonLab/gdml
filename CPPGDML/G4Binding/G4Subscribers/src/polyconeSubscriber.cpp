@@ -4,6 +4,7 @@
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "Schema/polycone.h"
 #include "Schema/zplane.h"
@@ -66,7 +67,7 @@ class polyconeSubscriber : public SAXSubscriber
             rmaxs[i] = calc->Eval( zpl->get_rmax() + "*" + lunit );
           }
 
-          G4VSolid* newobj = new G4Polycone(name, startphi, deltaphi,
+          G4VSolid* newobj = new G4Polycone(Util::generateName(name), startphi, deltaphi,
                                             numberofz, zets, rmins, rmaxs);
       
 
@@ -77,7 +78,7 @@ class polyconeSubscriber : public SAXSubscriber
       } else {
         std::cerr << "GOT ZERO DATA POINTER!" << std::endl;
       }
-      delete object;
+      //delete object;
     }
 };
 

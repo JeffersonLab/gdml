@@ -1,5 +1,5 @@
-// $Id: SAXProcessor.cpp,v 1.1 2005/02/11 17:58:48 rado Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: SAXProcessor.cpp,v 1.2 2005/04/22 17:50:27 jmccormi Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 
@@ -193,13 +193,13 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
       if( fStack->Empty() && fNotifyStack->Empty() )
       {
         fStack->Push( state );
-	    }
-	    else
-	    {
-        StateStack::State notifystate = top;
-	      fNotifyStack->Push( notifystate );
-	      fStack->Push( state );
-	    }
+      }
+      else
+      {
+	StateStack::State notifystate = top;
+	fNotifyStack->Push( notifystate );
+	fStack->Push( state );
+      }
 
       process->StartElement( tagname, ev->Attributes() );
     }
@@ -224,8 +224,12 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
         // Grab a new object from the stack and play with it a bit
         objectRef = top->GetObjectRef();
 
+	//std::cout << "*objectRef: " << *objectRef << std::endl;
+
         // Locate the subcriber(s) and send them the created object
         const SAXSubscriberPool::Subscribers* actors = fPool->GetSubscribers( ev->Name() );
+
+	bool didSub = false;
 
         if( actors != 0 ) {
           // There are some guys waiting out there for a gift
@@ -235,7 +239,8 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
             // Now we call only subscribers processing only this single element
             if( (*subscriberRef)->GetSubscriptions()->size() == 1 ) {
               //std::cout << "SXP::PE:: Executing subscriber(s) for element: " << ev->Name() << std::endl;
-              (*subscriberRef)->Activate( *objectRef );
+              (*subscriberRef)->Activate( *objectRef );	      	      
+	      didSub = true;
             }
           }
 
@@ -260,8 +265,9 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
             for( subscriberRef = actors->begin(); subscriberRef != actors->end(); subscriberRef++ ) {
               if( (*subscriberRef)->IsSubscribedTo( ev->Name() ) ) {
                 //std::cout << "SXP::PE:: Executing PARENT subscriber(s) for: "
-                //          << ParentTag << " for element: " << ev->Name() << std::endl;
+                //         << ParentTag << " for element: " << ev->Name() << std::endl;
                 (*subscriberRef)->Activate( *objectRef );
+		didSub = true;
               }
             }
             
@@ -272,7 +278,15 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
           fNotifyStack->Pop();
         }
 
+	// delete the object because all subscribers should have been called 
+	if ( didSub ) {
+	  //std::cout << "deleting object <" << ev->Name() << "> = *objectRef: " << *objectRef << std::endl;	
+	  delete *objectRef;
+	}
+
+	// delete the object reference
         if( objectRef != 0 ) {
+	  //std::cout << "deleting objectRef: " << objectRef << std::endl;
           delete objectRef;
         }
 

@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // $Id: SAXObject.h,v 1.1 2005/02/11 17:58:48 rado Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// GEANT4 tag $Name: GDML_2_2_0 $
 #ifndef GDML_SAXANA_SAXOBJECT_H
 #define GDML_SAXANA_SAXOBJECT_H 1
 

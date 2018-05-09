@@ -4,6 +4,7 @@
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "Schema/orb.h"
 
@@ -43,7 +44,7 @@ public:
         sval += "*"+lunit;
         double r = calc->Eval( sval );
           
-        G4VSolid* newobj = new G4Orb( name, r );
+        G4VSolid* newobj = new G4Orb( Util::generateName(name), r );
           
         GDMLProcessor::GetInstance()->AddSolid( name, newobj );      
       } catch(...) {
@@ -52,7 +53,7 @@ public:
     } else {
       std::cerr << "GOT ZERO DATA POINTER!" << std::endl;
     }
-    delete object;
+    //delete object;
   }
 };
 

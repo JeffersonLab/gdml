@@ -1,40 +1,10 @@
 //
-// ********************************************************************
-// * DISCLAIMER                                                       *
-// *                                                                  *
-// * The following disclaimer summarizes all the specific disclaimers *
-// * of contributors to this software. The specific disclaimers,which *
-// * govern, are listed with their locations in:                      *
-// *   http://cern.ch/geant4/license                                  *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.                                                             *
-// *                                                                  *
-// * This  code  implementation is the  intellectual property  of the *
-// * GEANT4 collaboration.                                            *
-// * By copying,  distributing  or modifying the Program (or any work *
-// * based  on  the Program)  you indicate  your  acceptance of  this *
-// * statement, and all its terms.                                    *
-// ********************************************************************
-//
-//
-// $Id: elementSubscriber.cpp,v 1.1 2005/03/02 10:50:37 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
-//
-// 
-// --------------------------------------------------------------
-// Comments
-//
-// --------------------------------------------------------------
-//
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "Schema/element.h"
 #include "Schema/fraction.h"
@@ -61,10 +31,9 @@ class elementSubscriber : virtual public SAXSubscriber
     // The activation callback invoked by SAXG4Processor whenever it has
     // a new object created from XML and a corresponding subcriber exists
     virtual void Activate( const SAXObject* object ) {
-      //std::cout << "ELEMENT SUBSCRIBER:: " << std::endl;
-    
+      
       GDMLExpressionEvaluator* calc = GDMLProcessor::GetInstance()->GetEvaluator();
-    
+      
       const element* obj = 0;
             
       if( object != 0 ) {
@@ -73,7 +42,6 @@ class elementSubscriber : virtual public SAXSubscriber
           obj = dynamic_cast<const element*>(object);
         
           if( obj != 0 ) {
-            //std::cout << "GOT ELEMENT " << obj->get_name() << std::endl;
 
             double      z = 0.0;
             double      a = 0.0;
@@ -100,21 +68,23 @@ class elementSubscriber : virtual public SAXSubscriber
               sA += "*";
               sA += ae->get_unit();
               a = calc->Eval( sA );
-              //std::cout << "Z: " << z  << " " << z          << std::endl;
-              //std::cout << "A: " << sA << " " << a/g/mole << std::endl;
-              G4Element* enew = new G4Element( obj->get_name(), f, z, a );
+
+              G4Element* enew = 
+              new G4Element( Util::generateName(obj->get_name()), f, z, a );
             } else {
               // Must be the sequence of fractions
               const ContentSequence* seq = dynamic_cast<const ContentSequence*>( cg );
               size_t icount = seq->size();                
 
-              G4Element* enew = new G4Element( obj->get_name(), f, icount );
+              G4Element* enew = new G4Element( Util::generateName(obj->get_name()), f, icount );
               for( unsigned int i = 0; i < icount; i++ ) {
                 fraction* fi = dynamic_cast<fraction*>( seq->content( i ).object );
                 double      ifrac = calc->Eval( fi->get_n().c_str() );
                 enew->AddIsotope( G4Isotope::GetIsotope(fi->get_ref()), ifrac );
               }
+#ifdef GDML_VERBOSE
               std::cout << *enew << std::endl;
+#endif
             }
               
           } else {
@@ -128,7 +98,7 @@ class elementSubscriber : virtual public SAXSubscriber
       } else {
         std::cerr << "ELEMENT SUBSCRIBER:: GOT ZERO DATA POINTER!" << std::endl;
       }
-      delete obj;
+      //delete obj;
     }
 };
 

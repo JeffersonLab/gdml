@@ -4,6 +4,7 @@
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "Schema/polyhedra.h"
 #include "Schema/zplane.h"
@@ -51,7 +52,7 @@ class polyhedraSubscriber : public SAXSubscriber
           double totalphi = calc->Eval( sval );
 
           sval = obj->get_numsides();
-          int numsides = calc->Eval( sval );
+          int numsides = (int)calc->Eval( sval );
 
           const ContentSequence* seq = obj->get_content();
 
@@ -70,7 +71,7 @@ class polyhedraSubscriber : public SAXSubscriber
             rmaxs[i] = calc->Eval( zpl->get_rmax() + "*" + lunit );
           }
 
-          G4VSolid* newobj = new G4Polyhedra(name, startphi, totalphi, numsides,
+          G4VSolid* newobj = new G4Polyhedra(Util::generateName(name), startphi, totalphi, numsides,
                                              numberofz, zets, rmins, rmaxs);          
           
           GDMLProcessor::GetInstance()->AddSolid( name, newobj );      
@@ -80,7 +81,7 @@ class polyhedraSubscriber : public SAXSubscriber
       } else {
         std::cerr << "GOT ZERO DATA POINTER!" << std::endl;
       }
-      delete object;
+      //delete object;
     }
 };
 

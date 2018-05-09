@@ -4,6 +4,7 @@
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "Schema/hype.h"
 
@@ -59,7 +60,7 @@ public:
         sval += "*"+lunit;
         double z = calc->Eval( sval );
 
-        G4VSolid* newobj = new G4Hype( name, rmin, rmax,
+        G4VSolid* newobj = new G4Hype( Util::generateName(name), rmin, rmax,
                                        inst, outst, z/2.0);
 
         GDMLProcessor::GetInstance()->AddSolid( name, newobj );      
@@ -69,7 +70,7 @@ public:
     } else {
       std::cerr << "GOT ZERO DATA POINTER!" << std::endl;
     }
-    delete object;
+    //delete object;
   }
 };
 

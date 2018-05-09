@@ -1,6 +1,6 @@
 // -*- C++ -*-
-// $Id: zplaneProcess.cpp,v 1.2 2005/03/07 17:17:19 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: zplaneProcess.cpp,v 1.3 2005/05/26 20:51:59 jmccormi Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 #ifndef GDML_PROCESS_ZPLANE_H
 #define GDML_PROCESS_ZPLANE_H 1
 
@@ -51,7 +51,7 @@ public:
   
   // Invoked whenever one of the daughter state processes has been popped-out of the state stack
   // The name passed-in as the argument is the name of the XML element for which that's been done
-  virtual void StackPopNotify( const std::string& name ) 
+  virtual void StackPopNotify( const std::string&) 
   {
   }
 

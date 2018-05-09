@@ -1,0 +1,3 @@
+GEANT4_LIBLIST += -lG4UIbasic \
+	-lG4UIcommon \
+	-lG4UIGAG

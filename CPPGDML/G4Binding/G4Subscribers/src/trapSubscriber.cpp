@@ -1,40 +1,10 @@
 //
-// ********************************************************************
-// * DISCLAIMER                                                       *
-// *                                                                  *
-// * The following disclaimer summarizes all the specific disclaimers *
-// * of contributors to this software. The specific disclaimers,which *
-// * govern, are listed with their locations in:                      *
-// *   http://cern.ch/geant4/license                                  *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.                                                             *
-// *                                                                  *
-// * This  code  implementation is the  intellectual property  of the *
-// * GEANT4 collaboration.                                            *
-// * By copying,  distributing  or modifying the Program (or any work *
-// * based  on  the Program)  you indicate  your  acceptance of  this *
-// * statement, and all its terms.                                    *
-// ********************************************************************
-//
-//
-// $Id: trapSubscriber.cpp,v 1.1 2005/03/02 10:50:37 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
-//
-// 
-// --------------------------------------------------------------
-// Comments
-//
-// --------------------------------------------------------------
-//
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "Schema/trap.h"
 
@@ -106,21 +76,9 @@ class trapSubscriber : public SAXSubscriber
           double dalpha1 = calc->Eval( sval );
           sval = obj->get_alpha2();
           sval += "*"+aunit;
-          double dalpha2 = calc->Eval( sval );
-        
-//           std::cout << "x1:    " << obj->get_x1()    << lunit << " dx1:    " << dx1     << std::endl;
-//           std::cout << "x2:    " << obj->get_x2()    << lunit << " dx2:    " << dx2     << std::endl;
-//           std::cout << "x3:    " << obj->get_x3()    << lunit << " dx3:    " << dx3     << std::endl;
-//           std::cout << "x4:    " << obj->get_x4()    << lunit << " dx4:    " << dx4     << std::endl;
-//           std::cout << "y1:    " << obj->get_y1()    << lunit << " dy1:    " << dy1     << std::endl;
-//           std::cout << "y2:    " << obj->get_y2()    << lunit << " dy2:    " << dy2     << std::endl;
-//           std::cout << "z:     " << obj->get_z()     << lunit << " dz:     " << dz      << std::endl;
-//           std::cout << "theta: " << obj->get_theta() << lunit << " dtheta: " << dtheta  << std::endl;
-//           std::cout << "phi:   " << obj->get_phi()   << aunit << " dphi:   " << dphi    << std::endl;
-//           std::cout << "alpha1: " << obj->get_alpha1() << aunit << " dalpha1: " << dalpha1 << std::endl;
-//           std::cout << "alpha2: " << obj->get_alpha2() << aunit << " dalpha2: " << dalpha2 << std::endl;
+          double dalpha2 = calc->Eval( sval );        
           
-          G4VSolid* newobj = new G4Trap( name, dz, dtheta, dphi, dy1, dx1, dx2, dalpha1,
+          G4VSolid* newobj = new G4Trap( Util::generateName(name), dz, dtheta, dphi, dy1, dx1, dx2, dalpha1,
                                          dy2, dx3, dx4, dalpha2);
       
           GDMLProcessor::GetInstance()->AddSolid( name, newobj );      
@@ -130,7 +88,7 @@ class trapSubscriber : public SAXSubscriber
       } else {
         std::cerr << "GOT ZERO DATA POINTER!" << std::endl;
       }
-      delete object;
+      //delete object;
     }
 };
 

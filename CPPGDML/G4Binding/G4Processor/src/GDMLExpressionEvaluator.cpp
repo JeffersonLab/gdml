@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: GDMLExpressionEvaluator.cpp,v 1.1 2005/03/02 10:50:37 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: GDMLExpressionEvaluator.cpp,v 1.2 2005/05/13 00:55:57 jmccormi Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 //
 // 
 // --------------------------------------------------------------
@@ -61,8 +61,10 @@ StatusCode GDMLExpressionEvaluator::RegisterConstant( const define::constant* co
     return StatusCode::eError;
   }
   
+#ifdef GDML_VERBOSE
   std::cout << "Expression evaluator:: Registering constant "
             << c->get_name() << ": " << value << std::endl;
+#endif
   
   //fCalc.setVariable( c->get_name().c_str(), c->get_value().c_str() );
   fCalc.setVariable( c->get_name().c_str(), value );
@@ -91,8 +93,10 @@ StatusCode GDMLExpressionEvaluator::RegisterPhysConstant( const define::quantity
     return StatusCode::eError;
   }
   
+#ifdef GDML_VERBOSE
   std::cout << "Expression evaluator:: Registering quantity "
             << physc->get_name() << ": " << (value/unit_value) << physc->get_unit() << std::endl;
+#endif
   
   //fCalc.setVariable( physc->get_name().c_str(), expr.c_str() );
   fCalc.setVariable( physc->get_name().c_str(), value );
@@ -115,8 +119,10 @@ StatusCode GDMLExpressionEvaluator::RegisterExpression( const define::expression
     return StatusCode::eError;
   }
   
+#ifdef GDML_VERBOSE
   std::cout << "Expression evaluator:: Registering expression "
             << e->get_name() << ": " << value << std::endl;
+#endif
   
   //fCalc.setVariable( e->get_name().c_str(), e->get_text().c_str() );
   fCalc.setVariable( e->get_name().c_str(), value );

@@ -38,7 +38,7 @@ void GenericPositionSizeParameterisation::ComputeTransformation(int copyNo, G4VP
 
 void GenericPositionSizeParameterisation::ComputeDimensions(G4Box& box, 
                                                 int copyNo, 
-                                                const G4VPhysicalVolume* physVol) const
+                                                const G4VPhysicalVolume*) const
 {
   box.SetXHalfLength(d1[copyNo]);
   box.SetYHalfLength(d2[copyNo]);
@@ -47,7 +47,7 @@ void GenericPositionSizeParameterisation::ComputeDimensions(G4Box& box,
 
 void GenericPositionSizeParameterisation::ComputeDimensions(G4Tubs& tubs, 
                                                 int copyNo, 
-                                                const G4VPhysicalVolume* physVol) const
+                                                const G4VPhysicalVolume*) const
 {
   tubs.SetDeltaPhiAngle(d1[copyNo]);
   tubs.SetInnerRadius(d2[copyNo]);

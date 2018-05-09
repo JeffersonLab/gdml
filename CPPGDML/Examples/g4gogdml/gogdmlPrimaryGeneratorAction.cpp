@@ -22,7 +22,7 @@
 //
 //
 // $Id: gogdmlPrimaryGeneratorAction.cpp,v 1.2 2005/03/10 18:18:00 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// GEANT4 tag $Name: GDML_2_2_0 $
 //
 
 #include "gogdmlPrimaryGeneratorAction.h"

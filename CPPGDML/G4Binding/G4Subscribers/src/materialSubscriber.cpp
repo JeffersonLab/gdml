@@ -1,40 +1,10 @@
 //
-// ********************************************************************
-// * DISCLAIMER                                                       *
-// *                                                                  *
-// * The following disclaimer summarizes all the specific disclaimers *
-// * of contributors to this software. The specific disclaimers,which *
-// * govern, are listed with their locations in:                      *
-// *   http://cern.ch/geant4/license                                  *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.                                                             *
-// *                                                                  *
-// * This  code  implementation is the  intellectual property  of the *
-// * GEANT4 collaboration.                                            *
-// * By copying,  distributing  or modifying the Program (or any work *
-// * based  on  the Program)  you indicate  your  acceptance of  this *
-// * statement, and all its terms.                                    *
-// ********************************************************************
-//
-//
-// $Id: materialSubscriber.cpp,v 1.1 2005/03/02 10:50:37 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
-//
-// 
-// --------------------------------------------------------------
-// Comments
-//
-// --------------------------------------------------------------
-//
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "Schema/material.h"
 #include "Schema/composite.h"
@@ -65,7 +35,6 @@ class materialSubscriber : virtual public SAXSubscriber
     // The activation callback invoked by SAXG4Processor whenever it has
     // a new object created from XML and a corresponding subcriber exists
     virtual void Activate( const SAXObject* object ) {
-      //std::cout << "MATERIAL SUBSCRIBER:: " << std::endl;
     
       GDMLExpressionEvaluator* calc = GDMLProcessor::GetInstance()->GetEvaluator();
     
@@ -77,7 +46,6 @@ class materialSubscriber : virtual public SAXSubscriber
           obj = dynamic_cast<const material*>(object);
         
           if( obj != 0 ) {
-            //std::cout << "GOT MATERIAL " << obj->get_name() << std::endl;
 
             double      z = 0.0;
             double      a = 0.0;
@@ -106,13 +74,11 @@ class materialSubscriber : virtual public SAXSubscriber
               // Can't happen
               ;
             }
-            //std::cout << "State: " << s << " " << str << std::endl;
           
             f = obj->get_formula();
             if( f.empty() ) {
               f=obj->get_name();
             }
-            //std::cout << "Formula: " << f << std::endl;
 
             // Retrieve density
             const ContentChoice* dchoice = dynamic_cast<const ContentChoice*>( obj->get_DorDref() );
@@ -129,8 +95,6 @@ class materialSubscriber : virtual public SAXSubscriber
               str = dref->get_ref();
               d   = calc->Eval( str );
             }
-            //std::cout << "D: " << d/(g/cm3) << "[g/cm3]" << std::endl;
-          
             // Retrieve temperature if any
             const SAXObject* tso = obj->get_TorTref();
             if( tso != 0 ) {
@@ -148,7 +112,6 @@ class materialSubscriber : virtual public SAXSubscriber
                 str = tref->get_ref();
                 t   = calc->Eval( str );
               }
-              //std::cout << "T: " << t/(kelvin) << "[kelvin]" << std::endl;
             }
 
             // Retrieve pressure if any
@@ -168,7 +131,6 @@ class materialSubscriber : virtual public SAXSubscriber
                 str = pref->get_ref();
                 p   = calc->Eval( str );
               }
-              //std::cout << "P: " << p/(atmosphere) << "[atmosphere]" << std::endl;
             }
           
             std::string tag;
@@ -183,21 +145,19 @@ class materialSubscriber : virtual public SAXSubscriber
               sA += "*";
               sA += am->get_unit();
               a = calc->Eval( sA );
-//             std::cout << "Simple definition by atom" << std::endl;
-//             std::cout << "Z: " << z          << std::endl;
-//             std::cout << "A: " << a/(g/mole) << "[g/mole]" << std::endl;
-              G4Material* mnew = new G4Material( obj->get_name(), z, a, d, s, t, p );
+
+              G4Material* mnew = new G4Material( Util::generateName(obj->get_name()), z, a, d, s, t, p );
+#ifdef GDML_VERBOSE
               std::cout << *mnew << std::endl;
+#endif
             } else {
               // Must be a sequence of composites or fractions
-              //std::cout << "Complex definition by ";
               const ContentSequence* cseq = dynamic_cast<const ContentSequence*>( cc->content().object );
               count = cseq->size();
               std::string tag = cseq->content( 0 ).tag;
               if( tag == "composite" ) {
                 // Composition by atoms of elements
-                //std::cout << count << " composites" << std::endl;
-                G4Material* mnew = new G4Material( obj->get_name(), d, count, s, t, p );
+                G4Material* mnew = new G4Material( Util::generateName(obj->get_name()), d, count, s, t, p );
                 for( unsigned int i = 0; i < count; i++ ) {
                   composite* ci = dynamic_cast<composite*>( cseq->content( i ).object );
                   int     natom = (int)calc->Eval( ci->get_n().c_str() );
@@ -217,17 +177,16 @@ class materialSubscriber : virtual public SAXSubscriber
                 std::cout << *mnew << std::endl;
               } else {
                 // Composition by fraction of mass
-                //std::cout << count << " fractions" << std::endl;
-                G4Material* mnew = new G4Material( obj->get_name(), d, count, s, t, p );
+                G4Material* mnew = new G4Material( Util::generateName(obj->get_name()), d, count, s, t, p );
                 for( unsigned int i = 0; i < count; i++ ) {
                   fraction* fi = dynamic_cast<fraction*>( cseq->content( i ).object );
                   double      frac = calc->Eval( fi->get_n().c_str() );
                   // Find the material
                   G4Material* mtoadd = 0;
                   G4Element*  etoadd = 0;
-                  if( (mtoadd = G4Material::GetMaterial( fi->get_ref())) != 0 ) {
+                  if( (mtoadd = G4Material::GetMaterial( Util::generateName(fi->get_ref()))) != 0 ) {
                     mnew->AddMaterial( mtoadd, frac );
-                  } else if( (etoadd = G4Element::GetElement( fi->get_ref())) != 0 ) {
+                  } else if( (etoadd = G4Element::GetElement( Util::generateName(fi->get_ref()))) != 0 ) {
                     mnew->AddElement( etoadd, frac );
                   } else {
                     std::cerr << "MATERIAL SUBSCRIBER:: material or element "
@@ -251,7 +210,7 @@ class materialSubscriber : virtual public SAXSubscriber
       } else {
         std::cerr << "MATERIAL SUBSCRIBER:: GOT ZERO DATA POINTER!" << std::endl;
       }
-      delete obj;
+      //delete obj;
     }
 };
 

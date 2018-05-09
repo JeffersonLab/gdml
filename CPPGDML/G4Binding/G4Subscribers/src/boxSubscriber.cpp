@@ -6,6 +6,7 @@
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "G4VSolid.hh"
 #include "G4Box.hh"
@@ -48,13 +49,9 @@ public:
         sval = obj->get_z();
         sval += "*";
         sval += obj->get_lunit();
-        double dz = calc->Eval( sval ); dz = dz/2.;
-        
-        //std::cout << "x: " << obj->get_x() << obj->get_lunit() << " dx: " << dx << std::endl;
-        //std::cout << "y: " << obj->get_y() << obj->get_lunit() << " dy: " << dy << std::endl;
-        //std::cout << "z: " << obj->get_z() << obj->get_lunit() << " dx: " << dz << std::endl;
+        double dz = calc->Eval( sval ); dz = dz/2.;        
 
-        G4VSolid* newobj = new G4Box( name, dx, dy, dz );
+        G4VSolid* newobj = new G4Box( Util::generateName(name), dx, dy, dz );
       
         GDMLProcessor::GetInstance()->AddSolid( name, newobj );      
       } catch(...) {
@@ -63,7 +60,7 @@ public:
     } else {
       std::cerr << "GOT ZERO DATA POINTER!" << std::endl;
     }
-    delete object;
+    //delete object;
   }
 };
 

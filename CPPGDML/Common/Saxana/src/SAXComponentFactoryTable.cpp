@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: SAXComponentFactoryTable.cpp,v 1.1 2005/02/11 17:58:48 rado Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: SAXComponentFactoryTable.cpp,v 1.2 2005/04/21 08:12:47 jmccormi Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 //
 // 
 // --------------------------------------------------------------
@@ -103,7 +103,7 @@ SAXComponentFactoryTable::SAXComponentFactoryTable()
   fProcesses   = new SAXComponentFactoryTable::Components();
   fActions     = new SAXComponentFactoryTable::Components();
   fSubscribers = new SAXComponentFactoryTable::Components();
-  std::cout << "Component Factory Table created" << std::endl;
+  //std::cout << "Component Factory Table created" << std::endl;
 }
 
 

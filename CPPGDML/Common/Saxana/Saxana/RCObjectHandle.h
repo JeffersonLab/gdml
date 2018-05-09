@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: RCObjectHandle.h,v 1.1 2005/02/11 17:58:48 rado Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: RCObjectHandle.h,v 1.2 2005/04/02 22:46:34 rado Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 //
 // 
 // --------------------------------------------------------------
@@ -182,7 +182,7 @@ public: // with description
     return *this;
   } // Assignment operator by pointer to the counted class object
   
-  RCH::CountedObject* GetCountedObject() const {
+  CountedObject* GetCountedObject() const {
     return fObj;
   }
 
@@ -224,7 +224,7 @@ public: // with description
 
 
 private:
-  RCH::CountedObject*     fObj;
+  CountedObject*     fObj;
  // Object being the subject to reference counting
 };
 

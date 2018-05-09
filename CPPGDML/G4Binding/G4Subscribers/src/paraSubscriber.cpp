@@ -1,40 +1,10 @@
 //
-// ********************************************************************
-// * DISCLAIMER                                                       *
-// *                                                                  *
-// * The following disclaimer summarizes all the specific disclaimers *
-// * of contributors to this software. The specific disclaimers,which *
-// * govern, are listed with their locations in:                      *
-// *   http://cern.ch/geant4/license                                  *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.                                                             *
-// *                                                                  *
-// * This  code  implementation is the  intellectual property  of the *
-// * GEANT4 collaboration.                                            *
-// * By copying,  distributing  or modifying the Program (or any work *
-// * based  on  the Program)  you indicate  your  acceptance of  this *
-// * statement, and all its terms.                                    *
-// ********************************************************************
-//
-//
-// $Id: paraSubscriber.cpp,v 1.1 2005/03/02 10:50:37 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
-//
-// 
-// --------------------------------------------------------------
-// Comments
-//
-// --------------------------------------------------------------
-//
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "Schema/para.h"
 
@@ -60,12 +30,9 @@ public:
   // The activation callback invoked by SAXG4Processor whenever it has
   // a new object created from XML and a corresponding subcriber exists
   virtual void Activate( const SAXObject* object ) {
-    //std::cout << "PARA SUBSCRIBER:: ";
     if( object != 0 ) {
       try {
-        const para* obj = dynamic_cast<const para*>( object );    
-        
-        //std::cout << "GOT PARA " << obj->get_name() << std::endl;
+        const para* obj = dynamic_cast<const para*>( object );        
       
         GDMLExpressionEvaluator* calc = GDMLProcessor::GetInstance()->GetEvaluator();
       
@@ -91,15 +58,7 @@ public:
         sval = obj->get_phi();
         sval += "*"+aunit;
         double dphi = calc->Eval( sval );
-        
-//         std::cout << "x:     " << obj->get_x()     << lunit << " dx:     " << dx     << std::endl;
-//         std::cout << "y:     " << obj->get_y()     << lunit << " dy:     " << dy     << std::endl;
-//         std::cout << "z:     " << obj->get_z()     << lunit << " dx:     " << dz     << std::endl;
-//         std::cout << "alpha: " << obj->get_alpha() << aunit << " dalpha: " << dalpha << std::endl;
-//         std::cout << "theta: " << obj->get_theta() << aunit << " dtheta: " << dtheta << std::endl;
-//         std::cout << "phi:   " << obj->get_phi()   << aunit << " dphi:   " << dphi   << std::endl;
-
-        G4VSolid* newobj = new G4Para( name, dx, dy, dz, dalpha, dtheta, dphi);
+        G4VSolid* newobj = new G4Para( Util::generateName(name), dx, dy, dz, dalpha, dtheta, dphi);
       
         GDMLProcessor::GetInstance()->AddSolid( name, newobj );      
       } catch(...) {
@@ -108,7 +67,7 @@ public:
     } else {
       std::cerr << "GOT ZERO DATA POINTER!" << std::endl;
     }
-    delete object;
+    //delete object;
   }
 };
 

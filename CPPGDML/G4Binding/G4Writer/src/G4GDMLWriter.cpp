@@ -1,5 +1,5 @@
-// $Id: G4GDMLWriter.cpp,v 1.2 2005/03/07 17:17:19 witoldp Exp $
-// Include files 
+// $Id: G4GDMLWriter.cpp,v 1.3 2005/05/26 20:51:22 jmccormi Exp $
+// Include files
 #include <iostream>
 #include <sstream>
 
@@ -69,11 +69,11 @@ void G4GDMLWriter::DumpMaterials()
 {
   int howmany=0;
 
-  // writing out materials  
+  // writing out materials
   const G4MaterialTable* mattable = G4Material::GetMaterialTable();
   int matsize = mattable->size();
   std::cout << "Dumping " << matsize << " materials"<< std::endl;
-  
+
   for( G4MaterialTable::const_iterator it=mattable->begin();
        it!=mattable->end();
        it++ )
@@ -82,23 +82,23 @@ void G4GDMLWriter::DumpMaterials()
       int nbofele = (*it)->GetNumberOfElements();
 
       if(nbofele > 1)
-	{ 
+	{
 	  gdml::writer::FractionsVector*
 	    frvect = new gdml::writer::FractionsVector();
-      
+
 	  for(int ii=0; ii!=nbofele; ii++)
 	    {
 	      const G4Element*
 		ele = (*it)->GetElement(ii);
-				
+
 	      matcur->addElement(ut->name(ele),
-				 ele->GetSymbol(), 
+				 ele->GetSymbol(),
 				 (int)ele->GetZ(),
 				 ele->GetA()*mole/g);
 	      frvect->push_back(std::pair<std::string, double>
-				(ut->name((*it)->GetElement(ii)), 
-				 (*it)->GetFractionVector()[ii])); 
-	    }    
+				(ut->name((*it)->GetElement(ii)),
+				 (*it)->GetFractionVector()[ii]));
+	    }
 	  matcur->addMaterial(ut->name(*it),
 			      (*it)->GetChemicalFormula(),
 			      (*it)->GetDensity()*cm3/g,
@@ -110,7 +110,7 @@ void G4GDMLWriter::DumpMaterials()
 			    (*it)->GetA()*mole/g,
 			    (*it)->GetDensity()*cm3/g);
       }
-      if(!(howmany%100)) std::cout << howmany << "/" 
+      if(!(howmany%100)) std::cout << howmany << "/"
 				   << matsize << " materials done" << std::endl;
     }
 }
@@ -123,23 +123,23 @@ void G4GDMLWriter::DumpSolids()
   int solsize = solidstr->size();
 
   std::cout << "Dumping " << solsize << " solids"<< std::endl;
-  
+
   for(G4SolidStore::const_iterator sit = solidstr->begin();
       sit!=solidstr->end();
       sit++)
     {
       howmany++;
 
-      if(!(howmany%100)) std::cout << howmany << "/" 
+      if(!(howmany%100)) std::cout << howmany << "/"
 				   << solsize << " solids done" << std::endl;
 
       G4VSolid* tempsol = *sit;
-      
-      while(const G4DisplacedSolid* disp = 
+
+      while(const G4DisplacedSolid* disp =
 	    dynamic_cast<const G4DisplacedSolid*>(tempsol))
 	{
 	  tempsol = disp->GetConstituentMovedSolid();
-	}    
+	}
 
       if( const G4Sphere* sphere = dynamic_cast<const G4Sphere*>(tempsol) )
 	{
@@ -199,7 +199,7 @@ void G4GDMLWriter::DumpSolids()
 	    phi = atan(para->GetSymAxis().y()/para->GetSymAxis().x());
 	  else
 	    phi = 0;
-      
+
 	  solcur->addPara(ut->name(para),
 			  2*para->GetXHalfLength()/mm,
 			  2*para->GetYHalfLength()/mm,
@@ -215,7 +215,7 @@ void G4GDMLWriter::DumpSolids()
 	    phi = atan(trap->GetSymAxis().y()/trap->GetSymAxis().x());
 	  else
 	    phi = 0;
-      
+
 	  solcur->addTrap(ut->name(trap),
 			  2*trap->GetXHalfLength1()/mm,
 			  2*trap->GetXHalfLength2()/mm,
@@ -228,7 +228,7 @@ void G4GDMLWriter::DumpSolids()
 			  acos(trap->GetSymAxis().z())/deg,
 			  2*trap->GetZHalfLength()/mm,
 			  phi/deg,"mm","degree");
-      
+
 
 	}
       else if( const G4Trd* trd = dynamic_cast<const G4Trd*>(tempsol) )
@@ -274,14 +274,15 @@ void G4GDMLWriter::DumpSolids()
       else if( const G4Polyhedra* polyh = dynamic_cast<const G4Polyhedra*>(tempsol) )
 	{
 	  solcur->addPolyhedra(ut->name(polyh),
-			       polyh->GetOriginalParameters()->numSide,
 			       polyh->GetOriginalParameters()->Num_z_planes,
 			       polyh->GetOriginalParameters()->Start_angle/deg,
 			       polyh->GetOriginalParameters()->Opening_angle/deg,
+			       polyh->GetOriginalParameters()->numSide,
 			       polyh->GetOriginalParameters()->Z_values,
 			       polyh->GetOriginalParameters()->Rmin,
 			       polyh->GetOriginalParameters()->Rmax,
-			       "mm","degree");
+			       "mm",
+			       "degree");
 	}
       else if( const G4BooleanSolid* boo = dynamic_cast<const G4BooleanSolid*>(tempsol) )
 	{
@@ -290,7 +291,7 @@ void G4GDMLWriter::DumpSolids()
 	  else if(boo->GetEntityType()=="G4UnionSolid") btype = "union";
 	  else if(boo->GetEntityType()=="G4IntersectionSolid") btype = "intersection";
 
-	  
+
 	  const G4VSolid* constit0 = boo->GetConstituentSolid(0);
 	  const G4VSolid* constit1 = boo->GetConstituentSolid(1);
 
@@ -308,37 +309,37 @@ void G4GDMLWriter::DumpSolids()
 	  double drx1=0;
 	  double dry1=0;
 	  double drz1=0;
-	  
-	  while(const G4DisplacedSolid* disp = 
+
+	  while(const G4DisplacedSolid* disp =
 		dynamic_cast<const G4DisplacedSolid*>(constit0))
 	    {
 	      dx0 += disp->GetObjectTranslation().x()/mm;
 	      dy0 += disp->GetObjectTranslation().y()/mm;
 	      dz0 += disp->GetObjectTranslation().z()/mm;
-	      
-	      const G4RotationMatrix r = disp->GetObjectRotation();        
+
+	      const G4RotationMatrix r = disp->GetObjectRotation();
 	      double tdrx=0; double tdry=0; double tdrz=0;
 	      getXYZ( &r, tdrx, tdry, tdrz );
 	      drx0+=tdrx; dry0+=tdry; drz0+=tdrz;
 
 	      constit0 = disp->GetConstituentMovedSolid();
-	    }    
-	  
-	  while(const G4DisplacedSolid* disp = 
+	    }
+
+	  while(const G4DisplacedSolid* disp =
 		dynamic_cast<const G4DisplacedSolid*>(constit1))
 	    {
 	      dx1 += disp->GetObjectTranslation().x()/mm;
 	      dy1 += disp->GetObjectTranslation().y()/mm;
 	      dz1 += disp->GetObjectTranslation().z()/mm;
-	      
-	      const G4RotationMatrix r = disp->GetObjectRotation();        
+
+	      const G4RotationMatrix r = disp->GetObjectRotation();
 	      double tdrx=0; double tdry=0; double tdrz=0;
 	      getXYZ( &r, tdrx, tdry, tdrz );
 	      drx1+=tdrx; dry1+=tdry; drz1+=tdrz;
 
 	      constit1 = disp->GetConstituentMovedSolid();
-	    }    
-        
+	    }
+
 	  solcur->addBoolean(ut->name(boo),
 			     btype,
 			     ut->name(constit0),
@@ -346,21 +347,21 @@ void G4GDMLWriter::DumpSolids()
  			     dx1/mm, dy1/mm, dz1/mm,
 			     drx1/deg, dry1/deg, drz1/deg,
  			     dx0/mm, dy0/mm, dz0/mm,
-			     drx0/deg, dry0/deg, drz0/deg);  
+			     drx0/deg, dry0/deg, drz0/deg);
 	}
       else
 	{
 	  // (tempsol)->DumpInfo();
-      
+
 	  std::cout << "Unknown solid: " << (tempsol)->GetName() << std::endl;
 	  std::cout << "The corresponding volume will have a null reference to solid!!" << std::endl;
-	}      
+	}
     }
 }
 
 void G4GDMLWriter::getXYZ( const G4RotationMatrix* r, double& a, double& b, double& c) const
 {
-  double cosb = sqrt( r->xx()*r->xx() + r->yx()*r->yx() ); 
+  double cosb = sqrt( r->xx()*r->xx() + r->yx()*r->yx() );
 
   if (cosb > 16*FLT_EPSILON)
     {
@@ -379,33 +380,33 @@ void G4GDMLWriter::getXYZ( const G4RotationMatrix* r, double& a, double& b, doub
 void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
 {
   std::stack<G4VPhysicalVolume*> volstack;
-  
+
   G4LogicalVolume* logvol = physvol->GetLogicalVolume();
   int nbofdaughters = logvol->GetNoDaughters();
-  
+
   for (int licz = 0; licz < nbofdaughters; licz++)
     {
       G4VPhysicalVolume* pv = logvol->GetDaughter(licz);
       G4LogicalVolume* dlv = pv->GetLogicalVolume();
 
-      
+
       std::vector<G4LogicalVolume*>::const_iterator itlv = lvlist.end();
 
       while(itlv!=lvlist.begin() && *itlv!=dlv) itlv--;
 
       if(itlv==lvlist.begin())
-	{      
+	{
 	  lvlist.push_back(pv->GetLogicalVolume());
 	  DumpGeoTree(pv);
-	}       
-      volstack.push( pv );                       
+	}
+      volstack.push( pv );
     }
-  
+
   std::string lvname = ut->name(logvol);
 
   G4VSolid* ts = logvol->GetSolid();
-  
-  while(const G4DisplacedSolid* dis = 
+
+  while(const G4DisplacedSolid* dis =
 	dynamic_cast<const G4DisplacedSolid*>(ts))
     {
       ts = dis->GetConstituentMovedSolid();
@@ -414,32 +415,32 @@ void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
   strcur->addVolume(lvname,
 		    ut->name(logvol->GetMaterial()),
 		    ut->name(ts));
-  
+
   while( !volstack.empty() )
     {
       G4VPhysicalVolume* pv = volstack.top();
-    
+
       if(!pv->IsParameterised())
-	{      
+	{
 	  std::string pvname = ut->name(pv);
-	  
+
 	  double dx=0;
 	  double dy=0;
 	  double dz=0;
 	  double drx=0;
 	  double dry=0;
 	  double drz=0;
-	  
+
 	  G4VSolid* tsol = pv->GetLogicalVolume()->GetSolid();
 
-	  while(const G4DisplacedSolid* displ = 
+	  while(const G4DisplacedSolid* displ =
 	     dynamic_cast<const G4DisplacedSolid*>(tsol))
 	    {
 	      dx += displ->GetObjectTranslation().x()/mm;
 	      dy += displ->GetObjectTranslation().y()/mm;
 	      dz += displ->GetObjectTranslation().z()/mm;
-	      
-	      const G4RotationMatrix r = displ->GetObjectRotation();        
+
+	      const G4RotationMatrix r = displ->GetObjectRotation();
 	      double tdrx=0; double tdry=0; double tdrz=0;
 	      getXYZ( &r, tdrx, tdry, tdrz );
 	      drx+=tdrx; dry+=tdry; drz+=tdrz;
@@ -452,15 +453,15 @@ void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
 			       pv->GetObjectTranslation().getX()+dx,
 			       pv->GetObjectTranslation().getY()+dy,
 			       pv->GetObjectTranslation().getZ()+dz );
-      
+
 	  double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
 	  const G4RotationMatrix* r = pv->GetFrameRotation();
-      
+
 	  if(r) getXYZ( r, rx, ry, rz );
-      
-	  defcur->addRotation( pvname+"in"+lvname+"r", 
+
+	  defcur->addRotation( pvname+"in"+lvname+"r",
 			       (rx+drx)/deg, (ry+dry)/deg, (rz+drz)/deg, "degree" );
-      
+
 	  strcur->addChild(lvname,
 			   ut->name(pv->GetLogicalVolume()),
 			   pvname+"in"+lvname+"p",
@@ -468,30 +469,30 @@ void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
 	}
       else
 	{
-	  std::cout << "Parameterised volume: " << pv->GetName()   
+	  std::cout << "Parameterised volume: " << pv->GetName()
 		    << std::endl;
-      
-	  gdml::writer::Element& param = 
+
+	  gdml::writer::Element& param =
 	    strcur->addParameterised(lvname,// mother volume
 				     ut->name(pv->GetLogicalVolume()),// parametrised volume
 				     pv->GetMultiplicity());// number of copies
 
 	  G4VSolid* solid = logvol->GetSolid();
-      
+
 	  for(int cpiter=1;cpiter!=pv->GetMultiplicity()+1;cpiter++)
 	    {
-        
+
 	      pv->GetParameterisation()->ComputeTransformation(cpiter-1,pv);
-        
+
 	      const G4RotationMatrix* r = pv->GetFrameRotation();
 
-	      double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles  
+	      double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
 	      if(r) getXYZ( r, rx, ry, rz );
-        
+
 	      if( G4Box* box = dynamic_cast<G4Box*>(solid) )
 		{
 		  pv->GetParameterisation()->ComputeDimensions(*box,cpiter-1,pv);
-          
+
 		  strcur->addBoxParameterisation(ut->name(pv->GetLogicalVolume()),
 						 param,  // volume
 						 cpiter,                            // copy number
@@ -524,10 +525,10 @@ void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
 		{
 		  std::cout << "Trying to parameterise unknown solid - it will not work!"
 			    << std::endl;
-		}        
+		}
 	    }
 	}
-      volstack.pop(); 
+      volstack.pop();
     }
 };
 
@@ -536,7 +537,7 @@ void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV)
 {
   std::cout << "Dumping geometry description into GDML file."
             << std::endl;
-	
+
   gdml::writer::DocumentBuilder db(outputFile);
   db.OpenDocument();
   db.setSchemaLocation( schemaLocation );
@@ -549,7 +550,7 @@ void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV)
 
   DumpMaterials();
   DumpSolids();
-	
+
   // Traverse the geometry hierarchy and write it down to the file
   std::cout << "Examining the logical tree" << std::endl;
   DumpGeoTree(worldPV);
@@ -558,7 +559,7 @@ void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV)
   stpcur->addSetup( "Default",                                // Setup ID
 		    "1.0",                                    // Setup version
 		    ut->name(worldPV->GetLogicalVolume()) ); // World vol. ref.
-	
+
   db.WriteDocument();
   db.CloseDocument();
   std::cout << "Written out GDML file." << std::endl;

@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: application.gmk,v 1.2 2005/03/07 21:54:44 rado Exp $
+# $Id: application.gmk,v 1.4 2005/05/12 20:35:58 jmccormi Exp $
 #
 # Application makefile fragment
 #
@@ -16,17 +16,18 @@
 # This makefile expects to be given the following variables
 #
 # PROJECT_TOP
-# SITE
 # PLATFORM
 # SUBSYSTEM
 # APP_NAME
 # 
+# Additional PROJECT_ vars are derived from PROJECT_TOP by including $(PROJECT_TOP)/project.gmk.
+#
 
-PROJECT_CONFIG           := $(PROJECT_TOP)/config/make
+# Setup package settings.
+include $(PROJECT_TOP)/config/make/project.gmk
 
-# include site & platform settings
-include $(PROJECT_CONFIG)/$(SITE)_settings.gmk
-include $(PROJECT_CONFIG)/$(PLATFORM)_settings.gmk
+# Setup local settings.
+include $(PROJECT_CONFIG)/local_settings.gmk
 
 APP_DIR              := $(PROJECT_TOP)/$(SUBSYSTEM)/$(APP_NAME)
 APP_BUILD_AREA       := $(PROJECT_BUILD_AREA)/$(PLATFORM)/$(SUBSYSTEM)/$(APP_NAME)
@@ -47,24 +48,41 @@ CPPFLAGS                 += $(PROJECT_INCLUDES)
 CXXFLAGS                 += $(PROJECT_INCLUDES)
 LDFLAGS                  += $(PROJECT_LINK_FLAGS)
 
+# package dependencies
 include $(PROJECT_CONFIG)/package_deps.gmk
+
+# Redo link order for GDML for static libs! (will cause some duplication of libs in LDFLAGS)
+include $(PROJECT_CONFIG)/gdml_link_libs.gmk
+
+# Setup external dependencies.  This gmk includes them in correct order for static linking.
+include $(PROJECT_CONFIG)/ext_deps.gmk
 
 VPATH := $(PACKAGE_DIR) $(PACKAGE_BUILD_AREA)
 
-#include external software
-include $(PROJECT_CONFIG)/ext_$(SITE)_xercesc.gmk
-include $(PROJECT_CONFIG)/ext_$(SITE)_geant4.gmk
-include $(PROJECT_CONFIG)/ext_$(SITE)_clhep.gmk
+# Check if platform supports shared libs and user selected this as an option at configure time.
+include $(PROJECT_CONFIG)/check_lib.gmk
 
-ifdef PLATFORM_SUPPORTS_SHARED_LIBS
-
-$(APP_NAME)_target: app_info $(APP_TARGET) $(APP_STATIC_TARGET) app_done
-
+ifdef DO_BOTH_LIBS
+  app_target := app_info $(APP_TARGET) $(APP_STATIC_TARGET) app_done
 else
-
-$(APP_NAME)_target: app_info $(APP_STATIC_TARGET) app_done
-
+  ifdef DO_SHARED_LIBS
+    app_target := app_info $(APP_TARGET) app_done
+  else
+    app_target := app_info $(APP_STATIC_TARGET) app_done
+  endif
 endif
+
+$(APP_NAME)_target: $(app_target)
+
+#ifdef DO_SHARED_LIBS
+
+#$(APP_NAME)_target: app_info $(APP_TARGET) $(APP_STATIC_TARGET) app_done
+
+#else
+
+#$(APP_NAME)_target: app_info $(APP_STATIC_TARGET) app_done
+
+#endif
 
 # Possibly static target
 .PHONY: $(APP_STATIC_TARGET)
@@ -78,7 +96,7 @@ $(APP_STATIC_TARGET): $(APP_DEPENDENCY_FILES) $(APP_OBJECT_FILES)
 .PHONY: $(APP_TARGET)
 $(APP_TARGET): $(APP_DEPENDENCY_FILES) $(APP_OBJECT_FILES)
 	@echo
-	@echo "Building shared application binary $@"
+	@echo "Building shared application binary $@"	
 	@echo
 	@test -d $(PROJECT_TOP)/build/$(PLATFORM)/bin || mkdir -pv $(PROJECT_TOP)/build/$(PLATFORM)/bin
 	$(CXX) -o $@ $(APP_OBJECT_FILES) $(CXXFLAGS) $(PLATFORM_EXE_SHLIB_FLAGS) $(LDFLAGS)

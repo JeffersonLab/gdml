@@ -1,6 +1,6 @@
 //
-// $Id: paramalgProcess.cpp,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: paramalgProcess.cpp,v 1.2 2005/05/26 20:51:59 jmccormi Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 #include "Processes/ParameterisationAlgTypeProcess.h"
 
 #include "Schema/paramalg.h"
@@ -16,7 +16,7 @@ public:
   }
 
   // Analogical to SAX startElement callback
-  virtual void StartElement( const std::string&, const ASCIIAttributeList& attrs) {
+  virtual void StartElement( const std::string&, const ASCIIAttributeList&) {
     //std::cout << "PROCESS::START OF TAG  : " << name << std::endl;
 
     SAXObject** obj = Context()->GetTopObject();

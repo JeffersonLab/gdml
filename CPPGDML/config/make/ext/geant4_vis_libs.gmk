@@ -1,0 +1,7 @@
+GEANT4_LIBLIST += -lG4FR \
+	-lG4visHepRep \
+	-lG4RayTracer \
+	-lG4VRML \
+	-lG4Tree \
+	-lG4vis_management \
+	-lG4modeling

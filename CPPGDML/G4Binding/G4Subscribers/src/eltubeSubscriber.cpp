@@ -6,6 +6,7 @@
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "G4VSolid.hh"
 #include "G4EllipticalTube.hh"
@@ -50,7 +51,7 @@ public:
         sval += obj->get_lunit();
         double dz = calc->Eval( sval );
         
-        G4VSolid* newobj = new G4EllipticalTube( name, dx, dy, dz );
+        G4VSolid* newobj = new G4EllipticalTube( Util::generateName(name), dx, dy, dz );
         
         GDMLProcessor::GetInstance()->AddSolid( name, newobj );      
       } catch(...) {
@@ -59,7 +60,7 @@ public:
     } else {
       std::cerr << "GOT ZERO DATA POINTER!" << std::endl;
     }
-    delete object;
+    //delete object;
   }
 };
 

@@ -4,6 +4,7 @@
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Subscribers/Util.h"
 
 #include "Schema/torus.h"
 
@@ -55,7 +56,7 @@ class torusSubscriber : public SAXSubscriber
           sval += "*"+aunit;
           double deltaphi = calc->Eval( sval );
           
-          G4VSolid* newobj = new G4Torus( name, rmin, rmax, rtor,
+          G4VSolid* newobj = new G4Torus( Util::generateName(name), rmin, rmax, rtor,
                                           startphi, deltaphi );
           
           GDMLProcessor::GetInstance()->AddSolid( name, newobj );      
@@ -65,7 +66,7 @@ class torusSubscriber : public SAXSubscriber
       } else {
         std::cerr << "GOT ZERO DATA POINTER!" << std::endl;
       }
-      delete object;
+      //delete object;
     }
 };
 

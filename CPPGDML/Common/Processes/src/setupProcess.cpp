@@ -21,10 +21,10 @@
 // ********************************************************************
 //
 //
-// $Id: setupProcess.cpp,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: setupProcess.cpp,v 1.4 2005/06/01 01:37:20 jmccormi Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 //
-// 
+//
 // --------------------------------------------------------------
 // Comments
 //
@@ -62,20 +62,24 @@ class setupProcess : public SAXStateProcess
       //std::cout << "PROCESS::START OF TAG  : " << name << std::endl;
 
       SAXObject** obj = Context()->GetTopObject();
-    
+
       m_setup = new setup;
       m_setup->set_name( attrs.getValue( "name" ) );
       m_setup->set_version( attrs.getValue( "version" ) );
-    
+
       if( Context()->GetConfig()->SetupName().empty() ) {
+#ifdef GDML_VERBOSE
         std::cerr << "PROCESS:: " << name
                   << " WARNING:: No setup name given, taking the first found..." << std::endl;
+#endif
         m_setup->set_match( true );
       } else {
         if( m_setup->get_name() == Context()->GetConfig()->SetupName() ) {
           if( Context()->GetConfig()->SetupVersion().empty() ) {
+#ifdef GDML_VERBOSE
             std::cerr << "PROCESS:: " << name
                       << " WARNING:: No setup version given, taking the first found..." << std::endl;
+#endif
             m_setup->set_match( true );
           } else {
             if( m_setup->get_version() == Context()->GetConfig()->SetupVersion() ) {
@@ -84,7 +88,7 @@ class setupProcess : public SAXStateProcess
           }
         }
       }
-    
+
       *obj = m_setup;
     }
 
@@ -129,7 +133,7 @@ class setupProcess : public SAXStateProcess
             m_ignoreTheRest = true;
           }
         } else {
-          std::cerr << "NOTIFY AFTER TAG:: " << name << " ERROR:: BAD OBJECT TYPE...\a" << std::endl;      
+          std::cerr << "NOTIFY AFTER TAG:: " << name << " ERROR:: BAD OBJECT TYPE...\a" << std::endl;
         }
       } else {
         std::cout << "NOTIFY AFTER TAG:: " << name << " Ignoring world volume..." << std::endl;
@@ -149,4 +153,4 @@ class setupProcess : public SAXStateProcess
 
 DECLARE_PROCESS_FACTORY(setupProcess)
 
-  
+

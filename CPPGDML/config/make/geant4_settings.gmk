@@ -1,0 +1,3 @@
+# Local Geant4 Settings.
+CXXFLAGS += -DG4VIS_USE
+CXXFLAGS += -DG4UI_USE

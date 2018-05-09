@@ -1,0 +1,49 @@
+# $Header: /cvs/simu/simu/GDML2/CPPGDML/configure.in,v 1.1 2005/05/04 02:12:16 jmccormi Exp $
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.57)
+AC_INIT(CPPGDML, 2.1.0, jeremym@slac.stanford.edu)
+
+# don't take defaults from this
+CXXFLAGS=""
+
+AC_CONFIG_SRCDIR([G4Binding/G4Writer/src/G4GDMLWriter.cpp])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_CC
+
+# initialize GDML setup
+GAC_INIT
+
+# setup GDML
+GAC_SETUP_GDML
+
+# setup Xerces
+GAC_SETUP_XERCESC
+
+# setup CLHEP
+GAC_SETUP_CLHEP
+
+# setup Geant4
+GAC_SETUP_GEANT4
+
+# checks for typedefs, structures, and compiler characteristics
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+
+# checks for library functions
+AC_FUNC_ERROR_AT_LINE
+AC_CHECK_FUNCS([sqrt])
+
+# basic substitutions
+AC_SUBST(CXXFLAGS)
+AC_SUBST(CPPFLAGS)
+AC_SUBST(DEFS)
+
+# All settings from Autoconf are put into this include file.
+AC_CONFIG_FILES([config/make/local_settings.gmk])
+
+AC_OUTPUT

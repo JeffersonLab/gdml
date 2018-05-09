@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: package.gmk,v 1.9 2005/03/07 21:54:44 rado Exp $
+# $Id: package.gmk,v 1.11 2005/05/12 20:35:58 jmccormi Exp $
 #
 # Package build rules
 #
@@ -24,15 +24,17 @@
 # package_tests - list of tests, automatically built
 #
 
-PROJECT_CONFIG           := $(PROJECT_TOP)/config/make
+# Setup pkg vars.
+include $(PROJECT_TOP)/config/make/project.gmk
 
-# include site & platform settings
-include $(PROJECT_CONFIG)/$(SITE)_settings.gmk
-include $(PROJECT_CONFIG)/$(PLATFORM)_settings.gmk
+# Setup local settings.
+include $(PROJECT_CONFIG)/local_settings.gmk
 
+# define package dirs
 PACKAGE_DIR              := $(PROJECT_TOP)/$(SUBSYSTEM)/$(PACKAGE_NAME)
 PACKAGE_BUILD_AREA       := $(PROJECT_BUILD_AREA)/$(PLATFORM)/$(SUBSYSTEM)/$(PACKAGE_NAME)
 
+# package file lists
 PACKAGE_SOURCE_FILES     := $(notdir $(wildcard src/*.cpp))
 PACKAGE_OBJECT_FILES     := $(patsubst %.cpp,%.o,$(notdir $(wildcard src/*.cpp)))
 PACKAGE_DEPENDENCY_FILES := $(patsubst %.cpp,%.d,$(notdir $(wildcard src/*.cpp)))
@@ -43,6 +45,7 @@ PACKAGE_OBJECT_FILES     := $(addprefix $(PACKAGE_BUILD_AREA)/,$(PACKAGE_OBJECT_
 
 PROJECT_INCLUDES         += -I$(PACKAGE_DIR)
 
+# flags
 CPPFLAGS                 += $(PROJECT_INCLUDES)
 CXXFLAGS                 += $(PROJECT_INCLUDES)
 LDFLAGS                  += $(PROJECT_LINKER_FLAGS)
@@ -52,7 +55,7 @@ ifneq ($(REQUIRED_PACKAGES),)
 CPPFLAGS                 += $(foreach package,$(REQUIRED_PACKAGES),-I$(PROJECT_TOP)/$(package) )
 CXXFLAGS                 += $(foreach package,$(REQUIRED_PACKAGES),-I$(PROJECT_TOP)/$(package) )
 LDFLAGS                  += -L$(PROJECT_TOP)/build/$(PLATFORM)/lib
-LDFLAGS                  += $(foreach package,$(REQUIRED_PACKAGES),-l$(SITE_LIB_PREFIX)$(notdir $(package)) )
+LDFLAGS                  += $(foreach package,$(REQUIRED_PACKAGES),-l$(TARGET_LIB_PREFIX)$(notdir $(package)) )
 endif
 
 # Build package libraries
@@ -71,26 +74,50 @@ PACKAGE_TEST_OBJECT_FILES     := $(addprefix $(PACKAGE_BUILD_AREA)/tests/,$(fore
 
 VPATH += $(PACKAGE_TEST_DIRS) $(PACKAGE_BUILD_AREA)/tests
 
-#include external software
-include $(PROJECT_CONFIG)/ext_$(SITE)_xercesc.gmk
-include $(PROJECT_CONFIG)/ext_$(SITE)_geant4.gmk
-include $(PROJECT_CONFIG)/ext_$(SITE)_clhep.gmk
+# check if platform supports shared libs and user select this as an option
+include $(PROJECT_CONFIG)/check_lib.gmk
 
-ifdef PLATFORM_SUPPORTS_SHARED_LIBS
+# include external dependencies
+include $(PROJECT_CONFIG)/ext_deps.gmk
 
-$(PACKAGE_NAME)_target: package_info $(PROJECT_BUILD_AREA)/$(PLATFORM)/lib/$(package_static_lib_name) $(PROJECT_BUILD_AREA)/$(PLATFORM)/lib/$(package_shared_lib_name) build_$(SUBSYSTEM)_$(PACKAGE_NAME)_tests package_done
+# set target vars
+static_lib := $(PROJECT_BUILD_AREA)/$(PLATFORM)/lib/$(package_static_lib_name)
+shared_lib := $(PROJECT_BUILD_AREA)/$(PLATFORM)/lib/$(package_shared_lib_name)
 
-.PHONY: build_$(SUBSYSTEM)_$(PACKAGE_NAME)_tests
-build_$(SUBSYSTEM)_$(PACKAGE_NAME)_tests: $(PACKAGE_TEST_TARGETS) $(PACKAGE_TEST_STATIC_TARGETS)
+shared_target            := package_info $(shared_lib) $(test_lib) package_done
+static_target            := package_info $(static_lib) $(test_lib) package_done
+shared_and_static_target := package_info $(static_lib) $(shared_lib) $(test_lib) package_done
 
+static_test := $(PACKAGE_TEST_STATIC_TARGETS) 
+shared_test := $(PACKAGE_TEST_LIBS)
+shared_and_static_test := $(static_target_tests) $(shared_target_tests)
+
+# set real package/lib target according to Autoconf selections...
+
+# both static and shared
+ifdef DO_BOTH_LIBS
+  package_target := $(shared_and_static_target)
+  test_lib       := $(shared_and_static_test)
 else
-
-$(PACKAGE_NAME)_target: package_info $(PROJECT_BUILD_AREA)/$(PLATFORM)/lib/$(package_static_lib_name) build_$(SUBSYSTEM)_$(PACKAGE_NAME)_tests package_done
-
-.PHONY: build_$(SUBSYSTEM)_$(PACKAGE_NAME)_tests
-build_$(SUBSYSTEM)_$(PACKAGE_NAME)_tests: $(PACKAGE_TEST_STATIC_TARGETS)
-
+  # shared only
+  ifdef DO_SHARED_LIBS
+    package_target := $(shared_target)
+    test_lib       := $(shared_test)
+  # static only (default)
+  else
+    package_target := $(static_target)
+    test_lib       := $(static_test)
+  endif
 endif
+
+# package target
+$(PACKAGE_NAME)_target: $(package_target)
+
+# phony target
+.PHONY: build_$(SUBSYSTEM)_$(PACKAGE_NAME)_tests
+
+# test target
+build_$(SUBSYSTEM)_$(PACKAGE_NAME)_tests: $(test_lib)
 
 .PHONY: $(package_static_lib_name)
 $(PROJECT_BUILD_AREA)/$(PLATFORM)/lib/$(package_static_lib_name): $(PACKAGE_DEPENDENCY_FILES) $(PACKAGE_OBJECT_FILES)
@@ -161,13 +188,13 @@ endif
 $(PROJECT_BUILD_AREA)/$(PLATFORM)/bin/tests/test_$(SUBSYSTEM)_$(PACKAGE_NAME)_%: %.o
 	@test -d $(PROJECT_BUILD_AREA)/$(PLATFORM)/bin/tests || mkdir -pv $(PROJECT_BUILD_AREA)/$(PLATFORM)/bin/tests
 	@echo "Building test $@"
-	@$(CXX) -o $@ $< $(CXXFLAGS) $(PLATFORM_EXE_SHLIB_FLAGS) $(LDFLAGS) -L$(PROJECT_BUILD_AREA)/$(PLATFORM)/lib -l$(SITE_LIB_PREFIX)$(PACKAGE_NAME)
+	@$(CXX) -o $@ $< $(CXXFLAGS) $(PLATFORM_EXE_SHLIB_FLAGS) $(LDFLAGS) -L$(PROJECT_BUILD_AREA)/$(PLATFORM)/lib -l$(TARGET_LIB_PREFIX)$(PACKAGE_NAME)
 
 # Build package static test executable files from .cpp files
 $(PROJECT_BUILD_AREA)/$(PLATFORM)/bin/tests/test_static_$(SUBSYSTEM)_$(PACKAGE_NAME)_%: %.o
 	@test -d $(PROJECT_BUILD_AREA)/$(PLATFORM)/bin/tests || mkdir -pv $(PROJECT_BUILD_AREA)/$(PLATFORM)/bin/tests
 	@echo "Building static test $@"
-	@$(CXX) -static -o $@ $< $(CXXFLAGS) $(LDFLAGS) -L$(PROJECT_BUILD_AREA)/$(PLATFORM)/lib -l$(SITE_LIB_PREFIX)$(PACKAGE_NAME)
+	@$(CXX) -static -o $@ $< $(CXXFLAGS) $(LDFLAGS) -L$(PROJECT_BUILD_AREA)/$(PLATFORM)/lib -l$(TARGET_LIB_PREFIX)$(PACKAGE_NAME)
 
 # Build package test dependency files
 $(PACKAGE_BUILD_AREA)/tests/%.d: %.cpp

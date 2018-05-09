@@ -21,10 +21,10 @@
 // ********************************************************************
 //
 //
-// $Id: GDMLProcessor.h,v 1.1 2005/03/02 10:50:37 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: GDMLProcessor.h,v 1.2 2005/06/01 01:38:25 jmccormi Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 //
-// 
+//
 // --------------------------------------------------------------
 // Comments
 //
@@ -66,34 +66,34 @@ public:
   typedef std::map<std::string,G4LogicalVolume*>   LogicalVolumes;
   typedef std::map<std::string,G4AssemblyVolume*>  AssemblyVolumes;
   typedef std::map<std::string,G4VPhysicalVolume*> PhysicalVolumes;
-  
+
   static GDMLProcessor* GetInstance();
-  
+
   GDMLExpressionEvaluator* GetEvaluator();
-  
+
   ~GDMLProcessor();
-  
+
   void AddPosition( const std::string& name, G4ThreeVector* p );
   void AddPosition( const char* name, G4ThreeVector* p );
-  
+
   void AddRotation( const std::string& name, G4RotationMatrix* p );
   void AddRotation( const char* name, G4RotationMatrix* p );
-  
+
   void AddSolid( const std::string& name, G4VSolid* p );
   void AddSolid( const char* name, G4VSolid* p );
-  
+
   void AddLogicalVolume( const std::string& name, G4LogicalVolume* p );
   void AddLogicalVolume( const char* name, G4LogicalVolume* p );
-  
+
   void AddAssemblyVolume( const std::string& name, G4AssemblyVolume* p );
   void AddAssemblyVolume( const char*        name, G4AssemblyVolume* p );
-  
+
   void AddPhysicalVolume( const std::string& name, G4VPhysicalVolume* p );
   void AddPhysicalVolume( const char* name, G4VPhysicalVolume* p );
-  
+
   const G4ThreeVector*    GetPosition( const std::string& name );
   const G4ThreeVector*    GetPosition( const char* name );
-  
+
   const G4RotationMatrix* GetRotation( const std::string& name );
   const G4RotationMatrix* GetRotation( const char* name );
 
@@ -102,26 +102,31 @@ public:
 
   const G4LogicalVolume* GetLogicalVolume( const std::string& name );
   const G4LogicalVolume* GetLogicalVolume( const char* name );
-  
+
   const G4AssemblyVolume* GetAssemblyVolume( const std::string& name );
   const G4AssemblyVolume* GetAssemblyVolume( const char* name );
 
   const G4VPhysicalVolume* GetPhysicalVolume( const std::string& name );
   const G4VPhysicalVolume* GetPhysicalVolume( const char* name );
-  
+
   const G4VPhysicalVolume* GetWorldVolume()
   {
     return fWorldVolume;
   }
-  
+
   void SetWorldVolume( G4VPhysicalVolume* newWorldVolume )
   {
     fWorldVolume = newWorldVolume;
   }
 
+  G4ThreeVector* getIdentityPosition()
+  {
+    return &fIdentityPos;
+  }
+
 protected:
   GDMLProcessor();
-  
+
 private:
   GDMLExpressionEvaluator*       fCalc;
   GDMLProcessor::Positions       fPTable;
@@ -131,6 +136,8 @@ private:
   GDMLProcessor::AssemblyVolumes fAVolumes;
   GDMLProcessor::PhysicalVolumes fPVolumes;
   G4VPhysicalVolume*             fWorldVolume;
+
+  G4ThreeVector fIdentityPos;
 };
 
 #endif // GDML_PROCESSOR_H

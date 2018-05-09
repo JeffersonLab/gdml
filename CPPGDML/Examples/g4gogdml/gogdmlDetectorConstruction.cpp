@@ -12,9 +12,10 @@
 gogdmlDetectorConstruction::gogdmlDetectorConstruction()
 {
   sxp.Initialize();
-  config.SetURI( "test.gdml" );
+  config.SetURI( "geo.gdml" );
   config.SetSetupName( "Default" );
   sxp.Configure( &config );
+
 }
 
 gogdmlDetectorConstruction::~gogdmlDetectorConstruction()

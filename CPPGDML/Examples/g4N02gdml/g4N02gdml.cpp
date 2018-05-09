@@ -62,7 +62,7 @@ int main(int argc,char** argv) {
   G4VPhysicalVolume* g4wv = G4TransportationManager::GetTransportationManager()->
     GetNavigatorForTracking()->GetWorldVolume();
   
-  G4GDMLWriter g4writer("../../GDMLSchema/gdml_2.0.xsd", "g4writertest.gdml");
+  G4GDMLWriter g4writer("../../../GDMLSchema/gdml.xsd", "geo.gdml");
 
   try
   {

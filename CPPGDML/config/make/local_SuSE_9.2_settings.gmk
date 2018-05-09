@@ -1,9 +1,0 @@
-# -*-Makefile-*-
-# $Id: local_SuSE_9.2_settings.gmk,v 1.1 2005/03/07 21:54:44 rado Exp $
-
-# CERN AFS/LCG dependent build settings
-
-SITE_EXTSW_BASE := /opt/lcg/sw/external
-SITE_LIB_PREFIX := lcg_
-
-

@@ -1,3 +1,12 @@
+2005-06-09  Witek Pokorski <Witold.Pokorski@cern.ch>
+        * config/autoconf: the build system has been extended by an Autoconf front-end;
+	work done by Jeremy
+	* G4Subscribers: a simple utility method has been added Util::generateName 
+	which allows a non-trivial mapping of names (of volumes, solids, etc) used in GDML 
+	( which must be unique ) to the names used in G4 objects. This is useful in case 
+	of processing GDML files which where generated automatically (by GDMLWriter) and which 
+	had hexadecimal addresses appended to the names in order to guarantee uniqueness. 
+
 2005-03-02  Radovan CHYTRACEK  <radovan.chytracek@cern.ch>
 
 	* config/make/application.gmk: Added application builder makefile

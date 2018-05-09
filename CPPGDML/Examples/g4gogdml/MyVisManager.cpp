@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: MyVisManager.cpp,v 1.2 2005/03/07 21:54:44 rado Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: MyVisManager.cpp,v 1.3 2005/05/04 02:24:08 jmccormi Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 //
 //
 // John Allison 24th January 1998.
@@ -57,9 +57,15 @@ MyVisManager::MyVisManager () {}
 
 void MyVisManager::RegisterGraphicsSystems () {
 
-//  RegisterGraphicsSystem (new G4OpenGLImmediateX);
-//  RegisterGraphicsSystem (new G4OpenGLStoredX);
-  RegisterGraphicsSystem (new G4DAWNFILE);
+    // Graphics Systems not needing external packages or libraries...
+    RegisterGraphicsSystem (new G4ASCIITree);
+    RegisterGraphicsSystem (new G4DAWNFILE);
+    RegisterGraphicsSystem (new G4GAGTree);
+    RegisterGraphicsSystem (new G4HepRepFile);
+    RegisterGraphicsSystem (new G4HepRep);
+    RegisterGraphicsSystem (new G4RayTracer);
+    RegisterGraphicsSystem (new G4VRML1File);
+    RegisterGraphicsSystem (new G4VRML2File);
 
   if (fVerbose > 0) {
     G4cout <<

@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: SAXSubscriberPool.cpp,v 1.1 2005/02/11 17:58:48 rado Exp $
-// GEANT4 tag $Name: GDML_2_1_0 $
+// $Id: SAXSubscriberPool.cpp,v 1.2 2005/05/13 00:55:57 jmccormi Exp $
+// GEANT4 tag $Name: GDML_2_2_0 $
 //
 // 
 // --------------------------------------------------------------
@@ -38,7 +38,9 @@
 
 SAXSubscriberPool::SAXSubscriberPool()
 {
+#ifdef GDML_VERBOSE
   std::cout << "Subcriber pool created" << std::endl;
+#endif
 }
 
 SAXSubscriberPool::~SAXSubscriberPool()
@@ -114,11 +116,15 @@ void SAXSubscriberPool::Initialize()
     SAXSubscriber::SubscriptionSet::const_iterator sit;
     for( sit = subs->begin(); sit != subs->end(); sit++ )
     {
+#ifdef GDML_VERBOSE
       std::cout << "Adding subscriber for tag: " << (*sit) << std::endl;
+#endif
       AddSubscriber( *sit, subscriber );    
     }
   }
+#ifdef GDML_VERBOSE
   std::cout << "========================================================" << std::endl;
+#endif
 }
 
 void SAXSubscriberPool::Reset() {
