@@ -1,3 +1,11 @@
+29.11.2017 - GDML_3_1_6
+-----------------------
+
+- Updated GDML schema:
+  o Extended description for TwistedTubs, to handle all possible configurations
+    for the shape, included asymmetric ones.
+- Updated documentation accordingly (GDML Guide v.2.7).
+
 22.06.2017 - GDML_3_1_5
 -----------------------
 
