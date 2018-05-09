@@ -2,6 +2,11 @@ STEPWriter is a tool which allows to convert the ST-Viewer (CAD
 visualisation tool) intermediate files (.geom and .tree) into GDML. It
 uses tessellated solids to represent the geometry. 
 
+The STEPWriter is not build by default. In order to build it one has
+to add --enable-build-stepwrt=yes option to the configure command.
+The STEPWriter is build as a separate library which one needs to link
+against.
+
 In order to use it, one has to include the appropriate header file
 
 	#include "STEPWriter/STEPWriter.h"

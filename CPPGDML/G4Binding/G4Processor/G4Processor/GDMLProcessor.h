@@ -38,6 +38,8 @@ public:
   typedef std::map<std::string,G4VPhysicalVolume*> PhysicalVolumes;
 
   static GDMLProcessor* GetInstance();
+  void SetDuplicationWarning(const std::string& firstFileName);
+  void UnsetDuplicationWarning();
 
   GDMLExpressionEvaluator* GetEvaluator();
 
@@ -60,6 +62,9 @@ public:
 
   void AddPhysicalVolume( const std::string& name, G4VPhysicalVolume* p );
   void AddPhysicalVolume( const char* name, G4VPhysicalVolume* p );
+  
+  void AddParsedFile( const std::string& name, G4VPhysicalVolume* p );
+  void AddParsedFile( const char* name, G4VPhysicalVolume* p );
 
   const G4ThreeVector*    GetPosition( const std::string& name );
   const G4ThreeVector*    GetPosition( const char* name );
@@ -78,22 +83,81 @@ public:
 
   const G4VPhysicalVolume* GetPhysicalVolume( const std::string& name );
   const G4VPhysicalVolume* GetPhysicalVolume( const char* name );
+  
+  const G4VPhysicalVolume* GetWorldVolumeOfParsedFile( const std::string& name );
+  const G4VPhysicalVolume* GetWorldVolumeOfParsedFile( const char* name );
 
   const G4VPhysicalVolume* GetWorldVolume()
   {
+    return WorldVolumes[WorldVolumes.size()-1];
+  }
+  
+  const G4VPhysicalVolume* GetTempWorldVolume()
+  {
     return fWorldVolume;
+  }
+  
+  G4VPhysicalVolume* GetWorldVolume(int i)
+  {
+    return WorldVolumes[i];
   }
 
   void SetWorldVolume( G4VPhysicalVolume* newWorldVolume )
   {
     fWorldVolume = newWorldVolume;
+    WorldVolumes.push_back(newWorldVolume);
   }
 
   G4ThreeVector* getIdentityPosition()
   {
     return &fIdentityPos;
   }
-
+  
+  
+  bool alreadyParsed(const std::string& name)
+  {
+   std::map<std::string,G4VPhysicalVolume*>::iterator i = Files_Volumes_Map.find(name);
+   if(i!=Files_Volumes_Map.end()) // found
+   {
+    return true;
+   }
+   else
+   {
+    return false;
+   }  
+  }
+  
+  void checkDuplication(const std::string& solidName)
+  {
+   std::map<std::string,std::string>::iterator i = SolidNames_FileNames_Map.find(solidName);
+   if(i!=SolidNames_FileNames_Map.end()) // found
+   {
+    if(i->second == fileCurrentlyParsed)
+    {
+     //Should not happen
+    }
+    else
+    {
+     std::cout << "Warning!!! Solid named: " << i->first << " was already defined in file: " << i->second << ". It will be instantiated twice!" << std::endl;
+    }
+   }
+   else
+   {
+    SolidNames_FileNames_Map[solidName] = fileCurrentlyParsed;
+   }
+  }
+  
+  bool isDuplicationWarningOn()
+  {
+   return duplicationWarning;
+  }
+  
+  void currentlyParsing(const std::string& name)
+  {
+   std::cout << "PARSING : " << name << std::endl;
+   fileCurrentlyParsed = name;
+  }
+  
 protected:
   GDMLProcessor();
 
@@ -106,6 +170,13 @@ private:
   GDMLProcessor::AssemblyVolumes fAVolumes;
   GDMLProcessor::PhysicalVolumes fPVolumes;
   G4VPhysicalVolume*             fWorldVolume;
+  
+  bool duplicationWarning;
+  std::map<std::string,std::string> SolidNames_FileNames_Map;
+  std::string fileCurrentlyParsed;
+  
+  std::vector<G4VPhysicalVolume*> WorldVolumes;
+  std::map<std::string,G4VPhysicalVolume*> Files_Volumes_Map;
 
   G4ThreeVector fIdentityPos;
 };

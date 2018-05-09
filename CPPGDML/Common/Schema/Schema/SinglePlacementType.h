@@ -1,16 +1,28 @@
 // -*- C++ -*-
-// $Id: SinglePlacementType.h,v 1.1 2005/02/28 13:21:30 witoldp Exp $
+// $Id: SinglePlacementType.h,v 1.2 2006/07/19 14:57:50 dkruse Exp $
 #ifndef GDML_SCHEMA_SINGLEPLACEMENTTYPE_H
 #define GDML_SCHEMA_SINGLEPLACEMENTTYPE_H 1
 
 #include "ContentGroup.h"
 #include "ReferenceType.h"
+#include "FileReferenceType.h"
 #include "Schema/positionType.h"
 #include "Schema/rotationType.h"
 
 class SinglePlacementType
 {
   public:
+    
+    class file : public SAXObject, public FileReferenceType {
+      public:
+        file() {
+        }
+        virtual ~file() {
+        }
+        virtual SAXObject::Type type() {
+          return SAXObject::element;
+        }
+    };
     
     class volumeref : public SAXObject, public ReferenceType {
       public:

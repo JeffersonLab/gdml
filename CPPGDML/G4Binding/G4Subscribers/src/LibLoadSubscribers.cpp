@@ -27,5 +27,9 @@ void GDMLSubscriberLibLoad() {
     LOAD_COMPONENT(tetSubscriber)
     LOAD_COMPONENT(volumeSubscriber)
     LOAD_COMPONENT(assemblySubscriber)
+    LOAD_COMPONENT(twistedboxSubscriber)
+    LOAD_COMPONENT(twistedtubsSubscriber)
+    LOAD_COMPONENT(twistedtrapSubscriber)
+    LOAD_COMPONENT(twistedtrdSubscriber)
     LOAD_COMPONENT(setupSubscriber)
 }

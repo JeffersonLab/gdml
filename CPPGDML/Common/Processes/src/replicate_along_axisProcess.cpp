@@ -1,6 +1,6 @@
 //
 // $Id: replicate_along_axisProcess.cpp,v 1.1 2005/11/03 09:29:44 witoldp Exp $
-// GEANT4 tag $Name:  $
+// GEANT4 tag $Name: GDML_2_7_0 $
 #include "Processes/ReplicationAlgTypeProcess.h"
 
 #include "Schema/replicate_along_axis.h"

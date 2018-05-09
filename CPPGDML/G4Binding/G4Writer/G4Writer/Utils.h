@@ -1,4 +1,4 @@
-// $Id: Utils.h,v 1.3 2006/07/13 08:52:10 witoldp Exp $
+// $Id: Utils.h,v 1.4 2006/07/26 13:31:01 dkruse Exp $
 #ifndef WRITERG4_UTILS_H 
 #define WRITERG4_UTILS_H 1
 
@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+#include <vector>
 
 #include "G4LogicalVolume.hh"
 #include "G4Element.hh"
@@ -28,6 +29,8 @@ private:
   std::map<std::string, const G4VSolid*> solids;
   std::map<std::string, const G4VPhysicalVolume*> pvolumes;
   std::map<std::string, const G4LogicalVolume*> lvolumes;
+  
+  int nameFormat;
 
   int elenumb;
   std::string elename;
@@ -42,7 +45,23 @@ private:
 
 public:
 
-  Utils() {};
+  Utils(int format = 0) 
+  {
+   if(format == 0 || format == 1 || format == 2)
+   /*
+     NAME SUFFIX:
+   
+     0: Hexadecimal addresses (stripping - POSSIBLY UNSAFE);
+     1: Long addresses (no stripping - SAFE);
+     2: No suffix (no stripping - VERY UNSAFE);
+     
+     DEFAULT: 0
+   */
+   {
+    nameFormat = format;
+   }
+   else nameFormat = 0;
+  }
   ~Utils() {};
   
   // The method below is to filter out some bad characters or redundant bits of the names coming from 
@@ -112,12 +131,23 @@ public:
     return cname;
   }
   //  
-  std::string name(const G4Element* ptr, std::string oname="")
+  std::string name(const G4Element* ptr/*, std::string oname=""*/)
   {
     elename = ptr->GetName();
     elename = filter(elename);
     std::ostringstream os;
-    os << "_" << (long int)ptr;
+    if(nameFormat == 0)
+    {
+     os << ptr;
+    }
+    else if (nameFormat == 1)
+    {
+     os << "_" << (long int)ptr;
+    }
+    else if (nameFormat == 2)
+    {
+     os << "";
+    }
     std::string ssn = os.str();
      
     return elename+ssn;
@@ -148,12 +178,23 @@ public:
     */
   };
   
-  std::string name(const G4Material* ptr, std::string oname="")
+  std::string name(const G4Material* ptr/*, std::string oname=""*/)
   {
     matname = ptr->GetName();
     matname = filter(matname);
     std::ostringstream os;
-    os << "_" << (long int)ptr;
+    if(nameFormat == 0)
+    {
+     os << ptr;
+    }
+    else if (nameFormat == 1)
+    {
+     os << "_" << (long int)ptr;
+    }
+    else if (nameFormat == 2)
+    {
+     os << "";
+    }
     std::string ssn = os.str();
      
     return matname+ssn;
@@ -189,13 +230,24 @@ public:
     solname = ptr->GetName();
     solname = filter(solname);
     std::ostringstream os;
-    os << "_" << (long int)ptr;
+    if(nameFormat == 0)
+    {
+     os << ptr;
+    }
+    else if (nameFormat == 1)
+    {
+     os << "_" << (long int)ptr;
+    }
+    else if (nameFormat == 2)
+    {
+     os << "";
+    }
     std::string ssn = os.str();
      
     return solname+ssn;
   };
     
-//   std::string name(const G4VSolid* ptr, std::string oname="")
+//   std::string name(const G4VSolid* ptr/*, std::string oname=""*/)
 //   {
 //     if(oname=="")
 //       {
@@ -221,16 +273,27 @@ public:
 //     return oname;
 //   };
     
-  std::string name(const G4VPhysicalVolume* ptr, std::string oname="")
+  std::string name(const G4VPhysicalVolume* ptr/*, std::string oname=""*/)
   {
     //    std::stringstream cpnb;
     //    cpnb << ptr->GetCopyNo();
     //    std::string scpnb(cpnb.str());
 
     pvolname = ptr->GetName();
-    pvolname = filter(pvolname);
+    pvolname = filter(pvolname);    
     std::ostringstream os;
-    os << "_" << (long int)ptr;
+    if(nameFormat == 0)
+    {
+     os << ptr;
+    }
+    else if (nameFormat == 1)
+    {
+     os << "_" << (long int)ptr;
+    }
+    else if (nameFormat == 2)
+    {
+     os << "";
+    }
     std::string ssn = os.str();
      
     return pvolname+ssn;
@@ -261,12 +324,23 @@ public:
     */ 
   };
     
-  std::string name(const G4LogicalVolume* ptr, std::string oname="")
+  std::string name(const G4LogicalVolume* ptr/*, std::string oname=""*/)
   {
     lvolname = ptr->GetName();
-    pvolname = filter(pvolname);
+    lvolname = filter(lvolname);
     std::ostringstream os;
-    os << "_" << (long int)ptr;
+    if(nameFormat == 0)
+    {
+     os << ptr;
+    }
+    else if (nameFormat == 1)
+    {
+     os << "_" << (long int)ptr;
+    }
+    else if (nameFormat == 2)
+    {
+     os << "";
+    }
     std::string ssn = os.str();
      
     return lvolname+ssn;
@@ -298,4 +372,6 @@ public:
   };  
   //
 };
+
+
 #endif // WRITERG4_UTILS_H

@@ -21,9 +21,9 @@ fi
 ./configure --with-platform=${PLATFORM} \
 	    --with-xercesc=${LCGEXT}/XercesC/2.7.0/${PLATFORM} \
             --with-clhep=${LCGEXT}/clhep/1.9.2.3/${PLATFORM} \
-            --with-geant4=${LCGEXT}/geant4/8.1/${PLATFORM} \
-            --with-geant4-include=${LCGEXT}/geant4/8.1/share/include \
-            --with-geant4-libdir=${LCGEXT}/geant4/8.1/${PLATFORM}/lib \
+            --with-geant4=${LCGEXT}/geant4/8.1.p01/${PLATFORM} \
+            --with-geant4-include=${LCGEXT}/geant4/8.1.p01/share/include \
+            --with-geant4-libdir=${LCGEXT}/geant4/8.1.p01/${PLATFORM}/lib \
             --enable-shared-libs=yes \
 	    --enable-static-libs=no \
 	    --enable-geant4-granular-libs=no \

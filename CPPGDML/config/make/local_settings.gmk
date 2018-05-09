@@ -91,8 +91,8 @@ CLHEP_LIBDIR       := /afs/cern.ch/sw/lcg/external/clhep/1.9.2.3/slc3_ia32_gcc32
 CLHEP_LIBNAME      := CLHEP
 
 # Geant4
-GEANT4_BASE        := /afs/cern.ch/sw/lcg/external/geant4/8.1/slc3_ia32_gcc323
-GEANT4_INCLUDE     := /afs/cern.ch/sw/lcg/external/geant4/8.1/share/include
-GEANT4_LIBDIR      := /afs/cern.ch/sw/lcg/external/geant4/8.1/slc3_ia32_gcc323/lib
+GEANT4_BASE        := /afs/cern.ch/sw/lcg/external/geant4/8.1.p01/slc3_ia32_gcc323
+GEANT4_INCLUDE     := /afs/cern.ch/sw/lcg/external/geant4/8.1.p01/share/include
+GEANT4_LIBDIR      := /afs/cern.ch/sw/lcg/external/geant4/8.1.p01/slc3_ia32_gcc323/lib
 
 endif

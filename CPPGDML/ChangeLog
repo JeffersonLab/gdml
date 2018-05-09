@@ -1,3 +1,12 @@
+2006-07-26 Daniele Francesco Kruse <k.master@fastwebnet.it>
+	* CPPGDML: added support for modularised GDML output
+
+2006-07-19 Ben Lloyd <ben.lloyd@cern.ch>
+	* CPPGDML: added support for G4TwistedBox, G4TwistedTrap, G4TwistedTubs & G4TwistedTrd
+
+2006-07-19 Daniele Francesco Kruse <k.master@fastwebnet.it>
+	* CPPGDML: added support for modularised GDML input
+
 2006-05-30 Witek Pokorski <Witold.Pokorski@cern.ch>
 	* CPPGDML: added support for G4TessellatedSolid and G4Tet 
 

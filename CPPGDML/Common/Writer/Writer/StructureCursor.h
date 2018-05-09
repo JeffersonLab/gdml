@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: StructureCursor.h,v 1.4 2006/02/09 10:58:25 witoldp Exp $
+// $Id: StructureCursor.h,v 1.5 2006/07/26 13:31:00 dkruse Exp $
 #ifndef GDML_WRITER_STRUCTURECURSOR_H
 #define GDML_WRITER_STRUCTURECURSOR_H 1
 
@@ -76,6 +76,19 @@ namespace gdml
                      const std::string& volumeRef,
                      const std::string& positionRef,
                      const std::string& rotationRef );
+      /// Add a child defined in a external module (GDML file) into a mother volume with name 
+      /// motherVolumeRef. The mother volume can ONLY be either an ordinary volume.
+      /// @param motherVolumeRef The IDREF of the mother volume
+      /// @param file            The filename where the definition of the child volume is
+      /// @param positionRef     The IDREF of the position definition
+      /// @param rotationRef     The IDREF of the rotation definition
+      /// @throws std::logic_error Exception if motherVolumeRef does not exist in the document
+      /// @throws std::logic_error Exception if either of the position or rotation can't be found
+      /// @throws std::logic_error Exception if the both volume references are the same
+      void addChildFile( const std::string& motherVolumeRef,
+                         const std::string& file,
+                         const std::string& positionRef,
+                         const std::string& rotationRef );
       /// Add a child with name volumeRef into a mother volume with name motherVolumeRef.
       /// The names must be different otherwise an exception is thrown.
       /// This method creates children volumes with inlined position and rotation defintions.
@@ -222,6 +235,10 @@ namespace gdml
                           const std::string& positionRef,
                           const std::string& rotationRef,
                           const std::string& uniqueHint="" );
+      Element buildChildFile( const std::string& file,
+                              const std::string& positionRef,
+                              const std::string& rotationRef,
+                              const std::string& uniqueHint="" );
       Element buildChild( const std::string& idRef,
                           double             x=0.0,
                           double             y=0.0,

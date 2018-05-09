@@ -142,6 +142,89 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+  <xs:element name="twistedbox" substitutionGroup="Solid">
+    <xs:annotation>
+      <xs:documentation>CSG twisted box solid described by 4 dimensions of 
+	x  length along x axis
+	y  length along y axis
+	z  length along z axis
+	PhiTwist twist angle </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+	<xs:extension base="SolidType">
+	  <xs:attribute name="x" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="y" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="z" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="PhiTwist" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	</xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+  <xs:element name="twistedtrap" substitutionGroup="Solid">
+    <xs:annotation>
+      <xs:documentation>general twisted trapezoid. faces perpendicular to the z planes are trapezia, and their centres are 
+			not necessarily on a line paralell to the z axis.
+	PhiTwist Twist Angle
+	z     length along the z-axis
+	Theta  Polar angle of the line joining the centres of the faces at -/+z
+	Phi    Azimuthal angle of the line joing the centre of the face at -z to the centre of the face at +z
+	y1    length along y of the face at -z
+    	x1    length along x of the side at y=-y1 of the face at -z
+	x2    length along x of the side at y=+y1 of the face at -z
+	y2    length along y of the face at +z
+	x3    length along x of the side at y=-y2 of the face at +z
+	x4    length along x of the side at y=+y2 of the face at +z
+	Alph   Angle with respect to the y axis from the centre of the side </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+	<xs:extension base="SolidType">
+          <xs:attribute name="PhiTwist" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="z" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="Theta" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="Phi" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="y1" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="x1" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="y2" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="x2" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="x3" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="x4" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+          <xs:attribute name="Alph" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	</xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+  <xs:element name="twistedtrd" substitutionGroup="Solid">
+    <xs:annotation>
+      <xs:documentation>different length axis twistable trapezoid. faces perpendicular to the z planes are trapezia, and their centres are 
+			not necessarily on a line paralell to the z axis.
+	PhiTwist Twist Angle
+	z     length along the z-axis
+	y1    length along y of the face at -z
+    	x1    length along x of the side at y=-y1 of the face at -z
+	x2    length along x of the side at y=+y1 of the face at -z
+	y2    length along y of the face at +z </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+	<xs:extension base="SolidType">
+          <xs:attribute name="PhiTwist" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="z" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="y1" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="x1" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="y2" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="x2" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	</xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   
   <xs:element name="paraboloid" substitutionGroup="Solid">
@@ -232,6 +315,29 @@
 	  <xs:attribute name="rmax" type="ExpressionOrIDREFType" use="required"></xs:attribute>
 	  <xs:attribute default="0.0" name="startphi" type="ExpressionOrIDREFType"></xs:attribute>
 	  <xs:attribute name="deltaphi" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	</xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+ <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+  <xs:element name="twistedtubs" substitutionGroup="Solid">
+    <xs:annotation>
+      <xs:documentation>CSG twisted tube segement solid described by
+	twistedangle	twist angle
+	endinnerrad	inside radius at end of segment
+	endouterrad	outside radius at end of segment
+	zlen		z length of segment
+	phi		phi angle of a segment </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+	<xs:extension base="SolidType">
+	  <xs:attribute name="twistedangle" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="endinnerrad" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="endouterrad" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="zlen" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="phi" type="ExpressionOrIDREFType" use="required"></xs:attribute>
 	</xs:extension>
       </xs:complexContent>
     </xs:complexType>
@@ -376,44 +482,6 @@
   </xs:element>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-  <xs:element name="twistTrap" substitutionGroup="Solid">
-    <xs:annotation>
-      <xs:documentation>CSG twisted trapezoid solid is described by
-        z      Length along the z-axis
-        theta  Polar angle of the line joining the centres of the faces at -/+z
-        phi    Azimuthal angle of the line joing the centre of the face at -z to the centre of the face at +z
-        y1     Length along y of the face at -z
-        x1     Length along x of the side at y = -y1 of the face at -z
-        x2     Length along x of the side at y = +y1 of the face at -z
-        alp1   Angle with respect to the y axis from the centre of the side at y =- y1 to the centre at y = +y1 of the face at -z
-        y2     Length along y of the face at +z
-        x3     Length along x of the side at y = -y2 of the face at +z
-        x4     Length along x of the side at y = +y2 of the face at +z
-        alp2   Angle with respect to the y axis from the centre of the side at y = -y2 to the centre at y = +y2 of the face at +z
-	twist  Rotation angle between the lower and the higher Z faces
-      </xs:documentation>
-    </xs:annotation>
-    <xs:complexType>
-      <xs:complexContent>
-	<xs:extension base="SolidType">
-	  <xs:attribute name="z" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="theta" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="phi" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="y1" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="x1" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="x2" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="alpha1" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="y2" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="x3" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="x4" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="alpha2" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="twist" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	</xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
-  </xs:element>
-  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
   <xs:element name="trap" substitutionGroup="Solid">
     <xs:annotation>
       <xs:documentation>CSG general trapezoid solid is described by
@@ -525,8 +593,7 @@
     <xs:attribute name="xOffset" type="ExpressionOrIDREFType" use="required"></xs:attribute>
     <xs:attribute name="yOffset" type="ExpressionOrIDREFType" use="required"></xs:attribute>
     <xs:attribute name="scalingFactor" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-  </xs:complexType>
-  
+  </xs:complexType>  
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   
   <xs:element name="xtru" substitutionGroup="Solid">
@@ -575,7 +642,6 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   
   <xs:element name="eltube" substitutionGroup="Solid">
@@ -651,7 +717,7 @@
 	</xs:extension>
       </xs:complexContent>
     </xs:complexType>
-  </xs:element>  
+  </xs:element>     
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
   <!-- Tessellated solid elements -->  

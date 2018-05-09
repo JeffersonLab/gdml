@@ -16,7 +16,7 @@ class LogicalVolume
   {  
    materialRef = materialRefSet;
    solidRef = solidRefSet;
-   name = "LogVol_of_"+solidRefSet+"_made_of_"+materialRefSet;
+   name = solidRefSet;
   }
   std::string getName()
   {

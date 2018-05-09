@@ -1,10 +1,11 @@
 // -*- C++ -*-
-// $Id: volumeSubscriber.cpp,v 1.14 2006/03/29 00:45:34 jmccormi Exp $
+// $Id: volumeSubscriber.cpp,v 1.18 2006/07/26 13:31:01 dkruse Exp $
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
+#include "Saxana/SAXProcessor.h"
+#include "Saxana/ProcessingConfigurator.h"
 
 #include "G4Processor/GDMLProcessor.h"
-////#include "G4Processor/GDMLExpressionEvaluator.h"
 #include "G4Processor/MaterialLocator.h"
 #include "G4Processor/GenericPositionSizeParameterisation.h"
 
@@ -123,6 +124,7 @@ public:
               physvol* c = dynamic_cast<physvol*>( seq->content(i).object );
               const ContentSequence* physvol_volchoice = c->get_content();
               size_t ccount = physvol_volchoice->size();
+	      SinglePlacementType::file*        f    = 0;
               SinglePlacementType::volumeref*   vr   = 0;
               SinglePlacementType::positionref* pr   = 0;
               SinglePlacementType::rotationref* rr   = 0;
@@ -131,8 +133,19 @@ public:
               G4ThreeVector*                    ppos = 0;
               G4RotationMatrix*                 prot = 0;
               bool doAssemblyInprint                 = false;
+	      bool externalFile                      = false;
+	      std::string                       efwvn; //external_file_world_volume_name
 
-              for( size_t cidx = 0; cidx < ccount; cidx++ )
+              /*
+              std::cout << "debug AA" << std::endl;
+	      for( size_t cidx = 0; cidx < ccount; cidx++ )
+              {
+	       std::cout << "TAG: " << physvol_volchoice->content(cidx).tag << std::endl;
+	      }
+	      std::cout << "debug BB" << std::endl;
+	      */
+	      
+	      for( size_t cidx = 0; cidx < ccount; cidx++ )
               {
                 if( physvol_volchoice->content(cidx).tag == "volumeref" )
                 {
@@ -154,6 +167,57 @@ public:
                       G4Exception( "Shutting-down due to error(s) in GDML input..." );
                     }
                     doAssemblyInprint = true;
+                  }
+                }
+		else if( physvol_volchoice->content(cidx).tag == "file" )
+                {
+                  externalFile = true;
+		  // Check & retrieve volume
+                  f = dynamic_cast<SinglePlacementType::file*>
+                    ( physvol_volchoice->content(cidx).object );
+		  
+		  if(!processor->alreadyParsed(f->get_name()))
+		  {
+		   //TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+		   SAXProcessor sxp;
+                   ProcessingConfigurator config;
+                   G4VPhysicalVolume* tempWorld;
+		   sxp.Initialize();
+                   config.SetURI( f->get_name() );
+                   config.SetSetupName( "Default" );
+                   sxp.Configure( &config );
+		   processor->currentlyParsing(f->get_name());
+		   sxp.Run(); 
+  
+                   tempWorld =  (G4VPhysicalVolume *)processor->GetTempWorldVolume();
+		   efwvn = tempWorld->GetName(); 
+		   processor->AddParsedFile(f->get_name(), tempWorld);
+                   
+		   //tempWorld->GetLogicalVolume()->SetVisAttributes (G4VisAttributes::Visible);
+
+                   if( tempWorld == 0 )
+		   {
+                    G4Exception("TEMPORARY World volume not set properly check your setup selection criteria or GDML input!");
+		   }
+
+                   plog = tempWorld->GetLogicalVolume();
+		   //TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+                  }
+		  else
+		  {
+		   const G4VPhysicalVolume* tempWorld = processor->GetWorldVolumeOfParsedFile(f->get_name());
+		   if( tempWorld == 0 )
+		   {
+                    G4Exception("TEMPORARY World volume not set properly check your setup selection criteria or GDML input!");
+		   }
+		   efwvn = tempWorld->GetName();
+		   plog = const_cast<G4LogicalVolume*> (tempWorld->GetLogicalVolume());
+		  }
+		  
+                  if( plog == 0 )
+		  {
+                    std::cerr << "plog == 0 !!" << std::endl;
+                    G4Exception( "Shutting-down due to error(s) in GDML input..." );
                   }
                 }
                 else if( physvol_volchoice->content(cidx).tag == "choice" )
@@ -227,12 +291,15 @@ public:
                 } else { /* should not happen */ }    // end of if-choice
               }                                       // end-for-loop over physvol's items
               // At this point we should have everything ready to create a physvol
-              if( doAssemblyInprint ) {
+              if( doAssemblyInprint && !externalFile)
+	      {
 #ifdef GDML_VERBOSE
                 std::cout << "Imprinting assembly volume: " << vr->get_ref() << std::endl;
 #endif
                 alog->MakeImprint( vnew, *ppos, prot );
-              } else {
+              } 
+	      else if (!doAssemblyInprint && !externalFile)
+	      {
                 std::stringstream pvname;
                 pvname << "pv_" << vr->get_ref() << "_" << (i-2);
 
@@ -244,6 +311,23 @@ public:
                 vphysvol = new G4PVPlacement(prot, *ppos, plog, Util::generateName(vr->get_ref()), vnew, false, (i-2));
                 processor->AddPhysicalVolume( pvname.str(), vphysvol );
               }
+	      else if (!doAssemblyInprint && externalFile)
+	      {
+                std::stringstream pvname;
+                pvname << "pv_" << efwvn << "_" << (i-2);
+
+                /* Got a null position so use identity position = (0,0,0) from GDMLProcessor. --JM */
+                if ( ppos == 0 ) {
+                  ppos = processor->getIdentityPosition();
+                }
+
+                vphysvol = new G4PVPlacement(prot, *ppos, plog, Util::generateName(efwvn), vnew, false, (i-2));
+                processor->AddPhysicalVolume( pvname.str(), vphysvol );
+              }
+	      else
+	      {
+	       std::cout << "Assembly cannot be defined in an external file!" << std::endl;
+	      }
             } // end of if-physvol
             else if( seq->content(i).tag == "replicavol" )
             {
@@ -509,9 +593,8 @@ public:
                             (pars_seq->content(jjj).object);
 
                           //to be done: rotation....
-                          HepRotation*  zerorot = new HepRotation(0,0,0);
-
-                          Hep3Vector* myvect = new Hep3Vector();
+                          G4RotationMatrix* zerorot = new G4RotationMatrix(0,0,0);
+                          G4ThreeVector* myvect = new G4ThreeVector; 
                           myvect->setX(calc->Eval(pos->get_x()));
                           myvect->setY(calc->Eval(pos->get_y()));
                           myvect->setZ(calc->Eval(pos->get_z()));

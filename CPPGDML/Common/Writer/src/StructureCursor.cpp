@@ -157,6 +157,23 @@ namespace gdml
       */
       motherVolume.appendChild( buildChild( volumeRef, positionRef, rotationRef ) );
     }
+    void StructureCursor::addChildFile( const std::string& motherVolumeRef,
+                                        const std::string& file,
+                                        const std::string& positionRef,
+                                        const std::string& rotationRef )
+    {
+      Element& motherVolume = findVolume( motherVolumeRef );
+      /*
+      if( ok( volumeRef ) || ok( positionRef ) || ok( rotationRef ) )
+      {
+        // Looks weird, but ok(id)=true means that the unique id
+        // is not already in the document registry.
+        std::string msg = volumeRef + " or " + positionRef + " or " + rotationRef + " not yet defined!";
+        throw std::logic_error( msg );
+      }
+      */
+      motherVolume.appendChild( buildChildFile( file, positionRef, rotationRef ) );
+    }
     void StructureCursor::addChild( Element&           motherVolume,
                                     const std::string& volumeRef,
                                     double             x,
@@ -195,6 +212,29 @@ namespace gdml
     {
       Element vref( "volumeref" );
       vref.addAttribute( "ref", idRef );
+      Element pref( "positionref" );
+      pref.addAttribute( "ref", positionRef );
+
+      Element child( "physvol" );
+      child.appendChild( vref );
+      child.appendChild( pref );
+
+      if (rotationRef !="")
+      {
+        Element rref( "rotationref" );
+        rref.addAttribute( "ref", rotationRef );
+        child.appendChild( rref );
+      }
+
+      return child;
+    }
+    Element StructureCursor::buildChildFile( const std::string& file,
+                                             const std::string& positionRef,
+                                             const std::string& rotationRef,
+                                             const std::string& /* uniquenessHint */ )
+    {
+      Element vref( "file" );
+      vref.addAttribute( "name", file );
       Element pref( "positionref" );
       pref.addAttribute( "ref", positionRef );
 

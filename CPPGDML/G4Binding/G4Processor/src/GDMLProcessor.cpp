@@ -22,6 +22,17 @@ GDMLProcessor* GDMLProcessor::GetInstance()
   return sProcessor;
 }
 
+void GDMLProcessor::SetDuplicationWarning(const std::string& firstFileName)
+{
+ currentlyParsing(firstFileName); //It's not nice to call this method here, this is due to backward compatibility issues
+ duplicationWarning = true;
+}
+
+void GDMLProcessor::UnsetDuplicationWarning()
+{
+ duplicationWarning = false;
+}
+
 GDMLExpressionEvaluator* GDMLProcessor::GetEvaluator()
 {
   return fCalc;
@@ -117,6 +128,10 @@ void GDMLProcessor::AddRotation( const char* name, G4RotationMatrix* p )
 void GDMLProcessor::AddSolid( const std::string& name, G4VSolid* p )
 {
   fSolids[name] = p;
+  if(duplicationWarning)
+  {
+   checkDuplication(name);
+  }
 }
 void GDMLProcessor::AddSolid( const char* name, G4VSolid* p )
 {
@@ -132,6 +147,16 @@ void GDMLProcessor::AddLogicalVolume( const char* name, G4LogicalVolume* p )
 {
   std::string key = name;
   AddLogicalVolume( key, p );
+}
+
+void GDMLProcessor::AddParsedFile( const std::string& name, G4VPhysicalVolume* p )
+{
+  Files_Volumes_Map[name] = p;
+}
+void GDMLProcessor::AddParsedFile( const char* name, G4VPhysicalVolume* p )
+{
+  std::string key = name;
+  AddParsedFile( key, p );
 }
 
 void GDMLProcessor::AddAssemblyVolume( const std::string& name, G4AssemblyVolume* p )
@@ -220,10 +245,22 @@ const G4VPhysicalVolume* GDMLProcessor::GetPhysicalVolume( const char* name )
   return GetPhysicalVolume( key );
 }
 
+const G4VPhysicalVolume* GDMLProcessor::GetWorldVolumeOfParsedFile( const std::string& name )
+{
+  return Files_Volumes_Map[name];
+}
+
+const G4VPhysicalVolume* GDMLProcessor::GetWorldVolumeOfParsedFile( const char* name )
+{
+  std::string key = name;
+  return GetWorldVolumeOfParsedFile( key );
+}
+
 GDMLProcessor::GDMLProcessor()
 : fCalc( 0 ), fWorldVolume( 0 )
 {
   fCalc = new GDMLExpressionEvaluator();
+  duplicationWarning = false;
   
   // We need to initialize our component system
   GDMLProcessLibLoad();

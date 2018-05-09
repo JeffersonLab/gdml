@@ -121,6 +121,139 @@ namespace gdml
       }
     }
     
+
+  void SolidsCursor::addTwistedBox( const std::string& id,              
+					 double             x, double             y, double             z, double Tw,
+                               const std::string& lunit,
+                               const std::string& aunit )
+    {
+      std::ostringstream os;
+      os.precision(16);
+      os << x;      
+      std::string sx = os.str(); os.str("");
+      os << y;      
+      std::string sy = os.str(); os.str("");
+      os << z;      
+      std::string sz = os.str(); os.str("");
+      os << Tw;      
+      std::string sTw = os.str(); os.str("");
+
+      if( ok( id ) )
+      {
+        add( id );
+
+      Element s( "twistedbox" );
+
+      s.addAttribute( "name" , id    );
+      s.addAttribute( "x"    , sx    );
+      s.addAttribute( "y"    , sy    );
+      s.addAttribute( "z"    , sz    );
+      s.addAttribute( "PhiTwist", sTw    );
+      s.addAttribute( "lunit", lunit );
+      s.addAttribute( "aunit", aunit );
+
+      m_cursor.appendChild( s );
+      }
+    }
+
+
+ void SolidsCursor::addTwistedTrap( const std::string& id,              
+				    double x1, double y1, double x2, double y2, double x3, 
+				    double x4, double z, double Tw, double Th, double Phi, double Alph,
+				    const std::string& lunit,
+				    const std::string& aunit )
+    {
+      std::ostringstream os;
+      os.precision(16);
+      os << x1;      
+      std::string sx1 = os.str(); os.str("");
+      os << y1;      
+      std::string sy1 = os.str(); os.str("");
+      os << x2;      
+      std::string sx2 = os.str(); os.str("");
+      os << y2;      
+      std::string sy2 = os.str(); os.str("");
+      os << x3;      
+      std::string sx3 = os.str(); os.str("");
+      os << x4;      
+      std::string sx4 = os.str(); os.str("");
+      os << z;      
+      std::string sz = os.str(); os.str("");
+      os << Tw;      
+      std::string sTw = os.str(); os.str("");
+      os << Th;      
+      std::string sTh = os.str(); os.str("");
+      os << Phi;      
+      std::string sPhi = os.str(); os.str("");
+      os << Alph;      
+      std::string sAlph = os.str(); os.str("");
+
+      if( ok( id ) )
+      {
+        add( id );
+
+      Element s( "twistedtrap" );
+
+      s.addAttribute( "name" , id    );
+      s.addAttribute( "PhiTwist"    , sTw    );
+      s.addAttribute( "Theta"    , sTh    );
+      s.addAttribute( "Phi"    , sPhi    );
+      s.addAttribute( "y1", sy1    );
+      s.addAttribute( "x1", sx1    );
+      s.addAttribute( "y2", sy2    );
+      s.addAttribute( "x2", sx2    );
+      s.addAttribute( "x3", sx3    );
+      s.addAttribute( "x4", sx4    );
+      s.addAttribute( "Alph", sAlph    );
+      s.addAttribute( "lunit", lunit );
+      s.addAttribute( "aunit", aunit );
+
+      m_cursor.appendChild( s );
+      }
+    }
+
+    void SolidsCursor::addTwistedTrd( const std::string& id,              
+				      double x1, double x2, double y1, double y2, double z, double Tw,
+				    const std::string& lunit,
+				    const std::string& aunit )
+    {
+      std::ostringstream os;
+      os.precision(16);
+      os << x1;      
+      std::string sx1 = os.str(); os.str("");
+      os << x2;      
+      std::string sx2 = os.str(); os.str("");
+      os << y1;      
+      std::string sy1 = os.str(); os.str("");
+      os << y2;      
+      std::string sy2 = os.str(); os.str("");
+      os << z;      
+      std::string sz = os.str(); os.str("");
+      os << Tw;      
+      std::string sTw = os.str(); os.str("");
+
+      if( ok( id ) )
+      {
+        add( id );
+
+      Element s( "twistedtrd" );
+
+      s.addAttribute( "name" , id    );
+      s.addAttribute( "x1", sx1    );
+      s.addAttribute( "x2", sx2    );
+      s.addAttribute( "y1", sy1    );
+      s.addAttribute( "y2", sy2    );
+      s.addAttribute( "z", sz      );
+      s.addAttribute( "PhiTwist"    , sTw    );
+      s.addAttribute( "lunit", lunit );
+      s.addAttribute( "aunit", aunit );
+
+      m_cursor.appendChild( s );
+      }
+    }    
+
+
+
     void SolidsCursor::addSphere( const std::string& id,
                                   double             rmin      , double             rmax,
                                   double             startphi  , double             deltaphi,
@@ -325,6 +458,47 @@ namespace gdml
       m_cursor.appendChild( s );
       }
     }
+
+
+ void SolidsCursor::addTwistedTubs( const std::string& id,
+                                double             phitwist, double rinner, double router,
+                                double             halfz,
+                                double             dphi,
+                                const std::string& lunit,
+                                const std::string& aunit )
+    {
+      std::ostringstream os;
+      os.precision(100);
+
+      os << phitwist;      
+      std::string sphitwist = os.str(); os.str("");
+      os << rinner;      
+      std::string srinner = os.str(); os.str("");
+      os << router;      
+      std::string srouter = os.str(); os.str("");
+      os << halfz;      
+      std::string shalfz = os.str(); os.str("");
+      os << dphi;      
+      std::string sdphi = os.str(); os.str("");
+      
+      if( ok( id ) )
+      {
+        add( id );
+
+      Element s( "twistedtubs" );
+
+      s.addAttribute( "twistedangle"    , sphitwist        );
+      s.addAttribute( "endinnerrad"       , srinner        );
+      s.addAttribute( "endouterrad"    , srouter     );
+      s.addAttribute( "zlen"    , shalfz     );
+      s.addAttribute( "phi", sdphi );
+      s.addAttribute( "lunit"   , lunit     );
+      s.addAttribute( "aunit"   , aunit     );
+
+      m_cursor.appendChild( s );
+      }
+    }
+
 
     void SolidsCursor::addElTube( const std::string& id,              
                                   double dx, double dy, double dz,

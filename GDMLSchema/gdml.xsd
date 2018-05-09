@@ -17,7 +17,10 @@
         in geometrical hierarchy</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="volumeref" type="ReferenceType"/>
+      <xs:choice minOccurs="1">
+	<xs:element name="file" type="FileReferenceType"/>
+	<xs:element name="volumeref" type="ReferenceType"/>
+      </xs:choice>      
       <xs:choice minOccurs="0">
 	<xs:element name="position" type="positionType"/>
 	<xs:element name="positionref" type="ReferenceType"/>

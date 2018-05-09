@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: SolidsCursor.h,v 1.4 2006/07/05 13:46:13 witoldp Exp $
+// $Id: SolidsCursor.h,v 1.5 2006/07/19 15:37:24 blloyd Exp $
 #ifndef GDML_WRITER_SOLIDSCURSOR_H
 #define GDML_WRITER_SOLIDSCURSOR_H 1
 
@@ -79,6 +79,76 @@ namespace gdml
                    double             z,               
                    const std::string& lunit="mm",      
                    const std::string& aunit="radian" );
+
+  /// Add GDML twistedbox solid
+      /// @param id    Name of the solid
+      /// @param pDx     Dimension along X axis
+      /// @param pDy     Dimension along Y axis
+      /// @param pDz     Dimension along Z axis
+      /// @param pPhiTwist  Twist Angle
+      /// @param lunit Length unit, default [mm]
+      /// @param aunit Angle unit, default [radian]
+      /// @throws std::logic_error Exception if the box with the same id
+      ///                          already exists in the document
+      void addTwistedBox( const std::string& id,              
+                   double             x,               
+                   double             y,               
+                   double             z,    
+		   double             Tw,
+                   const std::string& lunit="mm",      
+                   const std::string& aunit="radian" );
+
+      /// Add GDML twistedTrap solid
+      /// @param id    Name of the solid
+      /// @param pDx1     Dimension along x1 axis
+      /// @param pDx2     Dimension along x2 axis  
+      /// @param pDx3     Dimension along x3 axis  
+      /// @param pDx4     Dimension along x4 axis
+      /// @param pDy1     Dimension along y1 axis
+      /// @param pDy2     Dimension along y2 axis
+      /// @param pDz      Dimension along z axis
+      /// @param pPhiTwist Twist Angle
+      /// @param pTheta   between planes polar angle
+      /// @param pPhi     azimuthal angle
+      /// @param pAlph    tilt angle
+      /// @param lunit Length unit, default [mm]
+      /// @param aunit Angle unit, default [radian]
+      /// @throws std::logic_error Exception if the box with the same id
+      ///                          already exists in the document
+
+      void addTwistedTrap( const std::string& id,              
+		    double x1, 
+	   	    double y1, 
+		    double x2, 
+		    double y2, 
+		    double x3, 
+		    double x4, 
+		    double z, 
+		    double Tw, 
+		    double Th, 
+		    double Phi, 
+		    double Alph,
+		    const std::string& lunit="mm",
+ 		    const std::string& aunit="radian"  );
+
+      /// Add GDML twistedTrp solid
+      /// @param id    Name of the solid
+      /// @param pDx1     Dimension along x1 axis
+      /// @param pDx2     Dimension along x2 axis  
+      /// @param pDy1     Dimension along y1 axis
+      /// @param pDy2     Dimension along y2 axis
+      /// @param pDz      Dimension along z axis
+      /// @param pPhiTwist Twist Angle
+      /// @param lunit Length unit, default [mm]
+      /// @param aunit Angle unit, default [radian]
+      /// @throws std::logic_error Exception if the box with the same id
+      ///                          already exists in the document
+
+    void addTwistedTrd( const std::string& id,              
+			double x1, double x2, double y1, double y2, double z, double Tw,
+				    const std::string& lunit="mm",
+			const std::string& aunit="rad" );
+
       /// Add GDML sphere solid
       /// @param id          Name of the solid
       /// @param rmin        Inner radius
@@ -121,6 +191,20 @@ namespace gdml
                     double             deltaphi,
                     const std::string& lunit="mm",   
                     const std::string& aunit="radian" );
+  ///Add GDML twisted tube segment solid
+      ///@param phitwist             twist angle of tube
+      ///@param rinner               inner radius of tube
+      ///@param router               outer radius of tube
+      ///@param halfz                z length / 2
+      ///@param dphi                 angle of segment.
+      void addTwistedTubs( const std::string& id,
+                    double             phitwist, double rinner, double router,
+                    double             halfz,
+                    double             dphi,
+                    const std::string& lunit="mm",
+		    const std::string& aunit="deg" );
+
+
       /// Add GDML cone solid
       /// @param id          Name of the solid
       /// @param rmin1       Inner radius at z/2

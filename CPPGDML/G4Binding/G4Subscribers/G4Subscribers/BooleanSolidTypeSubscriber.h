@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // $Id: BooleanSolidTypeSubscriber.h,v 1.2 2006/03/29 00:45:34 jmccormi Exp $
-// GEANT4 tag $Name:  $
+// GEANT4 tag $Name: GDML_2_7_0 $
 #ifndef GDML_G4_BOOLEANSOLIDTYPESUBSCRIBER_H
 #define GDML_G4_BOOLEANSOLIDTYPESUBSCRIBER_H 1
 

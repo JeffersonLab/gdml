@@ -1,9 +1,10 @@
-// $Id: G4GDMLWriter.cpp,v 1.12 2006/07/13 08:01:28 witoldp Exp $
+// $Id: G4GDMLWriter.cpp,v 1.14 2006/07/26 13:31:01 dkruse Exp $
 // Include files
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <stack>
+#include <stdexcept>
 
 // G4
 #include "G4LogicalVolume.hh"
@@ -19,8 +20,12 @@
 
 #include "G4Cons.hh"
 #include "G4Box.hh"
+#include "G4TwistedBox.hh"
+#include "G4TwistedTrap.hh"
+#include "G4TwistedTrd.hh"
 #include "G4Sphere.hh"
 #include "G4Tubs.hh"
+#include "G4TwistedTubs.hh"
 #include "G4Polycone.hh"
 #include "G4Para.hh"
 #include "G4Trap.hh"
@@ -56,19 +61,22 @@
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-G4GDMLWriter::G4GDMLWriter(  )
+G4GDMLWriter::G4GDMLWriter(int format)
   : schemaLocation("gdml.xsd"),
     outputFile("g4geo.gdml")
 {
-  ut = new Utils();
+  currentFormat = format;
+  ut = new Utils(format);
   vertixCount=0;
 }
 G4GDMLWriter::G4GDMLWriter(std::string schema,
-                           std::string output)
+                           std::string output,
+			   int format)
   : schemaLocation(schema),
     outputFile(output)
 {
-  ut = new Utils();
+  currentFormat = format;
+  ut = new Utils(format);
   vertixCount=0;
 }
 //=============================================================================
@@ -91,40 +99,9 @@ void G4GDMLWriter::DumpMaterials()
        it!=mattable->end();
        it++ )
   {
-    howmany++;
-    int nbofele = (*it)->GetNumberOfElements();
-
-    if(nbofele > 1)
-    {
-      gdml::writer::FractionsVector*
-        frvect = new gdml::writer::FractionsVector();
-
-      for(int ii=0; ii!=nbofele; ii++)
-	    {
-	      const G4Element*
-          ele = (*it)->GetElement(ii);
-
-	      matcur->addElement(ut->name(ele),
-                           ele->GetSymbol(),
-                           (int)ele->GetZ(),
-                           ele->GetA()*mole/g);
-	      frvect->push_back(std::pair<std::string, double>
-                          (ut->name((*it)->GetElement(ii)),
-                           (*it)->GetFractionVector()[ii]));
-	    }
-      matcur->addMaterial(ut->name(*it),
-                          (*it)->GetChemicalFormula(),
-                          (*it)->GetDensity()*cm3/g,
-                          *frvect);
-    } else {
-      matcur->addMaterial(ut->name(*it),
-                          (*it)->GetChemicalFormula(),
-                          (*it)->GetZ(),
-                          (*it)->GetA()*mole/g,
-                          (*it)->GetDensity()*cm3/g);
-    }
-    if(!(howmany%100)) std::cout << howmany << "/"
-                                 << matsize << " materials done" << std::endl;
+    DumpMaterial(*it);
+    howmany++;    
+    if(!(howmany%100)) std::cout << howmany << "/" << matsize << " materials done" << std::endl;
   }
 }
 
@@ -180,313 +157,9 @@ void G4GDMLWriter::DumpSolids()
       sit++)
   {
     howmany++;
-
-    if(!(howmany%100)) std::cout << howmany << "/"
-                                 << solsize << " solids done" << std::endl;
-
-    G4VSolid* tempsol = *sit;
-
-    while(const G4DisplacedSolid* disp =
-          dynamic_cast<const G4DisplacedSolid*>(tempsol))
-    {
-      tempsol = disp->GetConstituentMovedSolid();
-    }
-    
-    if( const G4TessellatedSolid* tessSolid = dynamic_cast<const G4TessellatedSolid*>(tempsol) )
-    {
-      int numberOfFacets = tessSolid->GetNumberOfFacets();
-      std::cout << "numberOfFacets: " << numberOfFacets << std::endl;
-      std::vector<gdml::writer::Facet> facets;
-      for(int i=0; i<numberOfFacets; i++)
-      {
-       G4VFacet *tempG4Facet = tessSolid->GetFacet(i);
-       int numberOfVertices = tempG4Facet->GetNumberOfVertices();
-       std::cout << "numberOfVertices: " << numberOfVertices << std::endl;
-       std::vector<std::string> verticesNames;
-       for(int j=0; j<numberOfVertices; j++)
-       {
-        G4ThreeVector currentVertex = tempG4Facet->GetVertex(j);
-	std::cout << "X: " << currentVertex.x()  << " Y: " << currentVertex.y()  << " Z: " << currentVertex.z() << std::endl;
-	verticesNames.push_back(processTessSolidVertex(currentVertex.x(),currentVertex.y(), currentVertex.z()));
-       }       
-       if(verticesNames.size()==3) //triangular facet
-       {
-        gdml::writer::Facet newFacet(verticesNames[0], verticesNames[1], verticesNames[2]);
-	facets.push_back(newFacet);
-       }
-       else if(verticesNames.size()==4) //quadrangular facet
-       {
-        gdml::writer::Facet newFacet(verticesNames[0], verticesNames[1], verticesNames[2], verticesNames[3]);
-	facets.push_back(newFacet);
-       }
-      }
-      solcur->addTessellated( ut->name(tessSolid),
-			      facets,
-                              "mm","degree");
-    }    
-    else if( const G4Tet* tet = dynamic_cast<const G4Tet*>(tempsol) )
-    {
-      std::vector<G4ThreeVector> tetVertices = tet->GetVertices();
-      std::string vertex1 = processTetVertex(tetVertices[0].x(),tetVertices[0].y(),tetVertices[0].z());
-      std::string vertex2 = processTetVertex(tetVertices[1].x(),tetVertices[1].y(),tetVertices[1].z());
-      std::string vertex3 = processTetVertex(tetVertices[2].x(),tetVertices[2].y(),tetVertices[2].z());
-      std::string vertex4 = processTetVertex(tetVertices[3].x(),tetVertices[3].y(),tetVertices[3].z());
-      
-      solcur->addTetrahedron( ut->name(tet),
-                              vertex1,
-			      vertex2,
-			      vertex3,
-			      vertex4,
-                              "mm","degree");
-    }
-    else if( const G4Sphere* sphere = dynamic_cast<const G4Sphere*>(tempsol) )
-    {
-      solcur->addSphere( ut->name(sphere),
-                         sphere->GetInsideRadius()/mm,
-                         sphere->GetOuterRadius()/mm,
-                         sphere->GetStartPhiAngle()/deg,
-                         sphere->GetDeltaPhiAngle()/deg,
-                         sphere->GetStartThetaAngle()/deg,
-                         sphere->GetDeltaThetaAngle()/deg,
-                         "mm","degree");
-    }
-    else if( const G4Box* box = dynamic_cast<const G4Box*>(tempsol) )
-    {
-      solcur->addBox( ut->name(box),
-                      2*box->GetXHalfLength()/mm,
-                      2*box->GetYHalfLength()/mm,
-                      2*box->GetZHalfLength()/mm,"mm" );
-    }
-    else if( const G4Tubs* tubs = dynamic_cast<const G4Tubs*>(tempsol) )
-    {
-      solcur->addTube(ut->name(tubs),
-                      tubs->GetInnerRadius()/mm,
-                      tubs->GetOuterRadius()/mm,
-                      2*tubs->GetZHalfLength()/mm,
-                      tubs->GetStartPhiAngle()/deg,
-                      tubs->GetDeltaPhiAngle()/deg
-                      ,"mm","degree");
-    }
-    else if( const G4Cons* cons = dynamic_cast<const G4Cons*>(tempsol) )
-    {
-      solcur->addCone(ut->name(cons),
-                      cons->GetInnerRadiusMinusZ()/mm,
-                      cons->GetOuterRadiusMinusZ()/mm,
-                      cons->GetInnerRadiusPlusZ()/mm,
-                      cons->GetOuterRadiusPlusZ()/mm,
-                      2*cons->GetZHalfLength()/mm,
-                      cons->GetStartPhiAngle()/deg,
-                      cons->GetDeltaPhiAngle()/deg,
-                      "mm","degree");
-    }
-    else if( const G4Polycone* polycone = dynamic_cast<const G4Polycone*>(tempsol) )
-    {
-      solcur->addPolyCone(ut->name(polycone),
-                          polycone->GetOriginalParameters()->Num_z_planes,
-                          polycone->GetOriginalParameters()->Start_angle/deg,
-                          polycone->GetOriginalParameters()->Opening_angle/deg,
-                          polycone->GetOriginalParameters()->Z_values,
-                          polycone->GetOriginalParameters()->Rmin,
-                          polycone->GetOriginalParameters()->Rmax,
-                          "mm","degree");
-    }
-    else if( const G4Para* para = dynamic_cast<const G4Para*>(tempsol) )
-    {
-      double phi;
-      if(para->GetSymAxis().z()!=1.0)
-        phi = atan(para->GetSymAxis().y()/para->GetSymAxis().x());
-      else
-        phi = 0;
-
-      solcur->addPara(ut->name(para),
-                      2*para->GetXHalfLength()/mm,
-                      2*para->GetYHalfLength()/mm,
-                      2*para->GetZHalfLength()/mm,
-                      atan(para->GetTanAlpha())/deg,
-                      acos(para->GetSymAxis().z())/deg,
-                      phi/deg,"mm","degree");
-    }
-    else if( const G4Trap* trap = dynamic_cast<const G4Trap*>(tempsol) )
-    {
-      double phi;
-      if(trap->GetSymAxis().z()!=1.0)
-        phi = atan(trap->GetSymAxis().y()/trap->GetSymAxis().x());
-      else
-        phi = 0;
-
-      solcur->addTrap(ut->name(trap),
-                      2*trap->GetXHalfLength1()/mm,
-                      2*trap->GetXHalfLength2()/mm,
-                      2*trap->GetYHalfLength1()/mm,
-                      atan(trap->GetTanAlpha1())/deg,
-                      2*trap->GetXHalfLength3()/mm,
-                      2*trap->GetXHalfLength4()/mm,
-                      2*trap->GetYHalfLength2()/mm,
-                      atan(trap->GetTanAlpha2())/deg,
-                      acos(trap->GetSymAxis().z())/deg,
-                      2*trap->GetZHalfLength()/mm,
-                      phi/deg,"mm","degree");
-
-
-    }
-    else if( const G4Trd* trd = dynamic_cast<const G4Trd*>(tempsol) )
-    {
-      solcur->addTrd(ut->name(trd),
-                     2*trd->GetXHalfLength1()/mm,
-                     2*trd->GetXHalfLength2()/mm,
-                     2*trd->GetYHalfLength1()/mm,
-                     2*trd->GetYHalfLength2()/mm,
-                     2*trd->GetZHalfLength()/mm,"mm");
-    }
-    else if( const G4Orb* orb = dynamic_cast<const G4Orb*>(tempsol) )
-    {
-      solcur->addOrb(ut->name(orb),
-                     orb->GetRadius()/mm,
-                     "mm");
-    }
-    else if( const G4Hype* hype = dynamic_cast<const G4Hype*>(tempsol) )
-    {
-      solcur->addHype(ut->name(hype),
-                      hype->GetInnerRadius()/mm,
-                      hype->GetOuterRadius()/mm,
-                      hype->GetInnerStereo()/deg,
-                      hype->GetOuterStereo()/deg,
-                      2*hype->GetZHalfLength()/mm,"mm","degree");
-    }
-    else if( const G4EllipticalTube* eltu = dynamic_cast<const G4EllipticalTube*>(tempsol) )
-    {
-      solcur->addElTube(ut->name(eltu),
-                        eltu->GetDx()/mm,
-                        eltu->GetDy()/mm,
-                        eltu->GetDz()/mm,"mm");
-    }
-    else if( const G4Torus* torus = dynamic_cast<const G4Torus*>(tempsol) )
-    {
-      solcur->addTorus(ut->name(torus),
-                       torus->GetRmin()/mm,
-                       torus->GetRmax()/mm,
-                       torus->GetRtor()/mm,
-                       torus->GetSPhi()/degree,
-                       torus->GetDPhi()/degree,"mm","degree");
-    }
-    else if( const G4Polyhedra* polyh = dynamic_cast<const G4Polyhedra*>(tempsol) )
-    {
-      
-      std::vector<double> rIn;
-      std::vector<double> rOut;
-      rIn.resize(polyh->GetOriginalParameters()->Num_z_planes);
-      rOut.resize(polyh->GetOriginalParameters()->Num_z_planes);
-
-      double convertRad = std::cos(0.5*polyh->GetOriginalParameters()->Opening_angle/
-                                   polyh->GetOriginalParameters()->numSide);
-
-      for (int i=0;i<polyh->GetOriginalParameters()->Num_z_planes;i++)
-      {
-        rIn[i] = (polyh->GetOriginalParameters()->Rmin)[i] * convertRad;
-        rOut[i] = (polyh->GetOriginalParameters()->Rmax)[i] * convertRad;          
-      }
-      
-      solcur->addPolyhedra(ut->name(polyh),
-                           polyh->GetOriginalParameters()->Num_z_planes,
-                           polyh->GetOriginalParameters()->Start_angle/deg,
-                           polyh->GetOriginalParameters()->Opening_angle/deg,
-                           polyh->GetOriginalParameters()->numSide,
-                           polyh->GetOriginalParameters()->Z_values,
-                           rIn,
-                           rOut,
-                           "mm",
-                           "degree");
-    }
-    else if(const G4ReflectedSolid* refl = dynamic_cast<const G4ReflectedSolid*>(tempsol) )
-    {
-      double rx, ry, rz;
-      G4Scale3D  scale;
-      G4Rotate3D rotation;
-      G4Translate3D  translation;
-
-      refl->GetTransform3D().getDecomposition(scale, rotation, translation);
-
-      getXYZ( &(rotation.getRotation()), rx, ry, rz );
-      
-      solcur->addReflected(ut->name(refl),
-                           ut->name(refl->GetConstituentMovedSolid()),
-                           scale.xx(), scale.yy(), scale.zz(),
-                           rx, ry, rz,
-                           translation.dx()/mm, translation.dy()/mm, translation.dz()/mm,
-                           "mm","degree");      
-    }
-    else if( const G4BooleanSolid* boo = dynamic_cast<const G4BooleanSolid*>(tempsol) )
-    {
-      std::string btype("unknown");
-      if(boo->GetEntityType()=="G4SubtractionSolid") btype = "subtraction";
-      else if(boo->GetEntityType()=="G4UnionSolid") btype = "union";
-      else if(boo->GetEntityType()=="G4IntersectionSolid") btype = "intersection";
-
-
-      const G4VSolid* constit0 = boo->GetConstituentSolid(0);
-      const G4VSolid* constit1 = boo->GetConstituentSolid(1);
-
-
-      double dx0=0;
-      double dy0=0;
-      double dz0=0;
-      double drx0=0;
-      double dry0=0;
-      double drz0=0;
-
-      double dx1=0;
-      double dy1=0;
-      double dz1=0;
-      double drx1=0;
-      double dry1=0;
-      double drz1=0;
-
-      while(const G4DisplacedSolid* disp =
-            dynamic_cast<const G4DisplacedSolid*>(constit0))
-	    {
-	      dx0 += disp->GetObjectTranslation().x()/mm;
-	      dy0 += disp->GetObjectTranslation().y()/mm;
-	      dz0 += disp->GetObjectTranslation().z()/mm;
-
-	      const G4RotationMatrix r = disp->GetObjectRotation();
-	      double tdrx=0; double tdry=0; double tdrz=0;
-	      getXYZ( &r, tdrx, tdry, tdrz );
-	      drx0+=tdrx; dry0+=tdry; drz0+=tdrz;
-
-	      constit0 = disp->GetConstituentMovedSolid();
-	    }
-
-      while(const G4DisplacedSolid* disp =
-            dynamic_cast<const G4DisplacedSolid*>(constit1))
-	    {
-	      dx1 += disp->GetObjectTranslation().x()/mm;
-	      dy1 += disp->GetObjectTranslation().y()/mm;
-	      dz1 += disp->GetObjectTranslation().z()/mm;
-
-	      const G4RotationMatrix r = disp->GetObjectRotation();
-	      double tdrx=0; double tdry=0; double tdrz=0;
-	      getXYZ( &r, tdrx, tdry, tdrz );
-	      drx1+=tdrx; dry1+=tdry; drz1+=tdrz;
-
-	      constit1 = disp->GetConstituentMovedSolid();
-	    }
-
-      solcur->addBoolean(ut->name(boo),
-                         btype,
-                         ut->name(constit0),
-                         ut->name(constit1),
-                         dx1/mm, dy1/mm, dz1/mm,
-                         drx1/deg, dry1/deg, drz1/deg,
-                         dx0/mm, dy0/mm, dz0/mm,
-                         drx0/deg, dry0/deg, drz0/deg);
-    }
-    else
-    {
-      // (tempsol)->DumpInfo();
-
-      std::cout << "Unknown solid: " << (tempsol)->GetName() << std::endl;
-      std::cout << "The corresponding volume will have a null reference to solid!!" << std::endl;
-    }
+    if(!(howmany%100)) std::cout << howmany << "/" << solsize << " solids done" << std::endl;
+    G4VSolid* tempsol = *sit;    
+    DumpSolid(tempsol);    
   }
 }
 
@@ -779,7 +452,7 @@ void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV)
   DumpTetrahedronSolidsDefinitions();
 
   // Traverse the geometry hierarchy and write it down to the file
-  std::cout << "Examining the logical tree" << std::endl;
+  //std::cout << "Examining the logical tree" << std::endl;
   DumpGeoTree(worldPV);
 
   // Finalize with the setup pointing to the world volume
@@ -789,6 +462,1010 @@ void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV)
 
   db.WriteDocument();
   db.CloseDocument();
-  std::cout << "Written out GDML file." << std::endl;
+  std::cout << "Written out GDML file: " << outputFile << std::endl;
 }
 
+void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV, std::vector<int> levels, int currentLevel)
+{
+  gdml::writer::DocumentBuilder db(outputFile);
+  db.OpenDocument();
+  db.setSchemaLocation( schemaLocation );
+
+  matcur = &db.getMaterialsCursor();
+  solcur = &db.getSolidsCursor();
+  strcur = &db.getStructureCursor();
+  defcur = &db.getDefinitionsCursor();
+  stpcur = &db.getSetupCursor();  
+
+  // Traverse the geometry hierarchy and write it down to the file
+  //std::cout << "Examining the logical tree" << std::endl;
+  DumpGeoTree2(worldPV, levels, currentLevel);
+  DumpTessellatedSolidsDefinitions();
+  DumpTetrahedronSolidsDefinitions();
+
+  // Finalize with the setup pointing to the world volume
+  stpcur->addSetup( "Default",                                // Setup ID
+                    "1.0",                                    // Setup version
+                    ut->name(worldPV->GetLogicalVolume()) );  // World vol. ref.
+
+  db.WriteDocument();
+  db.CloseDocument();
+  std::cout << "Written out GDML file: " << outputFile << std::endl;  
+}
+
+void G4GDMLWriter::DumpMaterial(G4Material* mat)
+{ 
+    int nbofele = mat->GetNumberOfElements();
+
+    if(nbofele > 1)
+    {
+      gdml::writer::FractionsVector*
+        frvect = new gdml::writer::FractionsVector();
+
+      for(int ii=0; ii!=nbofele; ii++)
+	    {
+	      const G4Element*
+          ele = mat->GetElement(ii);
+
+	      matcur->addElement(ut->name(ele),
+                           ele->GetSymbol(),
+                           (int)ele->GetZ(),
+                           ele->GetA()*mole/g);
+	      frvect->push_back(std::pair<std::string, double>
+                          (ut->name(mat->GetElement(ii)),
+                           mat->GetFractionVector()[ii]));
+	    }
+      matcur->addMaterial(ut->name(mat),
+                          mat->GetChemicalFormula(),
+                          mat->GetDensity()*cm3/g,
+                          *frvect);
+    } 
+    else
+    {
+      matcur->addMaterial(ut->name(mat),
+                          mat->GetChemicalFormula(),
+                          mat->GetZ(),
+                          mat->GetA()*mole/g,
+                          mat->GetDensity()*cm3/g);
+    }
+}
+
+void G4GDMLWriter::DumpSolid(G4VSolid* tempsol)
+{
+    while(const G4DisplacedSolid* disp = dynamic_cast<const G4DisplacedSolid*>(tempsol))
+    {
+      tempsol = disp->GetConstituentMovedSolid();
+    }
+    
+    if( const G4TessellatedSolid* tessSolid = dynamic_cast<const G4TessellatedSolid*>(tempsol) )
+    {
+      int numberOfFacets = tessSolid->GetNumberOfFacets();
+      std::cout << "numberOfFacets: " << numberOfFacets << std::endl;
+      std::vector<gdml::writer::Facet> facets;
+      for(int i=0; i<numberOfFacets; i++)
+      {
+       G4VFacet *tempG4Facet = tessSolid->GetFacet(i);
+       int numberOfVertices = tempG4Facet->GetNumberOfVertices();
+       std::cout << "numberOfVertices: " << numberOfVertices << std::endl;
+       std::vector<std::string> verticesNames;
+       for(int j=0; j<numberOfVertices; j++)
+       {
+        G4ThreeVector currentVertex = tempG4Facet->GetVertex(j);
+	std::cout << "X: " << currentVertex.x()  << " Y: " << currentVertex.y()  << " Z: " << currentVertex.z() << std::endl;
+	verticesNames.push_back(processTessSolidVertex(currentVertex.x(),currentVertex.y(), currentVertex.z()));
+       }       
+       if(verticesNames.size()==3) //triangular facet
+       {
+        gdml::writer::Facet newFacet(verticesNames[0], verticesNames[1], verticesNames[2]);
+	facets.push_back(newFacet);
+       }
+       else if(verticesNames.size()==4) //quadrangular facet
+       {
+        gdml::writer::Facet newFacet(verticesNames[0], verticesNames[1], verticesNames[2], verticesNames[3]);
+	facets.push_back(newFacet);
+       }
+      }
+      solcur->addTessellated( ut->name(tessSolid),
+			      facets,
+                              "mm","degree");
+    }    
+    else if( const G4Tet* tet = dynamic_cast<const G4Tet*>(tempsol) )
+    {
+      std::vector<G4ThreeVector> tetVertices = tet->GetVertices();
+      std::string vertex1 = processTetVertex(tetVertices[0].x(),tetVertices[0].y(),tetVertices[0].z());
+      std::string vertex2 = processTetVertex(tetVertices[1].x(),tetVertices[1].y(),tetVertices[1].z());
+      std::string vertex3 = processTetVertex(tetVertices[2].x(),tetVertices[2].y(),tetVertices[2].z());
+      std::string vertex4 = processTetVertex(tetVertices[3].x(),tetVertices[3].y(),tetVertices[3].z());
+      
+      solcur->addTetrahedron( ut->name(tet),
+                              vertex1,
+			      vertex2,
+			      vertex3,
+			      vertex4,
+                              "mm","degree");
+    }
+    else if( const G4Sphere* sphere = dynamic_cast<const G4Sphere*>(tempsol) )
+    {
+      solcur->addSphere( ut->name(sphere),
+                         sphere->GetInsideRadius()/mm,
+                         sphere->GetOuterRadius()/mm,
+                         sphere->GetStartPhiAngle()/deg,
+                         sphere->GetDeltaPhiAngle()/deg,
+                         sphere->GetStartThetaAngle()/deg,
+                         sphere->GetDeltaThetaAngle()/deg,
+                         "mm","degree");
+    }
+    else if( const G4Box* box = dynamic_cast<const G4Box*>(tempsol) )
+    {
+      solcur->addBox( ut->name(box),
+                      2*box->GetXHalfLength()/mm,
+                      2*box->GetYHalfLength()/mm,
+                      2*box->GetZHalfLength()/mm,"mm" );
+    }
+
+      else if( const G4TwistedTrap* twistedtrap = dynamic_cast<const G4TwistedTrap*>(tempsol) )
+    {
+      solcur->addTwistedTrap( ut->name(twistedtrap),
+		      2*twistedtrap->GetY1HalfLength()/mm,
+                      2*twistedtrap->GetX1HalfLength()/mm,
+		      2*twistedtrap->GetX2HalfLength()/mm,
+                      2*twistedtrap->GetY2HalfLength()/mm,
+		      2*twistedtrap->GetX3HalfLength()/mm,
+		      2*twistedtrap->GetX4HalfLength()/mm,
+                      2*twistedtrap->GetZHalfLength()/mm,
+		      twistedtrap->GetPhiTwist()/deg, 
+		      twistedtrap->GetTiltAngleAlpha()/deg,
+		      twistedtrap->GetPolarAngleTheta()/deg,
+		      twistedtrap->GetAzimuthalAnglePhi()/deg, "mm", "degree");
+    }
+
+    else if( const G4TwistedTrd* twistedtrd = dynamic_cast<const G4TwistedTrd*>(tempsol) )
+    {
+      solcur->addTwistedTrd( ut->name(twistedtrd),
+	
+		      2*twistedtrd->GetX1HalfLength()/mm,
+                      2*twistedtrd->GetX2HalfLength()/mm,
+		      2*twistedtrd->GetY1HalfLength()/mm,
+                      2*twistedtrd->GetY2HalfLength()/mm,
+                      2*twistedtrd->GetZHalfLength()/mm,
+		      twistedtrd->GetPhiTwist()/deg,"mm", "rad");
+    }
+
+
+    else if( const G4TwistedBox* twistedbox = dynamic_cast<const G4TwistedBox*>(tempsol) )
+    {
+      solcur->addTwistedBox( ut->name(twistedbox),
+                      2*twistedbox->GetXHalfLength()/mm,
+                      2*twistedbox->GetYHalfLength()/mm,
+                      2*twistedbox->GetZHalfLength()/mm,
+		      twistedbox->GetPhiTwist()/deg, "mm", "degree");
+    }
+
+
+    else if( const G4Tubs* tubs = dynamic_cast<const G4Tubs*>(tempsol) )
+    {
+      solcur->addTube(ut->name(tubs),
+                      tubs->GetInnerRadius()/mm,
+                      tubs->GetOuterRadius()/mm,
+                      2*tubs->GetZHalfLength()/mm,
+                      tubs->GetStartPhiAngle()/deg,
+                      tubs->GetDeltaPhiAngle()/deg
+                      ,"mm","degree");
+    }
+
+       else if( const G4TwistedTubs* twistedtubs = dynamic_cast<const G4TwistedTubs*>(tempsol) )
+    {
+      solcur->addTwistedTubs(ut->name(twistedtubs),
+			     twistedtubs->GetPhiTwist()/deg,
+                      twistedtubs->GetInnerRadius()/mm,
+                      twistedtubs->GetOuterRadius()/mm,
+                      2*twistedtubs->GetZHalfLength()/mm,
+                      twistedtubs->GetDPhi()/deg,"mm","degree");
+    }
+
+    else if( const G4Cons* cons = dynamic_cast<const G4Cons*>(tempsol) )
+    {
+      solcur->addCone(ut->name(cons),
+                      cons->GetInnerRadiusMinusZ()/mm,
+                      cons->GetOuterRadiusMinusZ()/mm,
+                      cons->GetInnerRadiusPlusZ()/mm,
+                      cons->GetOuterRadiusPlusZ()/mm,
+                      2*cons->GetZHalfLength()/mm,
+                      cons->GetStartPhiAngle()/deg,
+                      cons->GetDeltaPhiAngle()/deg,
+                      "mm","degree");
+    }
+    else if( const G4Polycone* polycone = dynamic_cast<const G4Polycone*>(tempsol) )
+    {
+      solcur->addPolyCone(ut->name(polycone),
+                          polycone->GetOriginalParameters()->Num_z_planes,
+                          polycone->GetOriginalParameters()->Start_angle/deg,
+                          polycone->GetOriginalParameters()->Opening_angle/deg,
+                          polycone->GetOriginalParameters()->Z_values,
+                          polycone->GetOriginalParameters()->Rmin,
+                          polycone->GetOriginalParameters()->Rmax,
+                          "mm","degree");
+    }
+    else if( const G4Para* para = dynamic_cast<const G4Para*>(tempsol) )
+    {
+      double phi;
+      if(para->GetSymAxis().z()!=1.0)
+        phi = atan(para->GetSymAxis().y()/para->GetSymAxis().x());
+      else
+        phi = 0;
+
+      solcur->addPara(ut->name(para),
+                      2*para->GetXHalfLength()/mm,
+                      2*para->GetYHalfLength()/mm,
+                      2*para->GetZHalfLength()/mm,
+                      atan(para->GetTanAlpha())/deg,
+                      acos(para->GetSymAxis().z())/deg,
+                      phi/deg,"mm","degree");
+    }
+    else if( const G4Trap* trap = dynamic_cast<const G4Trap*>(tempsol) )
+    {
+      double phi;
+      if(trap->GetSymAxis().z()!=1.0)
+        phi = atan(trap->GetSymAxis().y()/trap->GetSymAxis().x());
+      else
+        phi = 0;
+
+      solcur->addTrap(ut->name(trap),
+                      2*trap->GetXHalfLength1()/mm,
+                      2*trap->GetXHalfLength2()/mm,
+                      2*trap->GetYHalfLength1()/mm,
+                      atan(trap->GetTanAlpha1())/deg,
+                      2*trap->GetXHalfLength3()/mm,
+                      2*trap->GetXHalfLength4()/mm,
+                      2*trap->GetYHalfLength2()/mm,
+                      atan(trap->GetTanAlpha2())/deg,
+                      acos(trap->GetSymAxis().z())/deg,
+                      2*trap->GetZHalfLength()/mm,
+                      phi/deg,"mm","degree");
+
+
+    }
+    else if( const G4Trd* trd = dynamic_cast<const G4Trd*>(tempsol) )
+    {
+      solcur->addTrd(ut->name(trd),
+                     2*trd->GetXHalfLength1()/mm,
+                     2*trd->GetXHalfLength2()/mm,
+                     2*trd->GetYHalfLength1()/mm,
+                     2*trd->GetYHalfLength2()/mm,
+                     2*trd->GetZHalfLength()/mm,"mm");
+    }
+    else if( const G4Orb* orb = dynamic_cast<const G4Orb*>(tempsol) )
+    {
+      solcur->addOrb(ut->name(orb),
+                     orb->GetRadius()/mm,
+                     "mm");
+    }
+    else if( const G4Hype* hype = dynamic_cast<const G4Hype*>(tempsol) )
+    {
+      solcur->addHype(ut->name(hype),
+                      hype->GetInnerRadius()/mm,
+                      hype->GetOuterRadius()/mm,
+                      hype->GetInnerStereo()/deg,
+                      hype->GetOuterStereo()/deg,
+                      2*hype->GetZHalfLength()/mm,"mm","degree");
+    }
+    else if( const G4EllipticalTube* eltu = dynamic_cast<const G4EllipticalTube*>(tempsol) )
+    {
+      solcur->addElTube(ut->name(eltu),
+                        eltu->GetDx()/mm,
+                        eltu->GetDy()/mm,
+                        eltu->GetDz()/mm,"mm");
+    }
+    else if( const G4Torus* torus = dynamic_cast<const G4Torus*>(tempsol) )
+    {
+      solcur->addTorus(ut->name(torus),
+                       torus->GetRmin()/mm,
+                       torus->GetRmax()/mm,
+                       torus->GetRtor()/mm,
+                       torus->GetSPhi()/degree,
+                       torus->GetDPhi()/degree,"mm","degree");
+    }
+    else if( const G4Polyhedra* polyh = dynamic_cast<const G4Polyhedra*>(tempsol) )
+    {
+      
+      std::vector<double> rIn;
+      std::vector<double> rOut;
+      rIn.resize(polyh->GetOriginalParameters()->Num_z_planes);
+      rOut.resize(polyh->GetOriginalParameters()->Num_z_planes);
+
+      double convertRad = std::cos(0.5*polyh->GetOriginalParameters()->Opening_angle/
+                                   polyh->GetOriginalParameters()->numSide);
+
+      for (int i=0;i<polyh->GetOriginalParameters()->Num_z_planes;i++)
+      {
+        rIn[i] = (polyh->GetOriginalParameters()->Rmin)[i] * convertRad;
+        rOut[i] = (polyh->GetOriginalParameters()->Rmax)[i] * convertRad;          
+      }
+      
+      solcur->addPolyhedra(ut->name(polyh),
+                           polyh->GetOriginalParameters()->Num_z_planes,
+                           polyh->GetOriginalParameters()->Start_angle/deg,
+                           polyh->GetOriginalParameters()->Opening_angle/deg,
+                           polyh->GetOriginalParameters()->numSide,
+                           polyh->GetOriginalParameters()->Z_values,
+                           rIn,
+                           rOut,
+                           "mm",
+                           "degree");
+    }
+    else if(const G4ReflectedSolid* refl = dynamic_cast<const G4ReflectedSolid*>(tempsol) )
+    {
+      double rx, ry, rz;
+      G4Scale3D  scale;
+      G4Rotate3D rotation;
+      G4Translate3D  translation;
+
+      refl->GetTransform3D().getDecomposition(scale, rotation, translation);
+
+      getXYZ( &(rotation.getRotation()), rx, ry, rz );
+      
+      solcur->addReflected(ut->name(refl),
+                           ut->name(refl->GetConstituentMovedSolid()),
+                           scale.xx(), scale.yy(), scale.zz(),
+                           rx, ry, rz,
+                           translation.dx()/mm, translation.dy()/mm, translation.dz()/mm,
+                           "mm","degree");      
+    }
+    else if( const G4BooleanSolid* boo = dynamic_cast<const G4BooleanSolid*>(tempsol) )
+    {
+      std::string btype("unknown");
+      if(boo->GetEntityType()=="G4SubtractionSolid") btype = "subtraction";
+      else if(boo->GetEntityType()=="G4UnionSolid") btype = "union";
+      else if(boo->GetEntityType()=="G4IntersectionSolid") btype = "intersection";
+
+
+      G4VSolid* constit0 = boo->GetConstituentSolid(0);
+      DumpSolid(constit0);
+      G4VSolid* constit1 = boo->GetConstituentSolid(1);
+      DumpSolid(constit1);
+
+
+      double dx0=0;
+      double dy0=0;
+      double dz0=0;
+      double drx0=0;
+      double dry0=0;
+      double drz0=0;
+
+      double dx1=0;
+      double dy1=0;
+      double dz1=0;
+      double drx1=0;
+      double dry1=0;
+      double drz1=0;
+
+      while(const G4DisplacedSolid* disp =
+            dynamic_cast<const G4DisplacedSolid*>(constit0))
+	    {
+	      dx0 += disp->GetObjectTranslation().x()/mm;
+	      dy0 += disp->GetObjectTranslation().y()/mm;
+	      dz0 += disp->GetObjectTranslation().z()/mm;
+
+	      const G4RotationMatrix r = disp->GetObjectRotation();
+	      double tdrx=0; double tdry=0; double tdrz=0;
+	      getXYZ( &r, tdrx, tdry, tdrz );
+	      drx0+=tdrx; dry0+=tdry; drz0+=tdrz;
+
+	      constit0 = disp->GetConstituentMovedSolid();
+	    }
+
+      while(const G4DisplacedSolid* disp =
+            dynamic_cast<const G4DisplacedSolid*>(constit1))
+	    {
+	      dx1 += disp->GetObjectTranslation().x()/mm;
+	      dy1 += disp->GetObjectTranslation().y()/mm;
+	      dz1 += disp->GetObjectTranslation().z()/mm;
+
+	      const G4RotationMatrix r = disp->GetObjectRotation();
+	      double tdrx=0; double tdry=0; double tdrz=0;
+	      getXYZ( &r, tdrx, tdry, tdrz );
+	      drx1+=tdrx; dry1+=tdry; drz1+=tdrz;
+
+	      constit1 = disp->GetConstituentMovedSolid();
+	    }
+
+      solcur->addBoolean(ut->name(boo),
+                         btype,
+                         ut->name(constit0),
+                         ut->name(constit1),
+                         dx1/mm, dy1/mm, dz1/mm,
+                         drx1/deg, dry1/deg, drz1/deg,
+                         dx0/mm, dy0/mm, dz0/mm,
+                         drx0/deg, dry0/deg, drz0/deg);
+    }
+    else
+    {
+      // (tempsol)->DumpInfo();
+
+      std::cout << "Unknown solid: " << (tempsol)->GetName() << std::endl;
+      std::cout << "The corresponding volume will have a null reference to solid!!" << std::endl;
+    }  
+}
+
+
+void G4GDMLWriter::DumpGeoTree2(G4VPhysicalVolume* physvol, std::vector<int> levels, int currentLevel)
+{
+  currentLevel++;
+  bool modularize = false;
+  std::vector<int>::iterator i = find(levels.begin(),levels.end(),currentLevel);
+  if(i!=levels.end()) // found
+  {
+   modularize = true;
+  }
+  
+  std::stack<G4VPhysicalVolume*> volstack;
+
+  G4LogicalVolume* logvol = physvol->GetLogicalVolume();
+  DumpSolid(logvol->GetSolid());
+  DumpMaterial(logvol->GetMaterial());
+  int nbofdaughters = logvol->GetNoDaughters();
+
+  for (int licz = 0; licz < nbofdaughters; licz++)
+  {
+    G4VPhysicalVolume* pv = logvol->GetDaughter(licz);
+    G4LogicalVolume* dlv = pv->GetLogicalVolume();
+
+    std::vector<G4LogicalVolume*>::const_reverse_iterator itlv = lvlist.rbegin();
+    std::vector<G4LogicalVolume*>::const_reverse_iterator enditlv = lvlist.rend();
+
+    while(itlv!=enditlv && (*itlv)!=dlv) itlv++;
+ 
+    if(itlv==enditlv)
+    {
+      lvlist.push_back(dlv);
+      if(!modularize)
+      {
+       DumpGeoTree2(pv, levels, currentLevel);
+      }
+      else
+      {
+       G4GDMLWriter g4writer(schemaLocation, (ut->name(pv->GetLogicalVolume()))+".gdml", currentFormat);
+       try
+       {
+        g4writer.DumpGeometryInfo(pv, levels, currentLevel);
+       }
+       catch(std::logic_error &lerr)
+       {
+        std::cout << "Caught an exception: " << lerr.what () << std::endl;
+       }
+      }
+    }
+    volstack.push( pv );
+  }
+
+  std::string lvname = ut->name(logvol);
+
+  G4VSolid* ts = logvol->GetSolid();
+
+  while(const G4DisplacedSolid* dis =
+        dynamic_cast<const G4DisplacedSolid*>(ts))
+  {
+    ts = dis->GetConstituentMovedSolid();
+  }
+
+  strcur->addVolume(lvname,
+                    ut->name(logvol->GetMaterial()),
+                    ut->name(ts));
+
+  while( !volstack.empty() )
+  {
+    G4VPhysicalVolume* pv = volstack.top();
+    
+    if(pv->IsParameterised())
+    {
+      if(dynamic_cast<G4PVParameterised*>(pv))
+      {
+        gdml::writer::Element& param =
+          strcur->addParameterised(lvname,// mother volume
+                                   ut->name(pv->GetLogicalVolume()),// parametrised volume
+                                   pv->GetMultiplicity());// number of copies
+      
+        G4VSolid* solid = logvol->GetSolid();
+      
+        for(int cpiter=1;cpiter!=pv->GetMultiplicity()+1;cpiter++)
+        {
+        
+          pv->GetParameterisation()->ComputeTransformation(cpiter-1,pv);
+        
+          const G4RotationMatrix* r = pv->GetFrameRotation();
+        
+          double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
+          if(r) getXYZ( r, rx, ry, rz );
+        
+          if( G4Box* box = dynamic_cast<G4Box*>(solid) )
+          {
+            pv->GetParameterisation()->ComputeDimensions(*box,cpiter-1,pv);
+          
+            strcur->addBoxParameterisation(ut->name(pv->GetLogicalVolume()),
+                                           param,  // volume
+                                           cpiter,                            // copy number
+                                           pv->GetObjectTranslation().getX(), // position
+                                           pv->GetObjectTranslation().getY(),
+                                           pv->GetObjectTranslation().getZ(),
+                                           rx, ry, rz, // rotation
+                                           box->GetXHalfLength(),
+                                           box->GetYHalfLength(),
+                                           box->GetZHalfLength()); // half-lengths
+          }
+          else if( G4Tubs* tubs = dynamic_cast<G4Tubs*>(solid) )
+          {
+            pv->GetParameterisation()->ComputeDimensions(*tubs,cpiter-1,pv);
+          
+            strcur->addTubeParameterisation(ut->name(pv->GetLogicalVolume()),
+                                            param,// volume
+                                            cpiter,// copy number
+                                            pv->GetObjectTranslation().getX(),// position
+                                            pv->GetObjectTranslation().getY(),
+                                            pv->GetObjectTranslation().getZ(),
+                                            rx, ry, rz,// rotation
+                                            tubs->GetInnerRadius(),
+                                            tubs->GetOuterRadius(),
+                                            2*tubs->GetZHalfLength(),
+                                            tubs->GetStartPhiAngle()/deg,
+                                            tubs->GetDeltaPhiAngle()/deg);
+          }
+          else
+          {
+            std::cout << "Trying to parameterise unknown solid - it will not work!"
+                      << std::endl;
+          }
+        }
+      }
+      else if(dynamic_cast<G4PVDivision*>(pv))
+      {
+      EAxis ax;
+      int nDiv;
+      double width;
+      double offset;
+      bool cons;
+
+      pv->GetReplicationData(ax, nDiv, width, offset, cons);
+
+      int axi=0;
+      
+      if(ax==kXAxis)
+      {
+        axi=1;
+      }
+      else if(ax==kYAxis)
+      {
+        axi=2;
+      }
+      else if(ax==kZAxis)
+      {
+        axi=3;
+      }
+      else if(ax==kRho)
+      {
+        axi=4;
+      }
+      else if(ax==kPhi)
+      {
+        axi=5;
+      }
+
+      std::string unit("mm");
+
+      // converting into degrees      
+      if(axi==4 || axi==5)
+      {
+        width = width/deg;
+        offset = offset/deg;
+        unit = "degree";
+      }      
+      strcur->addDivision(lvname,// mother volume
+                          ut->name(pv->GetLogicalVolume()),// divided volume
+                          nDiv, axi, width, offset, unit);
+      }
+    }
+    else if(pv->IsReplicated())
+    {
+      EAxis ax;
+      int nrep;
+      double width;
+      double offset;
+      bool cons;
+
+      pv->GetReplicationData(ax, nrep, width, offset, cons);
+
+      int axi=0;
+      
+      if(ax==kXAxis)
+      {
+        axi=1;
+      }
+      else if(ax==kYAxis)
+      {
+        axi=2;
+      }
+      else if(ax==kZAxis)
+      {
+        axi=3;
+      }
+
+      strcur->addReplica(lvname,// mother volume
+                         ut->name(pv->GetLogicalVolume()),// replicated volume
+                         nrep, axi, width, offset);
+    }
+    else //normal volume
+    {
+      std::string pvname = ut->name(pv);
+      
+      double dx=0;
+      double dy=0;
+      double dz=0;
+      double drx=0;
+      double dry=0;
+      double drz=0;
+
+      G4VSolid* tsol = pv->GetLogicalVolume()->GetSolid();
+
+      while(const G4DisplacedSolid* displ =
+            dynamic_cast<const G4DisplacedSolid*>(tsol))
+	    {
+	      dx += displ->GetObjectTranslation().x()/mm;
+	      dy += displ->GetObjectTranslation().y()/mm;
+	      dz += displ->GetObjectTranslation().z()/mm;
+
+	      const G4RotationMatrix r = displ->GetObjectRotation();
+	      double tdrx=0; double tdry=0; double tdrz=0;
+	      getXYZ( &r, tdrx, tdry, tdrz );
+	      drx+=tdrx; dry+=tdry; drz+=tdrz;
+        
+	      tsol = displ->GetConstituentMovedSolid();
+	    }
+      
+      defcur->addPosition( pvname+"in"+lvname+"p",
+                           pv->GetObjectTranslation().getX()+dx,
+                           pv->GetObjectTranslation().getY()+dy,
+                           pv->GetObjectTranslation().getZ()+dz );
+      
+      double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
+      const G4RotationMatrix* r = pv->GetFrameRotation();
+
+      std::string rotname("");
+
+      if (r) 
+      {
+        rotname = pvname+"in"+lvname+"r";
+        getXYZ( r, rx, ry, rz );
+        defcur->addRotation( pvname+"in"+lvname+"r",
+                             (rx+drx)/deg, (ry+dry)/deg, (rz+drz)/deg, "degree" );
+      }
+
+      if(!modularize)
+      {
+       strcur->addChild(lvname,
+                       ut->name(pv->GetLogicalVolume()),
+                       pvname+"in"+lvname+"p",
+                       rotname);
+      }
+      else
+      {
+       std::string filename = (ut->name(pv->GetLogicalVolume()))+".gdml";
+       strcur->addChildFile(lvname,
+                            filename,
+                            pvname+"in"+lvname+"p",
+                            rotname);
+      }      
+    }
+    volstack.pop();
+  }
+}
+
+
+void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV, std::vector<std::string> volnames)
+{
+  gdml::writer::DocumentBuilder db(outputFile);
+  db.OpenDocument();
+  db.setSchemaLocation( schemaLocation );
+
+  matcur = &db.getMaterialsCursor();
+  solcur = &db.getSolidsCursor();
+  strcur = &db.getStructureCursor();
+  defcur = &db.getDefinitionsCursor();
+  stpcur = &db.getSetupCursor();  
+
+  // Traverse the geometry hierarchy and write it down to the file
+  //std::cout << "Examining the logical tree" << std::endl;
+  DumpGeoTree2(worldPV, volnames);
+  DumpTessellatedSolidsDefinitions();
+  DumpTetrahedronSolidsDefinitions();
+
+  // Finalize with the setup pointing to the world volume
+  stpcur->addSetup( "Default",                                // Setup ID
+                    "1.0",                                    // Setup version
+                    ut->name(worldPV->GetLogicalVolume()) );  // World vol. ref.
+
+  db.WriteDocument();
+  db.CloseDocument();
+  std::cout << "Written out GDML file: " << outputFile << std::endl; 
+}
+
+void G4GDMLWriter::DumpGeoTree2(G4VPhysicalVolume* physvol, std::vector<std::string> volnames)
+{
+  bool modularize = false;  
+  std::stack<G4VPhysicalVolume*> volstack;
+
+  G4LogicalVolume* logvol = physvol->GetLogicalVolume();
+  DumpSolid(logvol->GetSolid());
+  DumpMaterial(logvol->GetMaterial());
+  int nbofdaughters = logvol->GetNoDaughters();
+
+  for (int licz = 0; licz < nbofdaughters; licz++)
+  {
+    G4VPhysicalVolume* pv = logvol->GetDaughter(licz);
+    G4LogicalVolume* dlv = pv->GetLogicalVolume();
+    std::string name_of_logical_vol = pv->GetLogicalVolume()->GetName();
+    std::vector<std::string>::iterator i = find(volnames.begin(),volnames.end(),name_of_logical_vol);
+    if(i!=volnames.end()) // found
+    {
+     modularize = true;
+    }
+    else
+    {
+     modularize = false;
+    }
+
+    std::vector<G4LogicalVolume*>::const_reverse_iterator itlv = lvlist.rbegin();
+    std::vector<G4LogicalVolume*>::const_reverse_iterator enditlv = lvlist.rend();
+
+    while(itlv!=enditlv && (*itlv)!=dlv) itlv++;
+ 
+    if(itlv==enditlv)
+    {
+      lvlist.push_back(dlv);
+      if(!modularize)
+      {
+       DumpGeoTree2(pv, volnames);
+      }
+      else
+      {
+       G4GDMLWriter g4writer(schemaLocation, (ut->name(pv->GetLogicalVolume()))+".gdml", currentFormat);
+       try
+       {
+        g4writer.DumpGeometryInfo(pv, volnames);
+       }
+       catch(std::logic_error &lerr)
+       {
+        std::cout << "Caught an exception: " << lerr.what () << std::endl;
+       }
+      }
+    }
+    volstack.push( pv );
+  }
+
+  std::string lvname = ut->name(logvol);
+
+  G4VSolid* ts = logvol->GetSolid();
+
+  while(const G4DisplacedSolid* dis =
+        dynamic_cast<const G4DisplacedSolid*>(ts))
+  {
+    ts = dis->GetConstituentMovedSolid();
+  }
+
+  strcur->addVolume(lvname,
+                    ut->name(logvol->GetMaterial()),
+                    ut->name(ts));
+
+  while( !volstack.empty() )
+  {
+    G4VPhysicalVolume* pv = volstack.top();
+    std::string name_of_logical_vol = pv->GetLogicalVolume()->GetName();
+    std::vector<std::string>::iterator i = find(volnames.begin(),volnames.end(),name_of_logical_vol);
+    if(i!=volnames.end()) // found
+    {
+     modularize = true;
+    }
+    else
+    {
+     modularize = false;
+    }
+    
+    if(pv->IsParameterised())
+    {
+      if(dynamic_cast<G4PVParameterised*>(pv))
+      {
+        gdml::writer::Element& param =
+          strcur->addParameterised(lvname,// mother volume
+                                   ut->name(pv->GetLogicalVolume()),// parametrised volume
+                                   pv->GetMultiplicity());// number of copies
+      
+        G4VSolid* solid = logvol->GetSolid();
+      
+        for(int cpiter=1;cpiter!=pv->GetMultiplicity()+1;cpiter++)
+        {
+        
+          pv->GetParameterisation()->ComputeTransformation(cpiter-1,pv);
+        
+          const G4RotationMatrix* r = pv->GetFrameRotation();
+        
+          double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
+          if(r) getXYZ( r, rx, ry, rz );
+        
+          if( G4Box* box = dynamic_cast<G4Box*>(solid) )
+          {
+            pv->GetParameterisation()->ComputeDimensions(*box,cpiter-1,pv);
+          
+            strcur->addBoxParameterisation(ut->name(pv->GetLogicalVolume()),
+                                           param,  // volume
+                                           cpiter,                            // copy number
+                                           pv->GetObjectTranslation().getX(), // position
+                                           pv->GetObjectTranslation().getY(),
+                                           pv->GetObjectTranslation().getZ(),
+                                           rx, ry, rz, // rotation
+                                           box->GetXHalfLength(),
+                                           box->GetYHalfLength(),
+                                           box->GetZHalfLength()); // half-lengths
+          }
+          else if( G4Tubs* tubs = dynamic_cast<G4Tubs*>(solid) )
+          {
+            pv->GetParameterisation()->ComputeDimensions(*tubs,cpiter-1,pv);
+          
+            strcur->addTubeParameterisation(ut->name(pv->GetLogicalVolume()),
+                                            param,// volume
+                                            cpiter,// copy number
+                                            pv->GetObjectTranslation().getX(),// position
+                                            pv->GetObjectTranslation().getY(),
+                                            pv->GetObjectTranslation().getZ(),
+                                            rx, ry, rz,// rotation
+                                            tubs->GetInnerRadius(),
+                                            tubs->GetOuterRadius(),
+                                            2*tubs->GetZHalfLength(),
+                                            tubs->GetStartPhiAngle()/deg,
+                                            tubs->GetDeltaPhiAngle()/deg);
+          }
+          else
+          {
+            std::cout << "Trying to parameterise unknown solid - it will not work!"
+                      << std::endl;
+          }
+        }
+      }
+      else if(dynamic_cast<G4PVDivision*>(pv))
+      {
+      EAxis ax;
+      int nDiv;
+      double width;
+      double offset;
+      bool cons;
+
+      pv->GetReplicationData(ax, nDiv, width, offset, cons);
+
+      int axi=0;
+      
+      if(ax==kXAxis)
+      {
+        axi=1;
+      }
+      else if(ax==kYAxis)
+      {
+        axi=2;
+      }
+      else if(ax==kZAxis)
+      {
+        axi=3;
+      }
+      else if(ax==kRho)
+      {
+        axi=4;
+      }
+      else if(ax==kPhi)
+      {
+        axi=5;
+      }
+
+      std::string unit("mm");
+
+      // converting into degrees      
+      if(axi==4 || axi==5)
+      {
+        width = width/deg;
+        offset = offset/deg;
+        unit = "degree";
+      }      
+      strcur->addDivision(lvname,// mother volume
+                          ut->name(pv->GetLogicalVolume()),// divided volume
+                          nDiv, axi, width, offset, unit);
+      }
+    }
+    else if(pv->IsReplicated())
+    {
+      EAxis ax;
+      int nrep;
+      double width;
+      double offset;
+      bool cons;
+
+      pv->GetReplicationData(ax, nrep, width, offset, cons);
+
+      int axi=0;
+      
+      if(ax==kXAxis)
+      {
+        axi=1;
+      }
+      else if(ax==kYAxis)
+      {
+        axi=2;
+      }
+      else if(ax==kZAxis)
+      {
+        axi=3;
+      }
+
+      strcur->addReplica(lvname,// mother volume
+                         ut->name(pv->GetLogicalVolume()),// replicated volume
+                         nrep, axi, width, offset);
+    }
+    else //normal volume
+    {
+      std::string pvname = ut->name(pv);
+      
+      double dx=0;
+      double dy=0;
+      double dz=0;
+      double drx=0;
+      double dry=0;
+      double drz=0;
+
+      G4VSolid* tsol = pv->GetLogicalVolume()->GetSolid();
+
+      while(const G4DisplacedSolid* displ =
+            dynamic_cast<const G4DisplacedSolid*>(tsol))
+	    {
+	      dx += displ->GetObjectTranslation().x()/mm;
+	      dy += displ->GetObjectTranslation().y()/mm;
+	      dz += displ->GetObjectTranslation().z()/mm;
+
+	      const G4RotationMatrix r = displ->GetObjectRotation();
+	      double tdrx=0; double tdry=0; double tdrz=0;
+	      getXYZ( &r, tdrx, tdry, tdrz );
+	      drx+=tdrx; dry+=tdry; drz+=tdrz;
+        
+	      tsol = displ->GetConstituentMovedSolid();
+	    }
+      
+      defcur->addPosition( pvname+"in"+lvname+"p",
+                           pv->GetObjectTranslation().getX()+dx,
+                           pv->GetObjectTranslation().getY()+dy,
+                           pv->GetObjectTranslation().getZ()+dz );
+      
+      double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
+      const G4RotationMatrix* r = pv->GetFrameRotation();
+
+      std::string rotname("");
+
+      if (r) 
+      {
+        rotname = pvname+"in"+lvname+"r";
+        getXYZ( r, rx, ry, rz );
+        defcur->addRotation( pvname+"in"+lvname+"r",
+                             (rx+drx)/deg, (ry+dry)/deg, (rz+drz)/deg, "degree" );
+      }
+
+      if(!modularize)
+      {
+       strcur->addChild(lvname,
+                       ut->name(pv->GetLogicalVolume()),
+                       pvname+"in"+lvname+"p",
+                       rotname);
+      }
+      else
+      {
+       std::string filename = (ut->name(pv->GetLogicalVolume()))+".gdml";
+       strcur->addChildFile(lvname,
+                            filename,
+                            pvname+"in"+lvname+"p",
+                            rotname);
+      }      
+    }
+    volstack.pop();
+  }
+}

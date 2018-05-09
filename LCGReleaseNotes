@@ -1,3 +1,30 @@
+14.08.2006 - GDML_2_7_0
+-----------------------
+
+New solids added: twisted box, twisted trap, twisted trd, twisted tubs.
+
+
+New major feature: support for modularization of the GDML
+files. 
+
+Standalone GDML files, representing parts of the geometry, can
+now be used within the other GDML files.
+The syntax is the following:
+
+<volume name="mother">
+   <materialref ref="Iron"/>
+   <solidref ref="MotherBox"/> 
+   <physvol>
+     <file name="child.gdml"/>
+     <positionref ref="pos"/>
+     <rotationref ref="rot"/>
+   </physvol>
+</volume>
+
+where the 'file' element contains the name of the file to be
+included. The top volume from that file becomes then the daughter
+volume of the 'mother' volume.
+
 14.07.2006 - GDML_2_6_0
 -----------------------
 
@@ -6,7 +33,7 @@ separate tags for CPPGDML and GDMLSchema will not be used anymore. The
 common tag GDML_X_Y_Z will be the only one used. The Python GDML
 processors will not be release anymore together with the rest of GDML
 system. The GDML ROOT binding is now part of ROOT distribution and
-therefore will not be furthered committed to GDML CVS.
+therefore will not be further committed to GDML CVS.
 
 This LCGReleaseNotes file will, from now on be the central 'release
 information' holder for LCG releases. 

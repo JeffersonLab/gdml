@@ -69,6 +69,10 @@
     LOAD_COMPONENT(solidrefProcess)    
     LOAD_COMPONENT(volumerefProcess)
     LOAD_COMPONENT(worldProcess)    
+    LOAD_COMPONENT(twistedboxProcess)
+    LOAD_COMPONENT(twistedtrapProcess)
+    LOAD_COMPONENT(twistedtrdProcess)
+    LOAD_COMPONENT(twistedtubsProcess)
     LOAD_COMPONENT(setupProcess)    
       }
 

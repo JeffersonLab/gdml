@@ -1,6 +1,6 @@
 // -*- C++ -*-
-// $Id: SinglePlacementTypeProcess.h,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name:  $
+// $Id: SinglePlacementTypeProcess.h,v 1.2 2006/07/19 14:57:49 dkruse Exp $
+// GEANT4 tag $Name: GDML_2_7_0 $
 #ifndef GDML_PROCESS_SINGLEPLACEMENTTYPEPROCESS_H
 #define GDML_PROCESS_SINGLEPLACEMENTTYPEPROCESS_H 1
 
@@ -49,6 +49,11 @@ public:
     if( name == "volumeref" )
     {
       // The volume reference came so simply add it into content model of the child
+      sptobj->add_content( name, *so );
+    }
+    else if( name == "file" )
+    {
+      // The file reference came so simply add it into content model of the child
       sptobj->add_content( name, *so );
     }
     else

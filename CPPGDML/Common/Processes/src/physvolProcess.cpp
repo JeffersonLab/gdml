@@ -1,6 +1,6 @@
 //
 // $Id: physvolProcess.cpp,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name:  $
+// GEANT4 tag $Name: GDML_2_7_0 $
 #include "Processes/SinglePlacementTypeProcess.h"
 
 #include "Schema/physvol.h"

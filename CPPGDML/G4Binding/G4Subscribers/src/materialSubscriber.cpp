@@ -146,11 +146,14 @@ class materialSubscriber : virtual public SAXSubscriber
               sA += "*";
               sA += am->get_unit();
               a = calc->Eval( sA );
-
-              G4Material* mnew = new G4Material( Util::generateName(obj->get_name()), z, a, d, s, t, p );
+              G4Material* existing = G4Material::GetMaterial(Util::generateName(obj->get_name()), false);
+	      if(!existing)
+              {
+	       G4Material* mnew = new G4Material( Util::generateName(obj->get_name()), z, a, d, s, t, p );	      
 #ifdef GDML_VERBOSE
-              std::cout << *mnew << std::endl;
+               std::cout << *mnew << std::endl;
 #endif
+              }
             } else {
               // Must be a sequence of composites or fractions
               const ContentSequence* cseq = dynamic_cast<const ContentSequence*>( cc->content().object );
@@ -158,59 +161,69 @@ class materialSubscriber : virtual public SAXSubscriber
               std::string tag = cseq->content( 0 ).tag;
               if( tag == "composite" ) {
                 // Composition by atoms of elements
-                G4Material* mnew = new G4Material( Util::generateName(obj->get_name()), d, count, s, t, p );
-                for( unsigned int i = 0; i < count; i++ ) {
-                  composite* ci = dynamic_cast<composite*>( cseq->content( i ).object );
-                  int     natom = (int)calc->Eval( ci->get_n().c_str() );
+		G4Material* existing = G4Material::GetMaterial(Util::generateName(obj->get_name()), false);
+	        if(!existing)
+                {
+                 G4Material* mnew = new G4Material( Util::generateName(obj->get_name()), d, count, s, t, p );
+		
+                 for( unsigned int i = 0; i < count; i++ ) {
+                   composite* ci = dynamic_cast<composite*>( cseq->content( i ).object );
+                   int     natom = (int)calc->Eval( ci->get_n().c_str() );
 
-                  // Find the element
-                  G4Element*  etoadd = 0;
-		  if ( ( etoadd = MaterialLocator::FindElement( ci->get_ref() ) ) != 0 )
-		  {
-		    mnew->AddElement( etoadd, natom );
-		  }
-                  else
-                  {
-                    std::cerr << "MATERIAL SUBSCRIBER:: element "
-                              << ci->get_ref() << " not found!" << std::endl;
-                    std::cerr << "Material " << obj->get_name() << " can't be created!" << std::endl;
-                    std::cerr << "Please, re-order your materials or add the missing one..."
-                              << std::endl;
-                    G4Exception( "Shutting-down due to error(s) in GDML input..." );
-                  }
-                }
-                std::cout << *mnew << std::endl;
+                   // Find the element
+                   G4Element*  etoadd = 0;
+		   if ( ( etoadd = MaterialLocator::FindElement( ci->get_ref() ) ) != 0 )
+		   {
+		     mnew->AddElement( etoadd, natom );
+		   }
+                   else
+                   {
+                     std::cerr << "MATERIAL SUBSCRIBER:: element "
+                               << ci->get_ref() << " not found!" << std::endl;
+                     std::cerr << "Material " << obj->get_name() << " can't be created!" << std::endl;
+                     std::cerr << "Please, re-order your materials or add the missing one..."
+                               << std::endl;
+                     G4Exception( "Shutting-down due to error(s) in GDML input..." );
+                   }
+                 }
+                 std::cout << *mnew << std::endl;
+	        }
               }
               else
               {
                 // Composition by fraction of mass
-                G4Material* mnew = new G4Material( Util::generateName(obj->get_name()), d, count, s, t, p );
-                for( unsigned int i = 0; i < count; i++ ) {
-                  fraction* fi = dynamic_cast<fraction*>( cseq->content( i ).object );
-                  double      frac = calc->Eval( fi->get_n().c_str() );
+		G4Material* existing = G4Material::GetMaterial(Util::generateName(obj->get_name()), false);
+	        if(!existing)
+                {
+                 G4Material* mnew = new G4Material( Util::generateName(obj->get_name()), d, count, s, t, p );
+		
+                 for( unsigned int i = 0; i < count; i++ ) {
+                   fraction* fi = dynamic_cast<fraction*>( cseq->content( i ).object );
+                   double      frac = calc->Eval( fi->get_n().c_str() );
 
-                  // Find the material or element
-                  G4Material* mtoadd = 0;
-                  G4Element*  etoadd = 0;
+                   // Find the material or element
+                   G4Material* mtoadd = 0;
+                   G4Element*  etoadd = 0;
 
-		  if ( ( mtoadd = MaterialLocator::FindMaterial( Util::generateName(fi->get_ref() ) ) ) != 0 )
-                  {
-		    mnew->AddMaterial( mtoadd, frac );
-		  }
-		  else if ( ( etoadd = MaterialLocator::FindElement( Util::generateName(fi->get_ref() ) ) ) != 0 )
-                  {
-		    mnew->AddElement( etoadd, frac );
-		  }
-                  else
-                  {
-                    std::cerr << "MATERIAL SUBSCRIBER:: material or element "
-                              << fi->get_ref() << " not found!" << std::endl;
-                    std::cerr << "Material " << obj->get_name() << " can't be created!" << std::endl;
-                    std::cerr << "Please, re-order your materials or add the missing one..."
-                              << std::endl;
-                    G4Exception( "Shutting-down due to error(s) in GDML input..." );
-                  }
-                }
+		   if ( ( mtoadd = MaterialLocator::FindMaterial( Util::generateName(fi->get_ref() ) ) ) != 0 )
+                   {
+		     mnew->AddMaterial( mtoadd, frac );
+		   }
+		   else if ( ( etoadd = MaterialLocator::FindElement( Util::generateName(fi->get_ref() ) ) ) != 0 )
+                   {
+		     mnew->AddElement( etoadd, frac );
+		   }
+                   else
+                   {
+                     std::cerr << "MATERIAL SUBSCRIBER:: material or element "
+                               << fi->get_ref() << " not found!" << std::endl;
+                     std::cerr << "Material " << obj->get_name() << " can't be created!" << std::endl;
+                     std::cerr << "Please, re-order your materials or add the missing one..."
+                               << std::endl;
+                     G4Exception( "Shutting-down due to error(s) in GDML input..." );
+                   }
+                 }
+	       }
               }
             }
           } else {
