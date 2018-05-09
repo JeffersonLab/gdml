@@ -11,11 +11,11 @@ setenv PLATFORM slc3_ia32_gcc323
 setenv CLHEP_BASE /afs/cern.ch/sw/lcg/external/clhep/1.9.1.2/slc3_ia32_gcc323
 
 # G4 installation on AFS
-setenv G4VERSION geant4.7.0.p01
-setenv G4BASE /afs/cern.ch/sw/geant4/releases/share/${G4VERSION}
-setenv G4INSTALL ${G4BASE}
-setenv G4INCLUDE ${G4BASE}/include
-setenv G4BINBASE /afs/cern.ch/sw/geant4/releases/specific/${PLATFORM}/${G4VERSION}
+setenv G4VERSION 7.1.p01
+setenv G4BASE /afs/cern.ch/sw/lcg/external/geant4/${G4VERSION}
+setenv G4INSTALL ${G4BASE}/share
+setenv G4INCLUDE ${G4INSTALL}/include
+setenv G4BINBASE ${G4BASE}/${PLATFORM}
 setenv G4LIBDIR ${G4BINBASE}/lib
 
 # Xerces-C setup

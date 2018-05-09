@@ -40,7 +40,8 @@
 	    <xs:element ref="direction"/>
 	    <xs:element name="directionref" type="ReferenceType"/>
 	  </xs:choice>
-	  <xs:element ref="distance"/>
+	  <xs:element ref="width"/>
+	  <xs:element ref="offset"/>
 	</xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -72,6 +73,7 @@
   </xs:complexType>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <xs:element name="direction" type="directionType"/>
-  <xs:element name="distance" type="QuantityType"/>
+  <xs:element name="width" type="QuantityType"/>
+  <xs:element name="offset" type="QuantityType"/>
   <xs:element name="replicavol" type="ReplicaPlacementType"/>
 </xs:schema>

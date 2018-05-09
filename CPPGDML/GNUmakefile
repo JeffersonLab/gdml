@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: GNUmakefile,v 1.17 2005/05/13 20:15:22 jmccormi Exp $
+# $Id: GNUmakefile,v 1.19 2005/11/11 10:57:31 witoldp Exp $
 #
 # /\/\/\/\ C++ GDML Build System /\/\/\/\
 #
@@ -43,7 +43,7 @@ endef
 
 # Build Targets
 .PHONY: build_gdml 
-build_gdml: build_gdml_prolog build_gdml_libs build_gdml_examples
+build_gdml: build_gdml_prolog build_gdml_libs # build_gdml_examples
 
 .PHONY: build_gdml_libs
 build_gdml_libs:

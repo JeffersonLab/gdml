@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: application.gmk,v 1.4 2005/05/12 20:35:58 jmccormi Exp $
+# $Id: application.gmk,v 1.6 2005/11/24 01:19:52 jmccormi Exp $
 #
 # Application makefile fragment
 #
@@ -19,7 +19,7 @@
 # PLATFORM
 # SUBSYSTEM
 # APP_NAME
-# 
+#
 # Additional PROJECT_ vars are derived from PROJECT_TOP by including $(PROJECT_TOP)/project.gmk.
 #
 
@@ -55,7 +55,7 @@ include $(PROJECT_CONFIG)/package_deps.gmk
 include $(PROJECT_CONFIG)/gdml_link_libs.gmk
 
 # Setup external dependencies.  This gmk includes them in correct order for static linking.
-include $(PROJECT_CONFIG)/ext_deps.gmk
+include $(PROJECT_CONFIG)/application_ext_deps.gmk
 
 VPATH := $(PACKAGE_DIR) $(PACKAGE_BUILD_AREA)
 
@@ -74,16 +74,6 @@ endif
 
 $(APP_NAME)_target: $(app_target)
 
-#ifdef DO_SHARED_LIBS
-
-#$(APP_NAME)_target: app_info $(APP_TARGET) $(APP_STATIC_TARGET) app_done
-
-#else
-
-#$(APP_NAME)_target: app_info $(APP_STATIC_TARGET) app_done
-
-#endif
-
 # Possibly static target
 .PHONY: $(APP_STATIC_TARGET)
 $(APP_STATIC_TARGET): $(APP_DEPENDENCY_FILES) $(APP_OBJECT_FILES)
@@ -96,7 +86,7 @@ $(APP_STATIC_TARGET): $(APP_DEPENDENCY_FILES) $(APP_OBJECT_FILES)
 .PHONY: $(APP_TARGET)
 $(APP_TARGET): $(APP_DEPENDENCY_FILES) $(APP_OBJECT_FILES)
 	@echo
-	@echo "Building shared application binary $@"	
+	@echo "Building shared application binary $@"
 	@echo
 	@test -d $(PROJECT_TOP)/build/$(PLATFORM)/bin || mkdir -pv $(PROJECT_TOP)/build/$(PLATFORM)/bin
 	$(CXX) -o $@ $(APP_OBJECT_FILES) $(CXXFLAGS) $(PLATFORM_EXE_SHLIB_FLAGS) $(LDFLAGS)
@@ -104,7 +94,7 @@ $(APP_TARGET): $(APP_DEPENDENCY_FILES) $(APP_OBJECT_FILES)
 .PHONY: app_info
 app_info:
 	@echo
-	@echo "Building application $(APP_NAME) on site $(SITE) for platform $(PLATFORM)"
+	@echo "Building application $(APP_NAME) for platform $(PLATFORM)"
 	@echo
 
 .PHONY: app_done
@@ -138,7 +128,7 @@ $(APP_BUILD_AREA)/%.d: %.cpp
    '$(CXX) -MM $(CPPFLAGS) $(addprefix $(CURDIR)/,$(notdir $<)) | sed -e '\''s@\(.*\)\(\.o\)\([ :]*\)@$(APP_BUILD_AREA)/\1\2 $(APP_BUILD_AREA)/\1.d\3@g'\'' > $@'
 
 # Build app library object files from .cpp files
-$(APP_BUILD_AREA)/%.o: %.cpp 
+$(APP_BUILD_AREA)/%.o: %.cpp
 	@test -d $(APP_BUILD_AREA) || mkdir -pv $(APP_BUILD_AREA)
 	@echo "Compiling $(notdir $<)"
 	@$(CXX) -c -o $@ $< $(CXXFLAGS)

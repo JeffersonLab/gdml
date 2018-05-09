@@ -1,7 +1,8 @@
 //
 #include "Saxana/SAXComponentFactory.h"
 
-extern "C" {
+//extern "C" 
+//{
 
   void GDMLProcessLibLoad() {
     LOAD_COMPONENT(defineProcess)
@@ -50,6 +51,10 @@ extern "C" {
     LOAD_COMPONENT(paramvolProcess)
     LOAD_COMPONENT(paramalgProcess)
     LOAD_COMPONENT(parametersProcess)
+    LOAD_COMPONENT(replicate_along_axisProcess)
+    LOAD_COMPONENT(widthProcess)
+    LOAD_COMPONENT(offsetProcess)
+    LOAD_COMPONENT(directionProcess)
     LOAD_COMPONENT(parameterised_position_sizeProcess)
     LOAD_COMPONENT(box_dimensionsProcess)
     LOAD_COMPONENT(tube_dimensionsProcess)
@@ -58,6 +63,6 @@ extern "C" {
     LOAD_COMPONENT(volumerefProcess)
     LOAD_COMPONENT(worldProcess)    
     LOAD_COMPONENT(setupProcess)    
-  }
+      };
 
-};
+//};

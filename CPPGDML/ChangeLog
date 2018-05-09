@@ -1,3 +1,25 @@
+2005-11-04 Witek Pokorski <Witold.Pokorski@cern.ch>
+        * CPPGDML/Common/Writer: major bug corrected... we forgot to setprecision for the 
+	ostringstreams that we were using to convert doubles into std::strings... All the GDML files
+	generated so far had all the doubles truncated
+
+2005-11-23 Jeremy MCCORMICK <jeremym@slac.stanford.edu>
+
+        * config/autoconf/*.m4: Changed GDML macro prefix from GAC to GDML; Cleaned-up comments
+
+        * config/autoconf/geant4.m4: Added option --enable-nist/--disable-nist to configure; 
+        Sets the GDML_USE_NIST compile flag; Forced to disable if NIST not supported by Geant4 install
+
+        * G4Binding/G4Processor/src/MaterialLocator.h: Added utility to lookup materials and elements in G4 with optional NIST
+        * G4Binding/G4Processor/src/MaterialLocator.cpp: "
+
+        * G4Binding/G4Subscriber/src/materialSubscriber.cpp: Changed material lookup to use the MaterialLocator
+        * G4Binding/G4Subscriber/src/volumeSubscriber.cpp: Changed material lookup to use the MaterialLocator
+
+2005-11-04 Witek Pokorski <Witold.Pokorski@cern.ch>
+	* CPPGDML: further implementation of the handlig of replicas; support for replicas
+	both in the 'reader' as well as the 'writer'
+
 2005-06-09  Witek Pokorski <Witold.Pokorski@cern.ch>
         * config/autoconf: the build system has been extended by an Autoconf front-end;
 	work done by Jeremy

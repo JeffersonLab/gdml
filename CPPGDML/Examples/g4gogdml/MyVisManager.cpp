@@ -22,7 +22,7 @@
 //
 //
 // $Id: MyVisManager.cpp,v 1.3 2005/05/04 02:24:08 jmccormi Exp $
-// GEANT4 tag $Name: GDML_2_3_0 $
+// GEANT4 tag $Name: GDML_2_4_0 $
 //
 //
 // John Allison 24th January 1998.

@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: G4GDMLWriter.h,v 1.2 2005/03/02 15:17:09 witoldp Exp $
+// $Id: G4GDMLWriter.h,v 1.3 2005/08/03 09:44:13 witoldp Exp $
 #ifndef INCLUDE_G4GDMLWRITER_H 
 #define INCLUDE_G4GDMLWRITER_H 1
 
@@ -15,6 +15,7 @@
 #include "Writer/SetupCursor.h"
 
 #include "G4Writer/Utils.h"
+#include "Writer/Element.h"
 
 // Forward declaration
 class G4VPhysicalVolume;

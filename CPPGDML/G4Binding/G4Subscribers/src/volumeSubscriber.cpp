@@ -1,10 +1,11 @@
 // -*- C++ -*-
-// $Id: volumeSubscriber.cpp,v 1.6 2005/06/09 13:37:56 witoldp Exp $
+// $Id: volumeSubscriber.cpp,v 1.9 2005/11/24 02:12:01 jmccormi Exp $
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Processor/MaterialLocator.h"
 #include "G4Processor/GenericPositionSizeParameterisation.h"
 
 #include "G4Subscribers/Util.h"
@@ -12,15 +13,18 @@
 #include "Schema/volume.h"
 #include "Schema/physvol.h"
 #include "Schema/replicavol.h"
+#include "Schema/replicate_along_axis.h"
 #include "Schema/paramvol.h"
 #include "Schema/parameterised_position_size.h"
 #include "Schema/parameters.h"
 #include "Schema/box_dimensions.h"
 #include "Schema/tube_dimensions.h"
 #include "Schema/SinglePlacementType.h"
+#include "Schema/directionType.h"
 #include "Schema/define.h"
 
 #include "G4Material.hh"
+
 #include "G4AssemblyVolume.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -82,12 +86,13 @@ public:
               VolumeType::materialref*
                 mref = dynamic_cast<VolumeType::materialref*>( seq->content(i).object );
 
-              if( (vmaterial = G4Material::GetMaterial( Util::generateName(mref->get_ref()))) == 0 ) {
-                std::cerr << "VOLUME SUBSCRIBER:: material " << mref->get_ref()
-                          << " not found!" << std::endl;
-                std::cerr << "Volume " << obj->get_name() << " can't be created!" << std::endl;
-                std::cerr << "Please, re-order your materials or add the missing one..." << std::endl;
-                G4Exception( "Shutting-down due to error(s) in GDML input..." );
+	      if( (vmaterial = MaterialLocator::FindMaterial( Util::generateName(mref->get_ref() ) ) ) == 0 )
+              {
+                  std::cerr << "VOLUME SUBSCRIBER:: material " << mref->get_ref()
+                            << " not found!" << std::endl;
+                  std::cerr << "Volume " << obj->get_name() << " can't be created!" << std::endl;
+                  std::cerr << "Please, re-order your materials or add the missing one..." << std::endl;
+                  G4Exception( "Shutting-down due to error(s) in GDML input..." );
               }
             }
             else if( seq->content(i).tag == "solidref" )
@@ -228,12 +233,12 @@ public:
               } else {
                 std::stringstream pvname;
                 pvname << "pv_" << vr->get_ref() << "_" << (i-2);
-                    
+
                 /* Got a null position so use identity position = (0,0,0) from GDMLProcessor. --JM */
                 if ( ppos == 0 ) {
                   ppos = processor->getIdentityPosition();
                 }
-                    
+
                 vphysvol = new G4PVPlacement(prot, *ppos, plog, Util::generateName(vr->get_ref()), vnew, false, (i-2));
                 processor->AddPhysicalVolume( pvname.str(), vphysvol );
               }
@@ -251,7 +256,9 @@ public:
               G4AssemblyVolume*                 alog = 0;
               G4PVReplica* vreplivol = 0;
               bool doAssemblyInprint                 = false;
-
+              double width = 0;
+              double offset = 0;
+              EAxis ax = kZAxis;
               for( size_t cidx = 0; cidx < ccount; cidx++ )
               {
                 if( replicavol_seq->content(cidx).tag == "volumeref" )
@@ -281,24 +288,61 @@ public:
                 }
                 else if(replicavol_seq->content(cidx).tag == "replicate_along_axis")
                 {
-#ifdef GDML_VERBOSE
-                  std::cout << "Dealing with replication algorithm" << std::endl;
-#endif
-                }
-                else
-                {
-                  /**
-                   * @todo Check if this actually does anything.  The p variable is not used according to compiler. --JM
-                   */
-                  //define::position* p =
-                  dynamic_cast<define::position*>(replicavol_seq->content(cidx).object);
+                  replicate_along_axis* raa = dynamic_cast<replicate_along_axis*>( replicavol_seq->content(cidx).object );
+
+                  const ContentSequence* replialg_seq = raa->get_content();
+                  size_t ccount = replialg_seq->size();
+
+                  for( size_t iiii = 0; iiii < ccount; iiii++ )
+                  {
+                    if(replialg_seq->content(iiii).tag=="width")
+                    {
+                      //
+                      QuantityType* quant = dynamic_cast<QuantityType*>(replialg_seq->content(iiii).object);
+                      std::string expr = quant->get_value() + "*" + quant->get_unit();
+                      width =  calc->Eval( expr.c_str() );
+                    }
+                    else if(replialg_seq->content(iiii).tag=="offset")
+                    {
+                      //
+                      QuantityType* quant = dynamic_cast<QuantityType*>(replialg_seq->content(iiii).object);
+                      std::string expr = quant->get_value() + "*" + quant->get_unit();
+                      offset = calc->Eval( expr.c_str() );
+                    }
+                    else if(replialg_seq->content(iiii).tag=="direction")
+                    {
+                      directionType* quant = dynamic_cast<directionType*>(replialg_seq->content(iiii).object);
+
+                      std::string expr = quant->get_x() ;
+                      double dx = calc->Eval( expr.c_str() );
+                      expr = quant->get_y();
+                      double dy = calc->Eval( expr.c_str() );
+                      expr = quant->get_z();
+                      double dz = calc->Eval( expr.c_str() );
+
+                      if(dx==1 && dy==0 && dz==0)
+                      {
+                        ax = kXAxis;
+                      }
+                      else if(dx==0 && dy==1 && dz==0)
+                      {
+                        ax = kYAxis;
+                      }
+                      else if(dx==0 && dy==0 && dz==1)
+                      {
+                        ax = kZAxis;
+                      }
+                      else std::cerr << "Only directions along axis are supported!" << std::endl;
+                    }
+                  }
                 }
               }
 
               std::stringstream pvname;
-              pvname << "pv_" << vr->get_ref() << "_" << (i-2);
-              vreplivol = new G4PVReplica(Util::generateName(vr->get_ref()), plog, vnew, kXAxis,
-                                          (int)calc->Eval(c->get_numb().c_str()),1000.0,0.0);
+              pvname  << vr->get_ref() << "_" << (i-2);
+              vreplivol = new G4PVReplica(Util::generateName(vr->get_ref()), plog, vnew, ax,
+                                          (int)calc->Eval(c->get_numb().c_str()), width, offset);
+
               processor->AddPhysicalVolume( pvname.str(), vreplivol );
             } // end of replicavol
             else if( seq->content(i).tag == "paramvol" )

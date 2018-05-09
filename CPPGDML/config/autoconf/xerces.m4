@@ -1,22 +1,22 @@
+dnl
+dnl Xerces m4 macros
+dnl
+
 # GDML m4 macros for XERCESC package
-AC_DEFUN( GAC_SETUP_XERCESC, [
+AC_DEFUN( GDML_SETUP_XERCESC, [
 
-GAC_WITH_XERCESC
-
-GAC_WITH_XERCESC_INCLUDE
-
-GAC_WITH_XERCESC_LIBDIR
-
-GAC_WITH_XERCESC_LIBNAME
-
-GAC_SUBST_XERCESC
+GDML_WITH_XERCESC
+GDML_WITH_XERCESC_INCLUDE
+GDML_WITH_XERCESC_LIBDIR
+GDML_WITH_XERCESC_LIBNAME
+GDML_SUBST_XERCESC
 
 ])
 
-# Xerces base dir
-AC_DEFUN( GAC_WITH_XERCESC, [
+# macro to set Xerces base dir
+AC_DEFUN( GDML_WITH_XERCESC, [
 
-AC_MSG_CHECKING(for Xerces-C++ installation setting) 
+AC_MSG_CHECKING(for Xerces-C++ installation setting)
 
 AC_ARG_WITH(xercesc,
 	AC_HELP_STRING([--with-xercesc=<path>],[Xerces-C++ installation base [[XERCESCCROOT]] ]),
@@ -25,13 +25,13 @@ AC_ARG_WITH(xercesc,
 
 AC_MSG_RESULT([$XERCESC_PREFIX])
 
-GAC_CHECK_PKG_DIR( [$XERCESC_PREFIX],
+GDML_CHECK_PKG_DIR( [$XERCESC_PREFIX],
 	[Xerces-C++])
 
 ])
 
-# Xerces include dir
-AC_DEFUN( GAC_WITH_XERCESC_INCLUDE, [
+# macro to set Xerces include dir
+AC_DEFUN( GDML_WITH_XERCESC_INCLUDE, [
 
 AC_MSG_CHECKING([for Xerces-C++ include dir setting])
 
@@ -42,15 +42,15 @@ AC_ARG_WITH([xercesc-include],
 
 AC_MSG_RESULT([$XERCESC_INCLUDE])
 
-GAC_CHECK_PKG_DIR( [$XERCESC_INCLUDE],
+GDML_CHECK_PKG_DIR( [$XERCESC_INCLUDE],
 	[Xerces],
 	[xercesc/dom/DOM.hpp])
 ])
 
 AC_MSG_RESULT(yes)
 
-# Xerces lib dir
-AC_DEFUN( GAC_WITH_XERCESC_LIBDIR, [
+# macro to set Xerces lib dir
+AC_DEFUN( GDML_WITH_XERCESC_LIBDIR, [
 
 AC_MSG_CHECKING([for Xerces-C++ lib dir setting])
 
@@ -61,12 +61,12 @@ AC_ARG_WITH([xercesc-libdir],
 
 AC_MSG_RESULT([$XERCESC_LIBDIR])
 
-GAC_CHECK_PKG_DIR( [$XERCESC_LIBDIR],
+GDML_CHECK_PKG_DIR( [$XERCESC_LIBDIR],
 	[Xerces-C++])
 ])
 
-# XERCESC libname
-AC_DEFUN( GAC_WITH_XERCESC_LIBNAME, [
+# macro set the Xerces lib name
+AC_DEFUN( GDML_WITH_XERCESC_LIBNAME, [
 
 AC_MSG_CHECKING([Xerces-C++ lib name])
 
@@ -86,8 +86,8 @@ AC_SUBST(XERCESC_LIBNAME)
 
 ])
 
-# Substitute Xerces vars to output
-AC_DEFUN( GAC_SUBST_XERCESC, [
+# macro to substitute Xerces vars to output
+AC_DEFUN( GDML_SUBST_XERCESC, [
 
 AC_SUBST(XERCESC_PREFIX)
 AC_SUBST(XERCESC_INCLUDE)

@@ -81,17 +81,17 @@ XERCESC_LIBDIR     := /afs/cern.ch/sw/lcg/external/XercesC/2.3.0/slc3_ia32_gcc32
 XERCESC_LIBNAME    := xerces-c
 
 # CLHEP
-CLHEP_BASE         := /afs/cern.ch/sw/lcg/external/clhep/1.9.1.2/slc3_ia32_gcc323 
-CLHEP_INCLUDE      := /afs/cern.ch/sw/lcg/external/clhep/1.9.1.2/slc3_ia32_gcc323/include
-CLHEP_LIBDIR       := /afs/cern.ch/sw/lcg/external/clhep/1.9.1.2/slc3_ia32_gcc323/lib
+CLHEP_BASE         := /afs/cern.ch/sw/lcg/external/clhep/1.9.2.1/slc3_ia32_gcc323 
+CLHEP_INCLUDE      := /afs/cern.ch/sw/lcg/external/clhep/1.9.2.1/slc3_ia32_gcc323/include
+CLHEP_LIBDIR       := /afs/cern.ch/sw/lcg/external/clhep/1.9.2.1/slc3_ia32_gcc323/lib
 
 # name of CLHEP library without prefix or extension
 CLHEP_LIBNAME      := CLHEP
 
 # Geant4
-GEANT4_BASE        := /afs/cern.ch/sw/lcg/external/geant4/7.0.p01/slc3_ia32_gcc323
-GEANT4_INCLUDE     := /afs/cern.ch/sw/lcg/external/geant4/7.0.p01/share/include
-GEANT4_LIBDIR      := /afs/cern.ch/sw/lcg/external/geant4/7.0.p01/slc3_ia32_gcc323/lib
+GEANT4_BASE        := /afs/cern.ch/sw/lcg/external/geant4/7.1/slc3_ia32_gcc323
+GEANT4_INCLUDE     := /afs/cern.ch/sw/lcg/external/geant4/7.1/share/include
+GEANT4_LIBDIR      := /afs/cern.ch/sw/lcg/external/geant4/7.1/slc3_ia32_gcc323/lib
 
 # Geant4 UI/Vis/Granular settings
 include $(PROJECT_TOP)/config/make/geant4_settings.gmk

@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: RCObjectHandle.h,v 1.2 2005/04/02 22:46:34 rado Exp $
-// GEANT4 tag $Name: GDML_2_3_0 $
+// $Id: RCObjectHandle.h,v 1.3 2005/12/08 17:29:35 witoldp Exp $
+// GEANT4 tag $Name: GDML_2_4_0 $
 //
 // 
 // --------------------------------------------------------------
@@ -104,7 +104,8 @@ public: // with description
   RCObjectHandle( X* rep = 0 )
   : fObj( 0 ) {
     if( rep != 0 ) {
-	    fObj = new RCH::CountedObject( rep );
+      // is the RCH:: in the line below needed...????
+      fObj = new RCH::CountedObject( rep );
 	  }
   } // Constructor
 
@@ -177,6 +178,7 @@ public: // with description
           delete fObj;
         }
       }
+      // is the RCH:: in the line below needed...????
       fObj = new RCH::CountedObject( pRefObj );
     }
     return *this;

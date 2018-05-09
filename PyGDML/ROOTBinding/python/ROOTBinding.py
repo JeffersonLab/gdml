@@ -122,17 +122,17 @@ class ROOTBinding(object):
 	return ROOT.TGeoEltu(re.sub('0x.......','',name), dx, dy, dz)
 
     def subtraction(self, name, first, second, pos, rot):
-	matr = ROOT.TGeoCombiTrans(pos, rot.Inverse())
-	sub = ROOT.TGeoSubtraction(first, second, 0, matr)
+	matr = ROOT.TGeoCombiTrans(pos, ROOT.TGeoRotation(rot.Inverse()))
+	sub = ROOT.TGeoSubtraction(first, second, ROOT.TGeoCombiTrans(), matr)
 	return ROOT.TGeoCompositeShape(re.sub('0x.......','',name), sub)
 
 
     def union(self, name, first, second, pos, rot):
-	matr = ROOT.TGeoCombiTrans(pos, rot.Inverse())
-	un = ROOT.TGeoUnion(first, second, 0, matr)
+	matr = ROOT.TGeoCombiTrans(pos, ROOT.TGeoRotation(rot.Inverse()))
+	un = ROOT.TGeoUnion(first, second, ROOT.TGeoCombiTrans(), matr)
 	return ROOT.TGeoCompositeShape(re.sub('0x.......','',name), un)
 
-    def intersection(self, name, first, second, pos, rot):	
-	matr = ROOT.TGeoCombiTrans(pos, rot.Inverse())
-	int = ROOT.TGeoIntersection(first, second, 0, matr)
+    def intersection(self, name, first, second, pos, rot):
+	matr = ROOT.TGeoCombiTrans(ROOT.TGeoTranslation(pos), ROOT.TGeoRotation(rot.Inverse()))
+	int = ROOT.TGeoIntersection(first, second, ROOT.TGeoCombiTrans(), matr)
 	return ROOT.TGeoCompositeShape(re.sub('0x.......','',name), int)

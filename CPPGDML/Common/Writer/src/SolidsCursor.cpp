@@ -21,7 +21,7 @@ namespace gdml
                                const std::string& aunit )
     {
       std::ostringstream os;
-
+      os.precision(100);
       os << x;      
       std::string sx = os.str(); os.str("");
       os << y;      
@@ -60,6 +60,7 @@ namespace gdml
                                   const std::string& aunit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << rmin;      
       std::string srmin = os.str(); os.str("");
@@ -111,6 +112,7 @@ namespace gdml
                                  const std::string& aunit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << rmin;      
       std::string srmin = os.str(); os.str("");
@@ -150,6 +152,7 @@ namespace gdml
                                 const std::string& aunit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << rmin;      
       std::string srmin = os.str(); os.str("");
@@ -186,6 +189,7 @@ namespace gdml
                                const std::string& lunit )
     {
       std::ostringstream os;
+      os.precision(100);
       
       os << r;      
       std::string sr = os.str(); os.str("");
@@ -212,6 +216,7 @@ namespace gdml
                                 const std::string& aunit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << z;      
       std::string sz = os.str(); os.str("");
@@ -257,6 +262,7 @@ namespace gdml
                                   const std::string& lunit)
     {
       std::ostringstream os;
+      os.precision(100);
       
       os << dx;      
       std::string sdx = os.str(); os.str("");
@@ -291,6 +297,7 @@ namespace gdml
                                 const std::string& aunit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << z;      
       std::string sz = os.str(); os.str("");
@@ -350,6 +357,7 @@ namespace gdml
                                     const std::string& aunit )
     {
       std::ostringstream os;      
+      os.precision(100);
 
       os << startphi;
       std::string sstartphi = os.str(); os.str("");
@@ -409,6 +417,7 @@ namespace gdml
                                      const std::string& aunit )
     {
       std::ostringstream os;      
+      os.precision(100);
 
       os << startphi;
       std::string sstartphi = os.str(); os.str("");
@@ -466,6 +475,7 @@ namespace gdml
                                 const std::string& aunit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << x;      
       std::string sx = os.str(); os.str("");
@@ -518,6 +528,7 @@ namespace gdml
                                const std::string& aunit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << x1;
       std::string sx1 = os.str(); os.str("");
@@ -573,6 +584,7 @@ namespace gdml
                                 const std::string& aunit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << x1;
       std::string sx1 = os.str(); os.str("");
@@ -740,6 +752,7 @@ namespace gdml
       if( x1 != 0.0 || y1 != 0.0 || z1 != 0.0 )
       {
         std::ostringstream os;
+        os.precision(100);
       
         os << x1;
         std::string sx = os.str(); os.str("");
@@ -767,7 +780,8 @@ namespace gdml
       if( x0 != 0.0 || y0 != 0.0 || z0 != 0.0 )
       {
         std::ostringstream os;
-      
+        os.precision(100);
+
         os << x0;
         std::string sx = os.str(); os.str("");
         os << y0;
@@ -794,7 +808,8 @@ namespace gdml
       if( rx1 != 0.0 || ry1 != 0.0 || rz1 != 0.0 )
       {
         std::ostringstream os;
-            
+        os.precision(100);
+              
         os << rx1;
         std::string srx = os.str(); os.str("");
         os << ry1;
@@ -821,7 +836,8 @@ namespace gdml
       if( rx0 != 0.0 || ry0 != 0.0 || rz0 != 0.0 )
       {
         std::ostringstream os;
-            
+        os.precision(100);
+              
         os << rx0;
         std::string srx = os.str(); os.str("");
         os << ry0;

@@ -1,4 +1,4 @@
-# $Header: /cvs/simu/simu/GDML2/CPPGDML/configure.in,v 1.1 2005/05/04 02:12:16 jmccormi Exp $
+# $Header: /cvs/simu/simu/GDML2/CPPGDML/configure.in,v 1.2 2005/11/24 02:13:01 jmccormi Exp $
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
@@ -14,19 +14,19 @@ AC_PROG_CXX
 AC_PROG_CC
 
 # initialize GDML setup
-GAC_INIT
+GDML_INIT
 
 # setup GDML
-GAC_SETUP_GDML
+GDML_SETUP_GDML
 
 # setup Xerces
-GAC_SETUP_XERCESC
+GDML_SETUP_XERCESC
 
 # setup CLHEP
-GAC_SETUP_CLHEP
+GDML_SETUP_CLHEP
 
 # setup Geant4
-GAC_SETUP_GEANT4
+GDML_SETUP_GEANT4
 
 # checks for typedefs, structures, and compiler characteristics
 AC_HEADER_STDBOOL

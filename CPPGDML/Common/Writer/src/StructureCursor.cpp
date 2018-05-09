@@ -181,6 +181,8 @@ namespace gdml
       const Attributes& mvolAttrs = motherVolume.getAttributes();
       std::string uhint           = (*mvolAttrs.find( "name" )).second;
       std::stringstream  os;
+      os.precision(100);
+
       os << m_reg.size();
       uhint += os.str();
       
@@ -195,13 +197,17 @@ namespace gdml
       vref.addAttribute( "ref", idRef );
       Element pref( "positionref" );
       pref.addAttribute( "ref", positionRef );
-      Element rref( "rotationref" );
-      rref.addAttribute( "ref", rotationRef );
-      
+
       Element child( "physvol" );
       child.appendChild( vref );
       child.appendChild( pref );
-      child.appendChild( rref );
+
+      if (rotationRef !="")
+      {
+        Element rref( "rotationref" );
+        rref.addAttribute( "ref", rotationRef );
+        child.appendChild( rref );
+      }
 
       return child;
     }
@@ -215,6 +221,7 @@ namespace gdml
                                          const std::string& uniquenessHint )
     {
       std::stringstream os;
+      os.precision(100);
       
       Element vref( "volumeref" );
       vref.addAttribute( "ref", idRef );
@@ -264,6 +271,67 @@ namespace gdml
       return child;
     }
 
+    Element& StructureCursor::addReplica(const std::string& motherVolume,
+                                         const std::string& volumeRef,
+                                         int ncopies, int axis,
+                                         double width, double offset)
+    {
+      Element& mvol = findVolume( motherVolume );      
+      
+      Element replica("replicavol");
+      std::stringstream os; 
+      os.precision(100);
+
+      os << ncopies;     
+      std::string sncopies = os.str(); 
+      os.str( "" );
+      
+      replica.addAttribute("number", sncopies);
+      
+      Element vref("volumeref");
+      vref.addAttribute("ref", volumeRef);  
+      replica.appendChild(vref);
+      
+      Element replicaalg("replicate_along_axis");
+      Element dir("direction");
+      if(axis==1)
+      {
+        dir.addAttribute("x", "1");
+      }
+      else if (axis==2)
+      {
+        dir.addAttribute("y", "1");
+      }
+      else if (axis==3)
+      {
+        dir.addAttribute("z", "1");
+      } 
+
+      replicaalg.appendChild(dir);
+
+      Element wid("width");
+
+      os << width;     
+      std::string swidth = os.str(); 
+      os.str( "" );
+
+      wid.addAttribute("value", swidth);
+      wid.addAttribute("unit", "mm");
+      replicaalg.appendChild(wid);
+
+      Element offs("offset");
+      os << offset;     
+      std::string soffset = os.str(); 
+
+      offs.addAttribute("value", soffset);
+      offs.addAttribute("unit", "mm");
+      replicaalg.appendChild(offs);
+
+      replica.appendChild(replicaalg);
+      
+      return *(mvol.appendChild(replica));
+    }
+    
     Element& StructureCursor::addParameterised(const std::string& motherVolume,
                                                const std::string& volumeRef,
                                                int ncopies)
@@ -280,6 +348,8 @@ namespace gdml
       
       Element parameterised("paramvol");
       std::stringstream os; 
+      os.precision(100);
+
       os << ncopies;     
       std::string sncopies = os.str(); 
       
@@ -311,6 +381,8 @@ namespace gdml
                                                  double hz)
     {
       std::stringstream os;
+      os.precision(100);
+
       os << hx;    std::string shx    = os.str(); os.str( "" );
       os << hy;    std::string shy    = os.str(); os.str( "" );
       os << hz;    std::string shz    = os.str(); os.str( "" );
@@ -345,6 +417,8 @@ namespace gdml
                                                   double DeltaPhi)
     {
       std::stringstream os;
+      os.precision(100);
+
       os << InR;    std::string sInR    = os.str(); os.str( "" );
       os << OutR;    std::string sOutR    = os.str(); os.str( "" );
       os << hz;    std::string shz    = os.str(); os.str( "" );
@@ -378,6 +452,7 @@ namespace gdml
       
     {
       std::stringstream os;
+      os.precision(100);
       
       os << ncopy;
       std::string sncopy = os.str();

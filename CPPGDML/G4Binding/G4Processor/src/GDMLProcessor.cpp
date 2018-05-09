@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: GDMLProcessor.cpp,v 1.1 2005/03/02 10:50:37 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_3_0 $
+// $Id: GDMLProcessor.cpp,v 1.2 2005/08/03 10:15:19 witoldp Exp $
+// GEANT4 tag $Name: GDML_2_4_0 $
 //
 // 
 // --------------------------------------------------------------
@@ -33,8 +33,10 @@
 #include "G4Processor/GDMLProcessor.h"
 
 // Declare the external component system initialization routines
-extern "C" void GDMLProcessLibLoad();
-extern "C" void GDMLSubscriberLibLoad();
+//extern "C" 
+void GDMLProcessLibLoad();
+//extern "C" 
+void GDMLSubscriberLibLoad();
 
 const double defaultTemp  = STP_Temperature;
 const double defaultPress = STP_Pressure;

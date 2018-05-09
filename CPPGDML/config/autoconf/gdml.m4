@@ -1,5 +1,22 @@
-# function to set whether shared libs should be built
-AC_DEFUN(GAC_ENABLE_SHARED_LIBS, [
+dnl
+dnl GDML m4 macros
+dnl
+
+# macro that calls all the GDML setup macros in sequence
+AC_DEFUN(GDML_SETUP_GDML, [
+
+GDML_CHECK_OS
+GDML_CHECK_COMPILER
+GDML_ENABLE_COMPILE_VERBOSE
+GDML_WITH_PLATFORM
+GDML_SETUP_LIBS
+GDML_SETUP_INSTALL_DIRS
+GDML_ENABLE_GDML_VERBOSE
+
+])
+
+# macro to set whether shared libs should be built
+AC_DEFUN(GDML_ENABLE_SHARED_LIBS, [
 
 AC_MSG_CHECKING(whether to build shared libs)
 
@@ -19,8 +36,8 @@ AC_SUBST(BUILD_SHARED_LIBS)
 
 ])
 
-# function to set whether static libs should be built
-AC_DEFUN(GAC_ENABLE_STATIC_LIBS, [
+# macro to set whether static libs should be built
+AC_DEFUN(GDML_ENABLE_STATIC_LIBS, [
 
 AC_MSG_CHECKING(whether to build static libs)
 
@@ -41,20 +58,21 @@ AC_SUBST(BUILD_STATIC_LIBS)
 ])
 
 # libs setup
-AC_DEFUN(GAC_SETUP_LIBS, [
+AC_DEFUN(GDML_SETUP_LIBS, [
 
-GAC_ENABLE_SHARED_LIBS
-GAC_ENABLE_STATIC_LIBS
+GDML_ENABLE_SHARED_LIBS
+GDML_ENABLE_STATIC_LIBS
 
 if test "${BUILD_STATIC_LIBS}" = "no" && test "${BUILD_SHARED_LIBS}" = "no"; then
   AC_MSG_ERROR([At least one of --enable-static-libs and --enable-shared-libs must be selected.])
 fi
 
-GAC_WITH_LIBNAME_PREFIX
+GDML_WITH_LIBNAME_PREFIX
 
 ])
 
-AC_DEFUN(GAC_WITH_LIBNAME_PREFIX, [
+# macro to set lib name prefix
+AC_DEFUN(GDML_WITH_LIBNAME_PREFIX, [
 
 AC_MSG_CHECKING(for libname prefix)
 
@@ -77,24 +95,23 @@ AC_SUBST(TARGET_LIB_PREFIX)
 
 ])
 
-# function to check the OS
-AC_DEFUN(GAC_CHECK_OS, [
+# macro to check the OS and set host_os var
+AC_DEFUN(GDML_CHECK_OS, [
 
 AC_MSG_CHECKING(for supported OS)
 
 # to lowercase
-#host_os=`uname -s | tr [[:upper:]] [[:lower:]]`
-host_os=`uname -s`
+host_os=`uname | tr [[:upper:]] [[:lower:]]`
 
+# default to okay
 supported_os=yes
 
+# set platform var
 case "$host_os" in
-
-Linux*            ) host_os="Linux";; 
-CYGWIN*           ) host_os="CYGWIN";;
-DARWIN*           ) host_os="DARWIN";;
-*                 ) supported_os=no;;
-
+linux*  ) host_os="Linux";;
+cygwin* ) host_os="WIN32";;
+darwin* ) host_os="Darwin";;
+*       ) supported_os=no;;
 esac
 
 AC_MSG_RESULT([$supported_os])
@@ -105,8 +122,8 @@ fi
 
 ])
 
-# function to check the compiler
-AC_DEFUN(GAC_CHECK_COMPILER, [
+# macro to check the compiler
+AC_DEFUN(GDML_CHECK_COMPILER, [
 
 AC_MSG_CHECKING(the compiler setting)
 
@@ -137,8 +154,8 @@ AC_SUBST(COMPILER_GMK_FILE)
 
 ])
 
-# function to set whether compile should be verbose
-AC_DEFUN( GAC_ENABLE_COMPILE_VERBOSE, [
+# macro to set whether compile should be verbose
+AC_DEFUN( GDML_ENABLE_COMPILE_VERBOSE, [
 
 AC_SUBST(COMPILE_VERBOSE_USE)
 
@@ -161,13 +178,13 @@ fi
 
 ])
 
-# function for PLATFORM with arg or env var
-AC_DEFUN(GAC_WITH_PLATFORM, [
+# macro for PLATFORM with arg or env var
+AC_DEFUN(GDML_WITH_PLATFORM, [
 
 AC_MSG_CHECKING([for PLATFORM setting])
 
 AC_ARG_WITH([platform],
-	AC_HELP_STRING([--with-platform=<platform>],[description of platform, e.g. linux]),
+	AC_HELP_STRING([--with-platform=<platform>],[description of platform, e.g. Linux-g++, Win32-g++, or Darwin-g++]),
 	[PLATFORM=${with_platform}],
 	[PLATFORM=${host_os}"-"${host_compiler}])
 
@@ -182,7 +199,7 @@ PLATFORM_GMK_FILE=${make_platform_dir}/${PLATFORM}.gmk
 if ! test -e $PLATFORM_GMK_FILE; then
   AC_MSG_RESULT(no)
   AC_MSG_ERROR([$PLATFORM_GMK_FILE does not exist for PLATFORM=$PLATFORM])
-else 
+else
   AC_MSG_RESULT($PLATFORM_GMK_FILE)
 fi
 
@@ -192,8 +209,8 @@ AC_SUBST(PLATFORM_GMK_FILE)
 
 ])
 
-# initialize some "global" variables for configuration
-AC_DEFUN(GAC_INIT, [
+# macro to initialize some "global" variables
+AC_DEFUN(GDML_INIT, [
 
 # make includes directories
 make_inc_dir=config/make
@@ -203,7 +220,8 @@ make_ext_dir=${make_inc_dir}/ext
 
 ])
 
-AC_DEFUN(GAC_WITH_BUILDDIR, [
+# macro to set the build dir
+AC_DEFUN(GDML_WITH_BUILDDIR, [
 
 AC_MSG_CHECKING(for build directory)
 
@@ -216,7 +234,8 @@ AC_SUBST(TARGET_BUILD_DIR)
 
 ])
 
-AC_DEFUN(GAC_SETUP_INSTALL_DIRS, [
+# macro to set the installation dirs
+AC_DEFUN(GDML_SETUP_INSTALL_DIRS, [
 
 AC_MSG_CHECKING(for prefix)
 
@@ -235,11 +254,12 @@ AC_SUBST(includedir)
 
 ])
 
-AC_DEFUN(GAC_ENABLE_GDML_VERBOSE, [
+# macro to enable/disable info messages from GDML
+AC_DEFUN(GDML_ENABLE_GDML_VERBOSE, [
 
 AC_MSG_CHECKING(whether to enable GDML diagnostic output)
 
-AC_ARG_ENABLE([gdml-verbose],	
+AC_ARG_ENABLE([gdml-verbose],
 	AC_HELP_STRING([--enable-gdml-verbose=<setting>], [Turn GDML diagnostic output on or off.]),
 	[GDML_VERBOSE_USE=$enable_gdml_verbose],
 	[GDML_VERBOSE_USE=no])
@@ -249,18 +269,5 @@ if test "${GDML_VERBOSE_USE}" = "yes"; then
 fi
 
 AC_MSG_RESULT($GDML_VERBOSE_USE)
-
-])
-
-# function to setup GDML package
-AC_DEFUN(GAC_SETUP_GDML, [
-
-GAC_CHECK_OS
-GAC_CHECK_COMPILER
-GAC_ENABLE_COMPILE_VERBOSE
-GAC_WITH_PLATFORM
-GAC_SETUP_LIBS
-GAC_SETUP_INSTALL_DIRS
-GAC_ENABLE_GDML_VERBOSE
 
 ])

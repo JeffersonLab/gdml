@@ -862,12 +862,15 @@ Optional Features:
   --enable-geant4-granular-libs
                           Enable linking against granular rather than global
                           Geant4 libs
+  --enable-nist=<setting>.
+                          Turn NIST support on or off.
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-platform=<platform>
-                          description of platform, e.g. linux
+                          description of platform, e.g. Linux-g++, Win32-g++,
+                          or Darwin-g++
   --with-libname-prefix=<prefix>
                           prefix target libs with a string identifier, e.g.
                           'lcg_'
@@ -2539,18 +2542,17 @@ echo "$as_me:$LINENO: checking for supported OS" >&5
 echo $ECHO_N "checking for supported OS... $ECHO_C" >&6
 
 # to lowercase
-#host_os=`uname -s | tr [[:upper:]] [[:lower:]]`
-host_os=`uname -s`
+host_os=`uname | tr [:upper:] [:lower:]`
 
+# default to okay
 supported_os=yes
 
+# set platform var
 case "$host_os" in
-
-Linux*            ) host_os="Linux";;
-CYGWIN*           ) host_os="CYGWIN";;
-DARWIN*           ) host_os="DARWIN";;
-*                 ) supported_os=no;;
-
+linux*  ) host_os="Linux";;
+cygwin* ) host_os="WIN32";;
+darwin* ) host_os="Darwin";;
+*       ) supported_os=no;;
 esac
 
 echo "$as_me:$LINENO: result: $supported_os" >&5
@@ -2882,8 +2884,8 @@ if test -n ${arg_test_file}; then
 
 
 if test -z ${arg_dir}/${arg_test_file} ; then
-  { { echo "$as_me:$LINENO: error: function requires an argument of file to test" >&5
-echo "$as_me: error: function requires an argument of file to test" >&2;}
+  { { echo "$as_me:$LINENO: error: macro requires an argument of file to test" >&5
+echo "$as_me: error: macro requires an argument of file to test" >&2;}
    { (exit 1); exit 1; }; };
 else
   arg_test_file=${arg_dir}/${arg_test_file}
@@ -2922,7 +2924,6 @@ fi
 
 
 fi
-
 
 
 
@@ -3002,8 +3003,8 @@ if test -n ${arg_test_file}; then
 
 
 if test -z ${arg_dir}/${arg_test_file} ; then
-  { { echo "$as_me:$LINENO: error: function requires an argument of file to test" >&5
-echo "$as_me: error: function requires an argument of file to test" >&2;}
+  { { echo "$as_me:$LINENO: error: macro requires an argument of file to test" >&5
+echo "$as_me: error: macro requires an argument of file to test" >&2;}
    { (exit 1); exit 1; }; };
 else
   arg_test_file=${arg_dir}/${arg_test_file}
@@ -3042,7 +3043,6 @@ fi
 
 
 fi
-
 
 
 
@@ -3121,8 +3121,8 @@ if test -n ${arg_test_file}; then
 
 
 if test -z ${arg_dir}/${arg_test_file} ; then
-  { { echo "$as_me:$LINENO: error: function requires an argument of file to test" >&5
-echo "$as_me: error: function requires an argument of file to test" >&2;}
+  { { echo "$as_me:$LINENO: error: macro requires an argument of file to test" >&5
+echo "$as_me: error: macro requires an argument of file to test" >&2;}
    { (exit 1); exit 1; }; };
 else
   arg_test_file=${arg_dir}/${arg_test_file}
@@ -3166,7 +3166,6 @@ fi
 
 
 
-
 echo "$as_me:$LINENO: checking Xerces-C++ lib name" >&5
 echo $ECHO_N "checking Xerces-C++ lib name... $ECHO_C" >&6
 
@@ -3189,7 +3188,6 @@ else
   echo "$as_me:$LINENO: result: $XERCESC_LIBNAME" >&5
 echo "${ECHO_T}$XERCESC_LIBNAME" >&6
 fi
-
 
 
 
@@ -3282,8 +3280,8 @@ if test -n ${arg_test_file}; then
 
 
 if test -z ${arg_dir}/${arg_test_file} ; then
-  { { echo "$as_me:$LINENO: error: function requires an argument of file to test" >&5
-echo "$as_me: error: function requires an argument of file to test" >&2;}
+  { { echo "$as_me:$LINENO: error: macro requires an argument of file to test" >&5
+echo "$as_me: error: macro requires an argument of file to test" >&2;}
    { (exit 1); exit 1; }; };
 else
   arg_test_file=${arg_dir}/${arg_test_file}
@@ -3322,7 +3320,6 @@ fi
 
 
 fi
-
 
 
 
@@ -3401,8 +3398,8 @@ if test -n ${arg_test_file}; then
 
 
 if test -z ${arg_dir}/${arg_test_file} ; then
-  { { echo "$as_me:$LINENO: error: function requires an argument of file to test" >&5
-echo "$as_me: error: function requires an argument of file to test" >&2;}
+  { { echo "$as_me:$LINENO: error: macro requires an argument of file to test" >&5
+echo "$as_me: error: macro requires an argument of file to test" >&2;}
    { (exit 1); exit 1; }; };
 else
   arg_test_file=${arg_dir}/${arg_test_file}
@@ -3441,7 +3438,6 @@ fi
 
 
 fi
-
 
 
 
@@ -3520,8 +3516,8 @@ if test -n ${arg_test_file}; then
 
 
 if test -z ${arg_dir}/${arg_test_file} ; then
-  { { echo "$as_me:$LINENO: error: function requires an argument of file to test" >&5
-echo "$as_me: error: function requires an argument of file to test" >&2;}
+  { { echo "$as_me:$LINENO: error: macro requires an argument of file to test" >&5
+echo "$as_me: error: macro requires an argument of file to test" >&2;}
    { (exit 1); exit 1; }; };
 else
   arg_test_file=${arg_dir}/${arg_test_file}
@@ -3565,7 +3561,6 @@ fi
 
 
 
-
 echo "$as_me:$LINENO: checking CLHEP lib name" >&5
 echo $ECHO_N "checking CLHEP lib name... $ECHO_C" >&6
 
@@ -3602,8 +3597,41 @@ fi
 
 
 
-
 # setup Geant4
+
+
+as_ac_File=`echo "ac_cv_file_$G4INSTALL/source/materials/include/G4NistManager.hh" | $as_tr_sh`
+echo "$as_me:$LINENO: checking for $G4INSTALL/source/materials/include/G4NistManager.hh" >&5
+echo $ECHO_N "checking for $G4INSTALL/source/materials/include/G4NistManager.hh... $ECHO_C" >&6
+if eval "test \"\${$as_ac_File+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  test "$cross_compiling" = yes &&
+  { { echo "$as_me:$LINENO: error: cannot check for file existence when cross compiling" >&5
+echo "$as_me: error: cannot check for file existence when cross compiling" >&2;}
+   { (exit 1); exit 1; }; }
+if test -r "$G4INSTALL/source/materials/include/G4NistManager.hh"; then
+  eval "$as_ac_File=yes"
+else
+  eval "$as_ac_File=no"
+fi
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_File'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_File'}'`" >&6
+if test `eval echo '${'$as_ac_File'}'` = yes; then
+  have_nist=yes
+fi
+
+
+if test $have_nist = "yes"
+then
+  cat >>confdefs.h <<\_ACEOF
+#define HAVE_NIST 1
+_ACEOF
+
+fi
+
+
 
 
 
@@ -3612,7 +3640,6 @@ g4config_file=${srcdir}/config/make/geant4_settings.gmk
 rm -f ${g4config_file}
 touch $g4config_file
 echo "# Local Geant4 Settings." >> $g4config_file
-
 
 
 
@@ -3690,8 +3717,8 @@ if test -n ${arg_test_file}; then
 
 
 if test -z ${arg_dir}/${arg_test_file} ; then
-  { { echo "$as_me:$LINENO: error: function requires an argument of file to test" >&5
-echo "$as_me: error: function requires an argument of file to test" >&2;}
+  { { echo "$as_me:$LINENO: error: macro requires an argument of file to test" >&5
+echo "$as_me: error: macro requires an argument of file to test" >&2;}
    { (exit 1); exit 1; }; };
 else
   arg_test_file=${arg_dir}/${arg_test_file}
@@ -3735,7 +3762,6 @@ fi
 
 
 
-
 echo "$as_me:$LINENO: checking for G4SYSTEM setting" >&5
 echo $ECHO_N "checking for G4SYSTEM setting... $ECHO_C" >&6
 
@@ -3752,7 +3778,6 @@ fi
 
 echo "$as_me:$LINENO: result: $G4SYSTEM" >&5
 echo "${ECHO_T}$G4SYSTEM" >&6
-
 
 
 
@@ -3832,8 +3857,8 @@ if test -n ${arg_test_file}; then
 
 
 if test -z ${arg_dir}/${arg_test_file} ; then
-  { { echo "$as_me:$LINENO: error: function requires an argument of file to test" >&5
-echo "$as_me: error: function requires an argument of file to test" >&2;}
+  { { echo "$as_me:$LINENO: error: macro requires an argument of file to test" >&5
+echo "$as_me: error: macro requires an argument of file to test" >&2;}
    { (exit 1); exit 1; }; };
 else
   arg_test_file=${arg_dir}/${arg_test_file}
@@ -3872,7 +3897,6 @@ fi
 
 
 fi
-
 
 
 
@@ -3951,8 +3975,8 @@ if test -n ${arg_test_file}; then
 
 
 if test -z ${arg_dir}/${arg_test_file} ; then
-  { { echo "$as_me:$LINENO: error: function requires an argument of file to test" >&5
-echo "$as_me: error: function requires an argument of file to test" >&2;}
+  { { echo "$as_me:$LINENO: error: macro requires an argument of file to test" >&5
+echo "$as_me: error: macro requires an argument of file to test" >&2;}
    { (exit 1); exit 1; }; };
 else
   arg_test_file=${arg_dir}/${arg_test_file}
@@ -3996,7 +4020,6 @@ fi
 
 
 
-
 echo "$as_me:$LINENO: checking whether to link against Geant4 visualization libs" >&5
 echo $ECHO_N "checking whether to link against Geant4 visualization libs... $ECHO_C" >&6
 
@@ -4025,7 +4048,6 @@ else
   echo "G4VIS_NONE = 1" >> $g4config_file
   echo "CXXFLAGS += -DG4VIS_NONE" >> $g4config_file
 fi
-
 
 
 
@@ -4064,7 +4086,6 @@ fi
 
 
 
-
 echo "$as_me:$LINENO: checking whether to use Geant4 granular libs" >&5
 echo $ECHO_N "checking whether to use Geant4 granular libs... $ECHO_C" >&6
 
@@ -4091,6 +4112,45 @@ if test "${ac_g4_use_granular}" = "yes"; then
   echo "G4LIB_USE_GRANULAR := 1" >> $g4config_file
 fi
 
+
+
+
+
+echo "$as_me:$LINENO: checking whether to enable Geant4 NIST support for material lookup" >&5
+echo $ECHO_N "checking whether to enable Geant4 NIST support for material lookup... $ECHO_C" >&6
+
+# Check whether --enable-nist or --disable-nist was given.
+if test "${enable_nist+set}" = set; then
+  enableval="$enable_nist"
+
+fi;
+
+# default to using NIST if not set from the enable-nist option
+if test "X$enable_nist" = "X"
+then
+  enable_nist=yes
+fi
+
+if test "X$enable_nist" = "Xyes"
+then
+  if test "X$have_nist" = "Xyes"
+  then
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+    cat >>confdefs.h <<\_ACEOF
+#define GDML_USE_NIST 1
+_ACEOF
+
+  else
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+    { echo "$as_me:$LINENO: WARNING: NIST was selected" >&5
+echo "$as_me: WARNING: NIST was selected" >&2;}
+  fi
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
 
 
 

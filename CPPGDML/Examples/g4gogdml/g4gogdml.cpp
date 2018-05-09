@@ -60,11 +60,12 @@ int main()
   // G4UIterminal is a (dumb) terminal.
   G4UIsession * session = new G4UIterminal(new G4UItcsh);
 
-  //  UI->ApplyCommand("/control/execute vis.mac"); 
+  UI->ApplyCommand("/control/execute vis.mac"); 
 
   UI->ApplyCommand("/run/verbose 0");
   UI->ApplyCommand("/event/verbose 0");
   UI->ApplyCommand("/tracking/verbose 1");
+  UI->ApplyCommand("/geometry/test/recursive_test");
 
   // start a run
   int numberOfEvent = 1;

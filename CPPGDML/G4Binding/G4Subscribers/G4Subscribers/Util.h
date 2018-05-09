@@ -1,4 +1,4 @@
-// $Id: Util.h,v 1.1 2005/06/10 12:28:24 witoldp Exp $
+// $Id: Util.h,v 1.2 2005/12/08 17:29:37 witoldp Exp $
 #ifndef G4SUBSCRIBERS_GENNAME_H 
 #define G4SUBSCRIBERS_GENNAME_H 1
 
@@ -22,7 +22,7 @@ public:
   {
     std::string::size_type i = name.find("0x");
     if ( i != std::string::npos) name.replace(i, 10, "");
-
+    
     return name;
   }
 };

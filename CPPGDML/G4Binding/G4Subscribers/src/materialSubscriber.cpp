@@ -4,6 +4,7 @@
 
 #include "G4Processor/GDMLProcessor.h"
 #include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Processor/MaterialLocator.h"
 #include "G4Subscribers/Util.h"
 
 #include "Schema/material.h"
@@ -35,16 +36,16 @@ class materialSubscriber : virtual public SAXSubscriber
     // The activation callback invoked by SAXG4Processor whenever it has
     // a new object created from XML and a corresponding subcriber exists
     virtual void Activate( const SAXObject* object ) {
-    
+
       GDMLExpressionEvaluator* calc = GDMLProcessor::GetInstance()->GetEvaluator();
-    
+
       const material* obj = 0;
-            
+
       if( object != 0 ) {
         try {
           // Try the element type first
           obj = dynamic_cast<const material*>(object);
-        
+
           if( obj != 0 ) {
 
             double      z = 0.0;
@@ -52,7 +53,7 @@ class materialSubscriber : virtual public SAXSubscriber
             double      d = 0.0;
             double      t = defaultTemp;
             double      p = defaultPress;
-          
+
             G4State     s = kStateUndefined;
             std::string f, str;
 
@@ -61,7 +62,7 @@ class materialSubscriber : virtual public SAXSubscriber
             if( !str.empty() ) {
               z = calc->Eval( str );
             }
-          
+
             // enum G4State { kStateUndefined, kStateSolid, kStateLiquid, kStateGas };
             str = obj->get_state();
             if( str == "gas" )
@@ -74,7 +75,7 @@ class materialSubscriber : virtual public SAXSubscriber
               // Can't happen
               ;
             }
-          
+
             f = obj->get_formula();
             if( f.empty() ) {
               f=obj->get_name();
@@ -132,7 +133,7 @@ class materialSubscriber : virtual public SAXSubscriber
                 p   = calc->Eval( str );
               }
             }
-          
+
             std::string tag;
             size_t count = 0;
 
@@ -161,11 +162,15 @@ class materialSubscriber : virtual public SAXSubscriber
                 for( unsigned int i = 0; i < count; i++ ) {
                   composite* ci = dynamic_cast<composite*>( cseq->content( i ).object );
                   int     natom = (int)calc->Eval( ci->get_n().c_str() );
-                  // Find the material
+
+                  // Find the element
                   G4Element*  etoadd = 0;
-                  if( (etoadd = G4Element::GetElement( ci->get_ref())) != 0 ) {
-                    mnew->AddElement( etoadd, natom );
-                  } else {
+		  if ( ( etoadd = MaterialLocator::FindElement( ci->get_ref() ) ) != 0 )
+		  {
+		    mnew->AddElement( etoadd, natom );
+		  }
+                  else
+                  {
                     std::cerr << "MATERIAL SUBSCRIBER:: element "
                               << ci->get_ref() << " not found!" << std::endl;
                     std::cerr << "Material " << obj->get_name() << " can't be created!" << std::endl;
@@ -175,20 +180,29 @@ class materialSubscriber : virtual public SAXSubscriber
                   }
                 }
                 std::cout << *mnew << std::endl;
-              } else {
+              }
+              else
+              {
                 // Composition by fraction of mass
                 G4Material* mnew = new G4Material( Util::generateName(obj->get_name()), d, count, s, t, p );
                 for( unsigned int i = 0; i < count; i++ ) {
                   fraction* fi = dynamic_cast<fraction*>( cseq->content( i ).object );
                   double      frac = calc->Eval( fi->get_n().c_str() );
-                  // Find the material
+
+                  // Find the material or element
                   G4Material* mtoadd = 0;
                   G4Element*  etoadd = 0;
-                  if( (mtoadd = G4Material::GetMaterial( Util::generateName(fi->get_ref()))) != 0 ) {
-                    mnew->AddMaterial( mtoadd, frac );
-                  } else if( (etoadd = G4Element::GetElement( Util::generateName(fi->get_ref()))) != 0 ) {
-                    mnew->AddElement( etoadd, frac );
-                  } else {
+
+		  if ( ( mtoadd = MaterialLocator::FindMaterial( Util::generateName(fi->get_ref() ) ) ) != 0 )
+                  {
+		    mnew->AddMaterial( mtoadd, frac );
+		  }
+		  else if ( ( etoadd = MaterialLocator::FindElement( Util::generateName(fi->get_ref() ) ) ) != 0 )
+                  {
+		    mnew->AddElement( etoadd, frac );
+		  }
+                  else
+                  {
                     std::cerr << "MATERIAL SUBSCRIBER:: material or element "
                               << fi->get_ref() << " not found!" << std::endl;
                     std::cerr << "Material " << obj->get_name() << " can't be created!" << std::endl;
@@ -210,7 +224,6 @@ class materialSubscriber : virtual public SAXSubscriber
       } else {
         std::cerr << "MATERIAL SUBSCRIBER:: GOT ZERO DATA POINTER!" << std::endl;
       }
-      //delete obj;
     }
 };
 

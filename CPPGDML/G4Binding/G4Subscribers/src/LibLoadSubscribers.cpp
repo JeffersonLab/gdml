@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: LibLoadSubscribers.cpp,v 1.1 2005/03/02 10:50:37 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_3_0 $
+// $Id: LibLoadSubscribers.cpp,v 1.2 2005/08/03 10:15:19 witoldp Exp $
+// GEANT4 tag $Name: GDML_2_4_0 $
 //
 // 
 // --------------------------------------------------------------
@@ -32,7 +32,7 @@
 //
 #include "Saxana/SAXComponentFactory.h"
 
-extern "C" {
+//extern "C" {
 
   void GDMLSubscriberLibLoad() {
     LOAD_COMPONENT(defineSubscriber)
@@ -58,6 +58,6 @@ extern "C" {
     LOAD_COMPONENT(volumeSubscriber)
     LOAD_COMPONENT(assemblySubscriber)
     LOAD_COMPONENT(setupSubscriber)
-  }
+      //  }
 
 };

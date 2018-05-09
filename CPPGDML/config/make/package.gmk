@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: package.gmk,v 1.11 2005/05/12 20:35:58 jmccormi Exp $
+# $Id: package.gmk,v 1.13 2005/11/24 01:19:52 jmccormi Exp $
 #
 # Package build rules
 #
@@ -12,13 +12,13 @@
 #                    :::
 #                    ...
 #                    +- testN
-# 
+#
 # Package properties, must be set in the calling makefile, e.g.
 # before this fragment is included.
 #
 # PROJECT_TOP  - the top level directory of the project
 # PACKAGE_NAME - name of the package to be built (recursive)
-# 
+#
 # Local variables
 #
 # package_tests - list of tests, automatically built
@@ -78,7 +78,7 @@ VPATH += $(PACKAGE_TEST_DIRS) $(PACKAGE_BUILD_AREA)/tests
 include $(PROJECT_CONFIG)/check_lib.gmk
 
 # include external dependencies
-include $(PROJECT_CONFIG)/ext_deps.gmk
+include $(PROJECT_CONFIG)/package_ext_deps.gmk
 
 # set target vars
 static_lib := $(PROJECT_BUILD_AREA)/$(PLATFORM)/lib/$(package_static_lib_name)
@@ -88,7 +88,7 @@ shared_target            := package_info $(shared_lib) $(test_lib) package_done
 static_target            := package_info $(static_lib) $(test_lib) package_done
 shared_and_static_target := package_info $(static_lib) $(shared_lib) $(test_lib) package_done
 
-static_test := $(PACKAGE_TEST_STATIC_TARGETS) 
+static_test := $(PACKAGE_TEST_STATIC_TARGETS)
 shared_test := $(PACKAGE_TEST_LIBS)
 shared_and_static_test := $(static_target_tests) $(shared_target_tests)
 
@@ -131,14 +131,14 @@ $(PROJECT_BUILD_AREA)/$(PLATFORM)/lib/$(package_static_lib_name): $(PACKAGE_DEPE
 $(PROJECT_BUILD_AREA)/$(PLATFORM)/lib/$(package_shared_lib_name): $(PACKAGE_DEPENDENCY_FILES) $(PACKAGE_OBJECT_FILES)
 	@echo
 	@echo "Building shared library $@"
-	@echo 
+	@echo
 	@test -d $(PROJECT_TOP)/build/$(PLATFORM)/lib || mkdir -pv $(PROJECT_TOP)/build/$(PLATFORM)/lib
 	@$(CXX) -o $@ $(CXXFLAGS) $(PLATFORM_SHLIB_FLAGS) $(PACKAGE_OBJECT_FILES) $(LDFLAGS)
 
 .PHONY: package_info
 package_info:
 	@echo
-	@echo "Building package $(PACKAGE_NAME) on site $(SITE) for platform $(PLATFORM)"
+	@echo "Building package $(PACKAGE_NAME) for platform $(PLATFORM)"
 	@echo
 
 
@@ -175,7 +175,7 @@ $(PACKAGE_BUILD_AREA)/%.d: %.cpp
    '$(CXX) -MM $(CPPFLAGS) $(addprefix $(CURDIR)/src/,$(notdir $<)) | sed -e '\''s@\(.*\)\(\.o\)\([ :]*\)@$(PACKAGE_BUILD_AREA)/\1\2 $(PACKAGE_BUILD_AREA)/\1.d\3@g'\'' > $@'
 
 # Build package library object files from .cpp files
-$(PACKAGE_BUILD_AREA)/%.o: %.cpp 
+$(PACKAGE_BUILD_AREA)/%.o: %.cpp
 	@test -d $(PACKAGE_BUILD_AREA) || mkdir -pv $(PACKAGE_BUILD_AREA)
 	@echo "Compiling $(notdir $<)"
 	@$(CXX) -c -o $@ $< $(CXXFLAGS)
@@ -205,7 +205,7 @@ $(PACKAGE_BUILD_AREA)/tests/%.d: %.cpp
    '$(CXX) -MM $(CPPFLAGS) -I$(dir $<) $< | sed -e '\''s@\(.*\)\(\.o\)\([ :]*\)@$(PACKAGE_BUILD_AREA)/tests/\1\2 $(PACKAGE_BUILD_AREA)/tests/\1.d\3@g'\'' > $@'
 
 # Build package test object files from .cpp files
-$(PACKAGE_BUILD_AREA)/tests/%.o: %.cpp 
+$(PACKAGE_BUILD_AREA)/tests/%.o: %.cpp
 	@test -d $(PROJECT_BUILD_AREA)/$(PLATFORM)/bin/tests || mkdir -pv $(PROJECT_BUILD_AREA)/$(PLATFORM)/bin/tests
 	@test -d $(PACKAGE_BUILD_AREA)/tests || mkdir -pv $(PACKAGE_BUILD_AREA)/tests
 	@echo "Compiling $(notdir $<)"

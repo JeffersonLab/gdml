@@ -18,6 +18,7 @@ namespace gdml
     void DefinitionsCursor::addConstant( const std::string& id, double value )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << value;
       
@@ -44,6 +45,7 @@ namespace gdml
                                          double             value, const std::string& unit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << value;
       
@@ -76,6 +78,7 @@ namespace gdml
                                          const std::string& unit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << x; std::string sx = os.str(); os.str("");
       os << y; std::string sy = os.str(); os.str("");
@@ -110,6 +113,7 @@ namespace gdml
                                          const std::string& unit )
     {
       std::ostringstream os;
+      os.precision(100);
 
       os << x; std::string sx = os.str(); os.str("");
       os << y; std::string sy = os.str(); os.str("");

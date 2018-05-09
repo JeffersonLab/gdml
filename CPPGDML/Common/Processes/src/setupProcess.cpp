@@ -22,7 +22,7 @@
 //
 //
 // $Id: setupProcess.cpp,v 1.4 2005/06/01 01:37:20 jmccormi Exp $
-// GEANT4 tag $Name: GDML_2_3_0 $
+// GEANT4 tag $Name: GDML_2_4_0 $
 //
 //
 // --------------------------------------------------------------

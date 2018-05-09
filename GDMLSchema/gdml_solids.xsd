@@ -157,6 +157,30 @@
       </xs:complexContent>
     </xs:complexType>
   </xs:element>
+  <!-- +++++++++++++++ G.GUERRIERI - 26.06.2005 +++++++++++++++++++++++ -->
+
+  <xs:element name="ellipsoid" substitutionGroup="Solid">
+    <xs:annotation>
+      <xs:documentation>CSG ellispoid or ellipsoidal shell segment solid described by
+        ax         x semiaxis
+        by         y semiaxis
+	cz	   z semiaxis
+        zcut1      bottom plane cutting ellipsoid
+        zcut2      top plane cutting ellispoid
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+	<xs:extension base="SolidType">
+	  <xs:attribute name="ax" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="by" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="cz" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute default="-1000000.0" name="zcut1" type="ExpressionOrIDREFType"></xs:attribute>
+	  <xs:attribute default="1000000.0" name="zcut2" type="ExpressionOrIDREFType"></xs:attribute>
+	</xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
   <xs:element name="tube" substitutionGroup="Solid">

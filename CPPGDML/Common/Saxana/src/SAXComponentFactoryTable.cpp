@@ -22,7 +22,7 @@
 //
 //
 // $Id: SAXComponentFactoryTable.cpp,v 1.2 2005/04/21 08:12:47 jmccormi Exp $
-// GEANT4 tag $Name: GDML_2_3_0 $
+// GEANT4 tag $Name: GDML_2_4_0 $
 //
 // 
 // --------------------------------------------------------------

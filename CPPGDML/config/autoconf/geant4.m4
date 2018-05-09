@@ -1,30 +1,27 @@
-# GDML m4 macros for GEANT4 package
-AC_DEFUN( GAC_SETUP_GEANT4, [
+dnl
+dnl m4 macros for setting up Geant4
+dnl
 
-GAC_CREATE_GEANT4_SETTINGS_FILE
+# call all the Geant4 macros
+AC_DEFUN( GDML_SETUP_GEANT4, [
 
-GAC_WITH_GEANT4
-
-GAC_WITH_G4SYSTEM
-
-GAC_WITH_GEANT4_INCLUDE
-
-GAC_WITH_GEANT4_LIBDIR
-
-GAC_ENABLE_GEANT4_VIS
-
-GAC_ENABLE_GEANT4_UI
-
-GAC_ENABLE_GEANT4_GRANULAR_LIBS
-
-GAC_SUBST_GEANT4
+GDML_CREATE_GEANT4_SETTINGS_FILE
+GDML_WITH_GEANT4
+GDML_WITH_G4SYSTEM
+GDML_WITH_GEANT4_INCLUDE
+GDML_WITH_GEANT4_LIBDIR
+GDML_ENABLE_GEANT4_VIS
+GDML_ENABLE_GEANT4_UI
+GDML_ENABLE_GEANT4_GRANULAR_LIBS
+GDML_ENABLE_NIST
+GDML_SUBST_GEANT4
 
 ])
 
-# GEANT4 base dir
-AC_DEFUN( GAC_WITH_GEANT4, [
+# macro to set GEANT4 base dir (G4INSTALL)
+AC_DEFUN( GDML_WITH_GEANT4, [
 
-AC_MSG_CHECKING(for GEANT4 installation setting) 
+AC_MSG_CHECKING(for GEANT4 installation setting)
 
 AC_ARG_WITH(geant4,
 	AC_HELP_STRING([--with-geant4=<path>],[Geant4 installation base [[G4INSTALL]] ]),
@@ -33,12 +30,12 @@ AC_ARG_WITH(geant4,
 
 AC_MSG_RESULT([$GEANT4_PREFIX])
 
-GAC_CHECK_PKG_DIR( [$GEANT4_PREFIX],
+GDML_CHECK_PKG_DIR( [$GEANT4_PREFIX],
 	[Geant4])
 ])
 
-# G4SYSTEM
-AC_DEFUN( GAC_WITH_G4SYSTEM, [
+# macro to set G4SYSTEM
+AC_DEFUN( GDML_WITH_G4SYSTEM, [
 
 AC_MSG_CHECKING(for G4SYSTEM setting)
 
@@ -56,8 +53,8 @@ AC_SUBST(G4SYSTEM)
 
 ])
 
-# GEANT4 include dir
-AC_DEFUN( GAC_WITH_GEANT4_INCLUDE, [
+# macro to set GEANT4 include dir
+AC_DEFUN( GDML_WITH_GEANT4_INCLUDE, [
 
 AC_MSG_CHECKING([for Geant4 include dir setting])
 
@@ -68,15 +65,15 @@ AC_ARG_WITH([geant4-include],
 
 AC_MSG_RESULT([$GEANT4_INCLUDE])
 
-GAC_CHECK_PKG_DIR( [$GEANT4_INCLUDE],
+GDML_CHECK_PKG_DIR( [$GEANT4_INCLUDE],
 	[GEANT4],
 	[G4RunManager.hh])
 ])
 
 AC_MSG_RESULT(yes)
 
-# GEANT4 lib dir
-AC_DEFUN( GAC_WITH_GEANT4_LIBDIR, [
+# macro to set GEANT4 lib dir
+AC_DEFUN( GDML_WITH_GEANT4_LIBDIR, [
 
 AC_MSG_CHECKING([for Geant4 lib dir])
 
@@ -87,12 +84,12 @@ AC_ARG_WITH([geant4-libdir],
 
 AC_MSG_RESULT([$GEANT4_LIBDIR])
 
-GAC_CHECK_PKG_DIR( [$GEANT4_LIBDIR],
+GDML_CHECK_PKG_DIR( [$GEANT4_LIBDIR],
 	[GEANT4])
 ])
 
-# GEANT4 visualization libs
-AC_DEFUN( GAC_ENABLE_GEANT4_VIS, [
+# macro to setup GEANT4 visualization libs
+AC_DEFUN( GDML_ENABLE_GEANT4_VIS, [
 
 AC_MSG_CHECKING(whether to link against Geant4 visualization libs)
 
@@ -120,8 +117,8 @@ fi
 
 ])
 
-# GEANT4 UI libs
-AC_DEFUN( GAC_ENABLE_GEANT4_UI, [
+# macro to setup GEANT4 UI libs
+AC_DEFUN( GDML_ENABLE_GEANT4_UI, [
 
 AC_MSG_CHECKING(whether to link against Geant4 UI libs)
 
@@ -151,8 +148,8 @@ fi
 
 ])
 
-# Substitute GEANT4 vars to output
-AC_DEFUN( GAC_SUBST_GEANT4, [
+# macro to substitute GEANT4 vars to output
+AC_DEFUN( GDML_SUBST_GEANT4, [
 
 AC_SUBST(GEANT4_PREFIX)
 AC_SUBST(GEANT4_INCLUDE)
@@ -160,7 +157,8 @@ AC_SUBST(GEANT4_LIBDIR)
 
 ])
 
-AC_DEFUN( GAC_ENABLE_GEANT4_GRANULAR_LIBS, [
+# macro to select granular libs
+AC_DEFUN( GDML_ENABLE_GEANT4_GRANULAR_LIBS, [
 
 AC_MSG_CHECKING(whether to use Geant4 granular libs)
 
@@ -185,11 +183,56 @@ fi
 
 ])
 
-AC_DEFUN( GAC_CREATE_GEANT4_SETTINGS_FILE, [
+# macro to regenerate the Geant4 settings file
+AC_DEFUN( GDML_CREATE_GEANT4_SETTINGS_FILE, [
 
 g4config_file=${srcdir}/config/make/geant4_settings.gmk
 rm -f ${g4config_file}
 touch $g4config_file
 echo "# Local Geant4 Settings." >> $g4config_file
+
+])
+
+# macro to check whether NIST is supported by the current Geant4 version
+AC_DEFUN(GDML_CHECK_NIST, [
+
+AC_CHECK_FILE([$G4INSTALL/source/materials/include/G4NistManager.hh],have_nist=yes)
+
+if test $have_nist = "yes"
+then
+  AC_DEFINE(HAVE_NIST)
+fi
+
+])
+
+# macro to enable/disable NIST support
+AC_DEFUN(GDML_ENABLE_NIST, [
+
+AC_REQUIRE([GDML_CHECK_NIST])dnl
+
+AC_MSG_CHECKING(whether to enable Geant4 NIST support for material lookup)
+
+AC_ARG_ENABLE([nist],
+              AC_HELP_STRING([--enable-nist=<setting>]., [Turn NIST support on or off.]))
+
+# default to using NIST if not set from the enable-nist option
+if test "X$enable_nist" = "X"
+then
+  enable_nist=yes
+fi
+
+if test "X$enable_nist" = "Xyes"
+then
+  if test "X$have_nist" = "Xyes"
+  then
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(GDML_USE_NIST)
+  else
+    AC_MSG_RESULT(no)
+    AC_MSG_WARN(NIST was selected, but your Geant4 installation does not support it.)
+  fi
+else
+  AC_MSG_RESULT(no)
+fi
 
 ])

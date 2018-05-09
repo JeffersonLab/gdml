@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: ExN02DetectorConstruction.cpp,v 1.1 2005/03/02 17:59:25 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_3_0 $
+// $Id: ExN02DetectorConstruction.cpp,v 1.2 2005/12/08 17:29:36 witoldp Exp $
+// GEANT4 tag $Name: GDML_2_4_0 $
 //
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo...... 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -109,7 +109,7 @@ G4VPhysicalVolume* ExN02DetectorConstruction::Construct()
   ChamberSpacing = 80*cm;
   
   fTrackerLength = (NbOfChambers+1)*ChamberSpacing; // Full length of Tracker
-  fTargetLength  = 5.0 * cm;                        // Full length of Target
+  fTargetLength  = 5.0/3.0 * cm;                        // Full length of Target
   
   TargetMater  = Pb;
   ChamberMater = Xenon;
@@ -182,13 +182,22 @@ G4VPhysicalVolume* ExN02DetectorConstruction::Construct()
   // An example of Parameterised volumes
   // dummy values for G4Box -- modified by parameterised volume
 
-  solidChamber = new G4Box("chamber", 100*cm, 100*cm, 10*cm); 
+  //  solidChamber = new G4Box("chamber", 100*cm, 100*cm, 10*cm); 
+  solidChamber = new G4Box("chamber", trackerSize, trackerSize, trackerSize/5 ); 
   logicChamber = new G4LogicalVolume(solidChamber,ChamberMater,"Chamber",0,0,0);
   
   G4double firstPosition = -trackerSize + 0.5*ChamberWidth;
   G4double firstLength = fTrackerLength/10;
   G4double lastLength  = fTrackerLength;
-   
+
+  physiChamber = new G4PVReplica("chamber",
+                                 logicChamber,
+                                 logicTracker,
+                                 kZAxis,
+                                 5,
+                                 2* trackerSize/5);                                 
+
+  /*   
   G4VPVParameterisation* chamberParam = new ExN02ChamberParameterisation(  
 			   NbOfChambers,          // NoChambers 
 			   firstPosition,         // Z of center of first 
@@ -199,6 +208,8 @@ G4VPhysicalVolume* ExN02DetectorConstruction::Construct()
 			   
   // dummy value : kZAxis -- modified by parameterised volume
   //
+
+
   physiChamber = new G4PVParameterised(
                             "Chamber",       // their name
                             logicChamber,    // their logical volume
@@ -211,7 +222,8 @@ G4VPhysicalVolume* ExN02DetectorConstruction::Construct()
          << "The chambers are " << ChamberWidth/mm << " mm of " 
          << ChamberMater->GetName() << "\n The distance between chamber is "
 	 << ChamberSpacing/cm << " cm" << G4endl;
-	 
+  */
+
   //------------------------------------------------ 
   // Sensitive detectors
   //------------------------------------------------ 
