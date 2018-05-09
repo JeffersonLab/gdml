@@ -1,3 +1,11 @@
+02.06.2016 - GDML_3_1_4
+-----------------------
+
+- Updated GDML schema:
+  o Added support for scaled shapes along Cartesian axes.
+    Added 'scaledSolid' tag for scale component with values greater than zero.
+- Updated documentation accordingly (GDML Guide v.2.6).
+
 09.10.2015 - GDML_3_1_3
 -----------------------
 
