@@ -1,5 +1,4 @@
 # This makefile is used for building GDML at CERN,
-# it may not be of use in other contexts.
 
 ifndef ${GDMLTOP}
 GDMLTOP=${PWD}/..
@@ -8,14 +7,15 @@ endif
 
 GDMLTARDIR = ${GDMLTOP}/../downloads
 
-GDML_VERSION = 2_5_0
-GDMLSCHEMA_VERSION = 2_3_0
-CPPGDML_VERSION = 2_4_0
-PYGDML_VERSION = 1_2_0
+GDML_VERSION = 2_6_0
+
+#GDMLSCHEMA_VERSION = 2_3_0
+#CPPGDML_VERSION = 2_4_0
+#PYGDML_VERSION = 1_2_0
 
 export PLATFORM=${SCRAM_ARCH}
 
-G4BIND_INC = G4Processor G4Subscribers G4Writer
+G4BIND_INC = G4Processor G4Subscribers G4Writer G4Evaluator
 COMMON_INC = Saxana Schema Writer Processes
 
 G4BIND_LIBS = ${addprefix ${GDMLTOP}/lib,${addsuffix .so,${G4BIND_INC}} }
@@ -25,8 +25,9 @@ release: release-build release-install
 
 release-build:
 	cd ${GDMLTOP}/src/CPPGDML ; . CERNConfigure.sh; make; cd ..
-	cd ${GDMLTOP}/src/PyGDML/G4Binding ; . g4setup.sh ; make ; cd ../..
-	cd ${GDMLTOP}/src/PyGDML/Examples/G4RunExample ; . exsetup.sh ; make ; cd ../../..
+
+#	cd ${GDMLTOP}/src/PyGDML/G4Binding ; . g4setup.sh ; make ; cd ../..
+#	cd ${GDMLTOP}/src/PyGDML/Examples/G4RunExample ; . exsetup.sh ; make ; cd ../../..
 
 release-install: release-install-libs release-install-includes
 
@@ -48,21 +49,22 @@ release-install-includes:
 	done
 
 release-tarballs:
-	@if [ ! -e ${GDMLTARDIR}/CPPGDML/CPPGDML_${CPPGDML_VERSION}.tar.gz ] ; then \
-	  cd ${GDMLTOP}/src ; tar zcf ${GDMLTARDIR}/CPPGDML/CPPGDML_${CPPGDML_VERSION}.tar.gz --exclude=CPPGDML/build CPPGDML ;\
-	else \
-	  echo "tarball already existing: " ${GDMLTARDIR}/CPPGDML/CPPGDML_${CPPGDML_VERSION}.tar.gz ;\
-	fi
-	@if [ ! -e ${GDMLTARDIR}/GDMLSchema/GDMLSchema_${GDMLSCHEMA_VERSION}.tar.gz ] ; then \
-	  cd ${GDMLTOP}/src ; tar zcf ${GDMLTARDIR}/GDMLSchema/GDMLSchema_${GDMLSCHEMA_VERSION}.tar.gz GDMLSchema ;\
-	else \
-	  echo "tarball already existing: " ${GDMLTARDIR}/GDMLSchema/GDMLSchema_${GDMLSCHEMA_VERSION}.tar.gz ;\
-	fi
-	@if [ ! -e ${GDMLTARDIR}/PyGDML/PyGDML_${PYGDML_VERSION}.tar.gz ] ; then \
-	  cd ${GDMLTOP}/src ; tar zcf ${GDMLTARDIR}/PyGDML/PyGDML_${PYGDML_VERSION}.tar.gz PyGDML ;\
-	else \
-	  echo "tarball already existing: " ${GDMLTARDIR}/PyGDML/PyGDML_${PYGDML_VERSION}.tar.gz ;\
-	fi
+#	@if [ ! -e ${GDMLTARDIR}/CPPGDML/CPPGDML_${CPPGDML_VERSION}.tar.gz ] ; then \
+#	  cd ${GDMLTOP}/src ; tar zcf ${GDMLTARDIR}/CPPGDML/CPPGDML_${CPPGDML_VERSION}.tar.gz --exclude=CPPGDML/build CPPGDML ;\
+#	else \
+#	  echo "tarball already existing: " ${GDMLTARDIR}/CPPGDML/CPPGDML_${CPPGDML_VERSION}.tar.gz ;\
+#	fi
+#	@if [ ! -e ${GDMLTARDIR}/GDMLSchema/GDMLSchema_${GDMLSCHEMA_VERSION}.tar.gz ] ; then \
+#	  cd ${GDMLTOP}/src ; tar zcf ${GDMLTARDIR}/GDMLSchema/GDMLSchema_${GDMLSCHEMA_VERSION}.tar.gz GDMLSchema ;\
+#	else \
+#	  echo "tarball already existing: " ${GDMLTARDIR}/GDMLSchema/GDMLSchema_${GDMLSCHEMA_VERSION}.tar.gz ;\
+#	fi
+#	@if [ ! -e ${GDMLTARDIR}/PyGDML/PyGDML_${PYGDML_VERSION}.tar.gz ] ; then \
+#	  cd ${GDMLTOP}/src ; tar zcf ${GDMLTARDIR}/PyGDML/PyGDML_${PYGDML_VERSION}.tar.gz PyGDML ;\
+#	else \
+#	  echo "tarball already existing: " ${GDMLTARDIR}/PyGDML/PyGDML_${PYGDML_VERSION}.tar.gz ;\
+#	fi
+
 	@if [ ! -e ${GDMLTARDIR}/GDML_${GDML_VERSION}.tar.gz ] ; then \
 	  cd ${GDMLTOP}/src ; tar zcf ${GDMLTARDIR}/GDML_${GDML_VERSION}.tar.gz --exclude=CPPGDML/build * ;\
 	else \

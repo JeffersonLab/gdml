@@ -12,7 +12,7 @@ GDML_WITH_PLATFORM
 GDML_SETUP_LIBS
 GDML_SETUP_INSTALL_DIRS
 GDML_ENABLE_GDML_VERBOSE
-
+GDML_ENABLE_BUILD_STEPWRT
 ])
 
 # macro to set whether shared libs should be built
@@ -175,6 +175,25 @@ fi
 if test "${COMPILE_VERBOSE_USE}" = yes; then
   CXXFLAGS="${CXXFLAGS} -v -Wl,--verbose"
 fi
+
+])
+
+# macro to set whether to build STEPWriter
+AC_DEFUN(GDML_ENABLE_BUILD_STEPWRT, [
+
+AC_MSG_CHECKING(whether to build STEPWriter)
+
+AC_ARG_ENABLE(build-stepwrt,
+	AC_HELP_STRING([--enable-build-stepwrt=<setting>], [set building of STEPWriter to on or off]),
+	[BUILD_STEPWRT=$enable_build_stepwrt],
+	[BUILD_STEPWRT=no])
+
+if test "$BUILD_STEPWRT" != yes && test "$BUILD_STEPWRT" != no; then
+  AC_MSG_ERROR([$BUILD_STEPWRT is not a valid setting for --enable-build-stepwrt])
+fi
+
+AC_MSG_RESULT($BUILD_STEPWRT)
+AC_SUBST(BUILD_STEPWRT)
 
 ])
 

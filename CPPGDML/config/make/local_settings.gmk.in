@@ -1,4 +1,4 @@
-# $Header: /cvs/simu/simu/GDML2/CPPGDML/config/make/local_settings.gmk.in,v 1.2 2005/05/12 20:36:37 jmccormi Exp $
+# $Header: /cvs/simu/simu/GDML2/CPPGDML/config/make/local_settings.gmk.in,v 1.5 2006/07/13 07:59:54 witoldp Exp $
 #
 # All the local settings for GDML build
 # defined by Autoconf configure script.
@@ -37,6 +37,8 @@ srcdir          := @srcdir@
 BUILD_SHARED_LIBS := @BUILD_SHARED_LIBS@
 BUILD_STATIC_LIBS := @BUILD_STATIC_LIBS@
 
+BUILDSTEP := @BUILD_STEPWRT@
+
 TARGET_LIB_PREFIX := @TARGET_LIB_PREFIX@
 
 #
@@ -49,7 +51,7 @@ PLATFORM          := @PLATFORM@
 # gmk file to include
 PLATFORM_GMK_FILE := $(PROJECT_TOP)/@PLATFORM_GMK_FILE@
 
-# include the platform file 
+# include the platform file
 include $(PLATFORM_GMK_FILE)
 
 #
@@ -63,12 +65,12 @@ COMPILER             := @COMPILER@
 COMPILER_GMK_FILE    := $(PROJECT_TOP)/@COMPILER_GMK_FILE@
 
 # include gmk for this compiler, which sets the main CXXFLAGS
-include $(COMPILER_GMK_FILE) 
+include $(COMPILER_GMK_FILE)
 
 # add in additional CXXFLAGS from configure plus the preprecessor DEFS
 CXXFLAGS             += @CXXFLAGS@ @DEFS@
 
-# 
+#
 # External Dependencies
 #
 
@@ -81,7 +83,7 @@ XERCESC_LIBDIR     := @XERCESC_LIBDIR@
 XERCESC_LIBNAME    := @XERCESC_LIBNAME@
 
 # CLHEP
-CLHEP_BASE         := @CLHEP_PREFIX@ 
+CLHEP_BASE         := @CLHEP_PREFIX@
 CLHEP_INCLUDE      := @CLHEP_INCLUDE@
 CLHEP_LIBDIR       := @CLHEP_LIBDIR@
 
@@ -92,8 +94,5 @@ CLHEP_LIBNAME      := @CLHEP_LIBNAME@
 GEANT4_BASE        := @GEANT4_PREFIX@
 GEANT4_INCLUDE     := @GEANT4_INCLUDE@
 GEANT4_LIBDIR      := @GEANT4_LIBDIR@
-
-# Geant4 UI/Vis/Granular settings
-include $(PROJECT_TOP)/config/make/geant4_settings.gmk
 
 endif

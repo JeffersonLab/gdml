@@ -1,56 +1,4 @@
 //
-// ********************************************************************
-// * DISCLAIMER                                                       *
-// *                                                                  *
-// * The following disclaimer summarizes all the specific disclaimers *
-// * of contributors to this software. The specific disclaimers,which *
-// * govern, are listed with their locations in:                      *
-// *   http://cern.ch/geant4/license                                  *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.                                                             *
-// *                                                                  *
-// * This  code  implementation is the  intellectual property  of the *
-// * GEANT4 collaboration.                                            *
-// * By copying,  distributing  or modifying the Program (or any work *
-// * based  on  the Program)  you indicate  your  acceptance of  this *
-// * statement, and all its terms.                                    *
-// ********************************************************************
-//
-//
-// $Id: RCObjectHandle.h,v 1.3 2005/12/08 17:29:35 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_5_0 $
-//
-// 
-// --------------------------------------------------------------
-// Comments
-//
-// --------------------------------------------------------------
-//
-// Class RCObjectHandle
-// Class description:
-// A class to provide reference counting mechanism for a class which
-// is designed without this support. It is a templated class, a smart pointer,
-// wrapping the class to be counted and performs the reference counting
-// during the life-time of the counted object. When its count goes to zero
-// the counted object is destroyed by explicit call to its destructor.
-// This class provides overloaded operators *() and ->() to make the
-// maniplutation syntax the same as for the normal "dumb" pointers.
-// The basic rule for the use of this class is that it is passed always by
-// reference and is not constructed by calling new.
-// Before the use of this smart pointer object one can test its validity
-// using the operator !() or operator bool().
-//  if( !smartPtrObj ) { ... } // Problem! We must initialize it first!
-//  else               { ... } // OK!
-// The code which tries to delete this object won't compile, because it is
-// not a pointer it is an object.
-// Author:      Radovan Chytracek
-// Version:     1.0
-// Date:        June 2001
-// ----------------------------------------------------------------------
 #ifndef RC_OBJECT_HANDLE_H
 #define RC_OBJECT_HANDLE_H 1
 
@@ -104,8 +52,7 @@ public: // with description
   RCObjectHandle( X* rep = 0 )
   : fObj( 0 ) {
     if( rep != 0 ) {
-      // is the RCH:: in the line below needed...????
-      fObj = new RCH::CountedObject( rep );
+      fObj = new CountedObject( rep );
 	  }
   } // Constructor
 
@@ -178,8 +125,7 @@ public: // with description
           delete fObj;
         }
       }
-      // is the RCH:: in the line below needed...????
-      fObj = new RCH::CountedObject( pRefObj );
+      fObj = new CountedObject( pRefObj );
     }
     return *this;
   } // Assignment operator by pointer to the counted class object

@@ -1,6 +1,6 @@
 #
-if !(${?GDMLROOT}) then
-    setenv GDMLROOT ${PWD}/../../
+if !(${?GDMLBASE}) then
+    setenv GDMLBASE ${PWD}/../../
 endif
 #
 if !(${?PLATFORM}) then
@@ -20,16 +20,10 @@ else
     setenv DEBUG
 endif
 
-setenv PyGDMLBASE ${GDMLROOT}/PyGDML 
+setenv PyGDMLBASE ${GDMLBASE}/PyGDML 
 
-# seal variables
-if !(${?SEALVER}) then
-    setenv SEALVER SEAL_1_6_2
-endif
-if !(${?SEALBASE}) then
-    setenv SEALBASE /afs/cern.ch/sw/lcg/app/releases/SEAL/${SEALVER}
-endif
-setenv SEALINCLUDES ${SEALBASE}/include
+# root variables
+setenv ROOTSYS /afs/cern.ch/sw/lcg/external/root/5.10.00/${PLATFORM}/root
 
 # gccxml
 if !(${?GCCXMLPATH}) then
@@ -37,27 +31,27 @@ if !(${?GCCXMLPATH}) then
 endif
 
 # CLHEP variables
-setenv CLHEPBASE /afs/cern.ch/sw/lcg/external/clhep/1.9.1.2
+setenv CLHEPBASE /afs/cern.ch/sw/lcg/external/clhep/1.9.2.2
 setenv CLHEPINC ${CLHEPBASE}/${PLATFORM}/include
 
 # G4 variables
-setenv G4VERSION geant4.7.0
-setenv G4INSTALL /afs/cern.ch/sw/geant4/releases/share
-setenv G4INCLUDES ${G4INSTALL}/${G4VERSION}/include
-setenv G4LIBS /afs/cern.ch/sw/geant4/releases/specific/${PLATFORM}/${G4VERSION}/lib
-
+setenv G4VERSION 8.0.p01
+setenv G4INSTALL /afs/cern.ch/sw/lcg/external/geant4
+setenv G4INCLUDES ${G4INSTALL}/${G4VERSION}/share/include
+setenv G4LIBS ${G4INSTALL}/${G4VERSION}/${PLATFORM}/lib
+ 
 #
 if (${?PYTHONPATH}) then
-    setenv PYTHONPATH ${PYTHONPATH}:${SEALBASE}/${PLATFORM}/python:${PyGDMLBASE}/Common/python:${PyGDMLBASE}/G4Binding/${PLATFORM}:${PyGDMLBASE}/G4Binding/python
+    setenv PYTHONPATH ${PYTHONPATH}:{$ROOTSYS}/lib:${PyGDMLBASE}/Common/python:${PyGDMLBASE}/G4Binding/${PLATFORM}:${PyGDMLBASE}/G4Binding/python
 else
-    setenv PYTHONPATH ${SEALBASE}/${PLATFORM}/python:${PyGDMLBASE}/Common/python:${PyGDMLBASE}/G4Binding/${PLATFORM}:${PyGDMLBASE}/G4Binding/python
+    setenv PYTHONPATH {$ROOTSYS}/lib:${PyGDMLBASE}/Common/python:${PyGDMLBASE}/G4Binding/${PLATFORM}:${PyGDMLBASE}/G4Binding/python
 endif
 
 
 if ( ${OSTYPE} == 'linux' ) then
-    setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${SEALBASE}/${PLATFORM}${DEBUG}/lib:${G4LIBS}:${CLHEPBASE}/${PLATFORM}/lib
+    setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:{$ROOTSYS}/lib:${G4LIBS}:${CLHEPBASE}/${PLATFORM}/lib:${PyGDMLBASE}/G4Binding/${PLATFORM}
 else if ( ${OSTYPE} == 'darwin' ) then
-    setenv DYLD_LIBRARY_PATH ${SEALBASE}/${PLATFORM}${DEBUG}/lib:${G4LIBS}:${CLHEPBASE}/${PLATFORM}/lib
+    setenv DYLD_LIBRARY_PATH {$ROOTSYS}/lib:${G4LIBS}:${CLHEPBASE}/${PLATFORM}/lib:${PyGDMLBASE}/G4Binding/${PLATFORM}
 endif
 
-setenv PATH ${PATH}:${SEALBASE}/${PLATFORM}${DEBUG}/bin
+setenv PATH ${PATH}:{$ROOTSYS}/bin

@@ -14,14 +14,83 @@ namespace gdml
       : Cursor( solidsElement, edReg )
     {
     }
+    
+    void SolidsCursor::addTessellated( const std::string&  id,
+                                       std::vector<Facet>& facet, 
+                                       const std::string& lunit,      
+                                       const std::string& aunit)
+    {
+      if( ok( id ) )
+      {
+        add( id );
+	
+        Element s( "tessellated" );
 
+        s.addAttribute( "name"    , id        );
+        s.addAttribute( "lunit"   , lunit     );
+        s.addAttribute( "aunit"   , aunit     );
+        
+        for (unsigned int i=0;i<facet.size();i++)
+        {
+          if(facet[i].isTriangular())
+          {
+            Element tess("triangular");
+            
+            tess.addAttribute("vertex1", facet[i].v1());
+            tess.addAttribute("vertex2", facet[i].v2());
+            tess.addAttribute("vertex3", facet[i].v3());
+            
+            s.appendChild(tess);
+          }
+          else
+          {
+            Element tess("quadrangular");
+            
+            tess.addAttribute("vertex1", facet[i].v1());
+            tess.addAttribute("vertex2", facet[i].v2());
+            tess.addAttribute("vertex3", facet[i].v3());
+            tess.addAttribute("vertex4", facet[i].v4());
+            
+            s.appendChild(tess);
+          }
+        }
+        m_cursor.appendChild( s );
+      }
+    }
+    
+    void SolidsCursor::addTetrahedron( const std::string& id,
+                                       const std::string& vertex1,
+                                       const std::string& vertex2,
+                                       const std::string& vertex3,
+                                       const std::string& vertex4, 
+                                       const std::string& lunit,      
+                                       const std::string& aunit)
+    {
+      if( ok( id ) )
+      {
+        add( id );
+	
+        Element s( "tet" );
+        
+        s.addAttribute( "name"      , id          );
+        s.addAttribute( "vertex1"   , vertex1     );
+        s.addAttribute( "vertex2"   , vertex2     );
+        s.addAttribute( "vertex3"   , vertex3     );
+        s.addAttribute( "vertex4"   , vertex4     );
+        s.addAttribute( "lunit"     , lunit       );
+        s.addAttribute( "aunit"     , aunit       );
+        
+        m_cursor.appendChild( s );
+      }
+    }
+    
     void SolidsCursor::addBox( const std::string& id,              
                                double             x, double             y, double             z,
                                const std::string& lunit,
                                const std::string& aunit )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
       os << x;      
       std::string sx = os.str(); os.str("");
       os << y;      
@@ -60,7 +129,7 @@ namespace gdml
                                   const std::string& aunit )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << rmin;      
       std::string srmin = os.str(); os.str("");
@@ -112,7 +181,7 @@ namespace gdml
                                  const std::string& aunit )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << rmin;      
       std::string srmin = os.str(); os.str("");
@@ -152,7 +221,7 @@ namespace gdml
                                 const std::string& aunit )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << rmin;      
       std::string srmin = os.str(); os.str("");
@@ -189,7 +258,7 @@ namespace gdml
                                const std::string& lunit )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
       
       os << r;      
       std::string sr = os.str(); os.str("");
@@ -216,7 +285,7 @@ namespace gdml
                                 const std::string& aunit )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << z;      
       std::string sz = os.str(); os.str("");
@@ -262,7 +331,7 @@ namespace gdml
                                   const std::string& lunit)
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
       
       os << dx;      
       std::string sdx = os.str(); os.str("");
@@ -297,7 +366,7 @@ namespace gdml
                                 const std::string& aunit )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << z;      
       std::string sz = os.str(); os.str("");
@@ -357,7 +426,7 @@ namespace gdml
                                     const std::string& aunit )
     {
       std::ostringstream os;      
-      os.precision(100);
+      os.precision(15);
 
       os << startphi;
       std::string sstartphi = os.str(); os.str("");
@@ -417,7 +486,7 @@ namespace gdml
                                      const std::string& aunit )
     {
       std::ostringstream os;      
-      os.precision(100);
+      os.precision(15);
 
       os << startphi;
       std::string sstartphi = os.str(); os.str("");
@@ -475,7 +544,7 @@ namespace gdml
                                 const std::string& aunit )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << x;      
       std::string sx = os.str(); os.str("");
@@ -528,7 +597,7 @@ namespace gdml
                                const std::string& aunit )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << x1;
       std::string sx1 = os.str(); os.str("");
@@ -584,7 +653,7 @@ namespace gdml
                                 const std::string& aunit )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << x1;
       std::string sx1 = os.str(); os.str("");
@@ -656,7 +725,7 @@ namespace gdml
     {
       
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
       
       os << xx;
       std::string sxx = os.str(); os.str("");
@@ -809,7 +878,7 @@ namespace gdml
       if( x1 != 0.0 || y1 != 0.0 || z1 != 0.0 )
       {
         std::ostringstream os;
-        os.precision(100);
+        os.precision(15);
       
         os << x1;
         std::string sx = os.str(); os.str("");
@@ -837,7 +906,7 @@ namespace gdml
       if( x0 != 0.0 || y0 != 0.0 || z0 != 0.0 )
       {
         std::ostringstream os;
-        os.precision(100);
+        os.precision(15);
 
         os << x0;
         std::string sx = os.str(); os.str("");
@@ -865,7 +934,7 @@ namespace gdml
       if( rx1 != 0.0 || ry1 != 0.0 || rz1 != 0.0 )
       {
         std::ostringstream os;
-        os.precision(100);
+        os.precision(15);
               
         os << rx1;
         std::string srx = os.str(); os.str("");
@@ -893,7 +962,7 @@ namespace gdml
       if( rx0 != 0.0 || ry0 != 0.0 || rz0 != 0.0 )
       {
         std::ostringstream os;
-        os.precision(100);
+        os.precision(15);
               
         os << rx0;
         std::string srx = os.str(); os.str("");

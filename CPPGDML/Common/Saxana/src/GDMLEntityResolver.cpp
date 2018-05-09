@@ -14,15 +14,16 @@
 using namespace xercesc;
 using std::string;
 using std::vector;
+using std::ifstream;
 using std::endl;
 using std::cout;
 
 GDMLEntityResolver::GDMLEntityResolver()
 {
-  /* Add the current working directory to search path. */
+  // Add the current working directory to search path.
   addSearchDir(getCurrentWorkingDir());
 
-  /* Add the variable GDML_SCHEMA_DIR to search path. */
+  // Add the variable GDML_SCHEMA_DIR to search path.
   char* env;
   env = getenv("GDML_SCHEMA_DIR");
   if (env != NULL) {
@@ -34,84 +35,155 @@ GDMLEntityResolver::~GDMLEntityResolver()
 {;}
 
 /**
- * A simple implementation of entity resolution that pulls out a file's basename from a URL and attempts
- * to find it within a list of directories.  An absolute URL with the "file:" protocol is returned if the
- * document is found locally.  Otherwise, a null input source is returned, so that Xerces' default
- * entity resolution will be used. --JM
- * @return isrc Returns an InputSource pointing to a local copy or NULL.
+ * A simple implementation of entity resolution that tries to find a matching local resource from
+ * a URL's base filename or (secondarily) from the full directory structure after the base address.
+ * An absolute URL with the "file:" protocol is returned if the document is found locally.  Otherwise,
+ * a null input source is returned, so that Xerces' default entity resolution will be used instead.
+ * --JM
+ * @return Returns an InputSource pointing to a local copy, if found, or NULL, if no local copy was found.
  */
-InputSource* GDMLEntityResolver::resolveEntity( const XMLCh* const, const XMLCh* const systemId) {
+InputSource* GDMLEntityResolver::resolveEntity( const XMLCh* const, const XMLCh* const systemId)
+{
 
-  /* Default to null InputSource. */
+  // Default to a null InputSource.
   InputSource* isrc = 0;
 
-  /* Make string from systemId. */
+  // Make a string from the systemId.
   string sysIdStr = string( XMLString::transcode(systemId) );
 
-  /* Get current working dir. (Is this x-platform compatible???) */
+  //std::cout << "resolveEntity - " << sysIdStr << std::endl;
+
+  // Get the current working dir.
+  // TODO:  Possible to not limit CWD to PATH_MAX?  --JM
   char ccwd[PATH_MAX];
   getcwd(ccwd, PATH_MAX);
   string cwd = string(ccwd);
 
-  /* Pull out filename. */
+  // Extract the base filename, e.g. all chars after last '/'.
   string::size_type lastSlashIdx = sysIdStr.find_last_of('/');
   string fileName;
-  std::string urlStr;
 
-  /* If found a '/', then only the filename is pulled-out, ignoring rest of relative path or URL. */
+  // If a '/' not found, then only the filename is pulled-out, ignoring rest of relative path or URL.
   if ( lastSlashIdx != string::npos ) {
     fileName = string(sysIdStr, lastSlashIdx + 1);
   }
-  /* If a '/' was NOT found, systemId is treated as a filename only, which is used verbatim. */
+  // If no '/' was found, the systemId is used verbatim.
   else {
     fileName = string(sysIdStr);
   }
 
-  /* Loop over list of search directories. */
-  for (vector<string>::const_iterator iter = m_dirs.begin();
-       iter != m_dirs.end();
-       iter++) {
+  // Try to create an InputSource from this filename.
+  isrc = createInputSource(fileName);
 
-    const std::string& dir = (*iter);
-
-    /* Try to open the full path -> dir + "/" + basename */
-    std::string path = dir + string("/") + fileName;
-    std::ifstream fin;
-    fin.open(path.c_str(), std::ios::in);
-
-    /* Open was successful? */
-    if ( !fin.fail() ) {
-
-      /* Setup "file:" protocol URL pointing to local copy. */
-      urlStr = string("file://") + path;
-      const XMLURL url = XMLURL(urlStr.c_str());
-      isrc = new URLInputSource(url);
-      break;
-    }
+  // If a source was not found, try finding it with just the base address stripped out,
+  // leaving the directory structure from the URL intact.
+  if (isrc == 0) {
+    fileName = makePath(sysIdStr);
+    isrc = createInputSource(fileName);
   }
 
-  /* Print an info mesg if this function redirected to a local copy. */
+  // Print an info mesg if this function redirected to a local copy.
 #ifdef GDML_VERBOSE
   if ( isrc != 0 ) {
-    cout << "systemId <" << sysIdStr << "> redirected to local copy at <" << urlStr << ">." << endl;
+    cout << "GDML - systemId <" << sysIdStr << "> redirected to <" << XMLString::transcode(isrc->getSystemId()) << ">." << endl;
   }
 #endif
 
   return isrc;
 }
 
-void GDMLEntityResolver::addSearchDir(std::string dir)
+bool GDMLEntityResolver::haveSearchDir(std::string dir)
 {
-#ifdef GDML_VERBOSE
-  cout << "Adding search directory <" << dir << ">" << endl;
-#endif
-  m_dirs.push_back(dir);
+  bool fnd = false;
+  for (vector<string>::const_iterator iter = m_dirs.begin();
+       iter != m_dirs.end();
+       iter++) {
+    if ((*iter) == dir) {
+      fnd = true;
+      break;
+    }
+  }
+  return fnd;
 }
 
-/* Get current working dir. (Is this x-platform compatible???) */
-std::string GDMLEntityResolver::getCurrentWorkingDir()
+void GDMLEntityResolver::addSearchDir(string dir)
+{
+  if (!haveSearchDir(dir)) {
+
+#ifdef GDML_VERBOSE
+    cout << "GDML - Adding schema search directory <" << dir << ">." << endl;
+#endif
+
+    m_dirs.push_back(dir);
+  }
+}
+
+/*
+ * Get current working dir.
+ * FIXME: Arbitrary limit PATH_MAX on size of path. --JM
+ */
+string GDMLEntityResolver::getCurrentWorkingDir()
 {
   char ccwd[PATH_MAX];
   getcwd(ccwd, PATH_MAX);
   return string(ccwd);
+}
+
+InputSource* GDMLEntityResolver::createInputSource(string fname)
+{
+  InputSource* isrc = 0;
+
+  // Loop over the list of base search directories.
+  for (vector<string>::const_iterator iter = m_dirs.begin();
+       iter != m_dirs.end();
+       iter++) {
+
+    const string& dir = (*iter);
+
+    // Try to open the path -> search_dir + "/" + fname
+    string path = dir + string("/") + fname;
+    ifstream fin;
+    fin.open(path.c_str(), std::ios::in);
+
+    // Open was successful?
+    if ( !fin.fail() ) {
+
+      // Setup the "file:" protocol URL pointing to a local copy.
+      string urlStr = string("file://") + path;
+
+      // Make a URL from the string.
+      const XMLURL url = XMLURL(urlStr.c_str());
+
+      // Make an input source from the URL.
+      isrc = new URLInputSource(url);
+
+      // Add the search dir from the local path that was found.
+      addSearchDir(path.substr(0, path.find_last_of("/") + 1));
+
+      break;
+    }
+  }
+
+  return isrc;
+}
+
+std::string GDMLEntityResolver::makePath(string url)
+{
+  std::string path = url;
+
+  size_t i = url.find("://");
+
+  if (i != string::npos) {
+    size_t ii = url.find_first_of("/", i + 3);
+
+    if (ii != string::npos) {
+      ii += 1;
+
+      path = url.substr(ii);
+    }
+  }
+
+  //std::cout << "path: " << path << std::endl;
+
+  return path;
 }

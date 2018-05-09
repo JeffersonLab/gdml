@@ -3,21 +3,21 @@
 
 GenericPositionSizeParameterisation::GenericPositionSizeParameterisation(int n)
 {
-  rotation = new HepRotation[n];
-  translation = new Hep3Vector[n];
+  rotation = new G4RotationMatrix[n];
+  translation = new G4ThreeVector[n];
   
   d1 = new double[n];
   d2 = new double[n];
   d3 = new double[n];
   d4 = new double[n];
   d5 = new double[n];
-};
+}
 
-void GenericPositionSizeParameterisation::SetTransformation(int n, HepRotation& rot, Hep3Vector& trans)
+void GenericPositionSizeParameterisation::SetTransformation(int n, G4RotationMatrix& rot, G4ThreeVector& trans)
 {
   rotation[n-1] = rot;
   translation[n-1] = trans;
-};
+}
 
 void GenericPositionSizeParameterisation::SetDimensions(int n, double dim1, double dim2, double dim3,
                                             double dim4, double dim5)
@@ -27,14 +27,14 @@ void GenericPositionSizeParameterisation::SetDimensions(int n, double dim1, doub
   d3[n-1] = dim3;
   d4[n-1] = dim4;
   d5[n-1] = dim5;
-};
+}
 
 
 void GenericPositionSizeParameterisation::ComputeTransformation(int copyNo, G4VPhysicalVolume* physVol) const
 {
   physVol->SetTranslation(translation[copyNo]);
   physVol->SetRotation(&(rotation[copyNo]));
-};
+}
 
 void GenericPositionSizeParameterisation::ComputeDimensions(G4Box& box, 
                                                 int copyNo, 
@@ -43,7 +43,7 @@ void GenericPositionSizeParameterisation::ComputeDimensions(G4Box& box,
   box.SetXHalfLength(d1[copyNo]);
   box.SetYHalfLength(d2[copyNo]);
   box.SetZHalfLength(d3[copyNo]);
-};
+}
 
 void GenericPositionSizeParameterisation::ComputeDimensions(G4Tubs& tubs, 
                                                 int copyNo, 
@@ -54,4 +54,4 @@ void GenericPositionSizeParameterisation::ComputeDimensions(G4Tubs& tubs,
   tubs.SetOuterRadius(d3[copyNo]);
   tubs.SetStartPhiAngle(d4[copyNo]);
   tubs.SetZHalfLength(d5[copyNo]);
-};
+}

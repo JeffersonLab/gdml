@@ -5,8 +5,6 @@
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
 #include "G4UIsession.hh"
-#include "G4UIterminal.hh"
-#include "G4UItcsh.hh"
 #include "G4TransportationManager.hh"
 
 #include "gogdmlDetectorConstruction.h"
@@ -16,19 +14,10 @@
 //g4 writer
 #include "G4Writer/G4GDMLWriter.h"
 
-// visualization...
-#define G4VIS_USE_OPENGLX 
-#define G4VIS_USE_OPENGLXM
-
-#include "G4VisExecutive.hh"
-
 int main()
 {
   // Construct the default run manager
   G4RunManager* runManager = new G4RunManager;
-  //
-  G4VisManager* visManager = new G4VisExecutive;
-  visManager->Initialize();
 
   // set mandatory initialization classes
   runManager->SetUserInitialization(new gogdmlDetectorConstruction);
@@ -39,44 +28,17 @@ int main()
 
   // Initialize G4 kernel
   runManager->Initialize();  
-
-  /*    
-  //scaning geometry tree
-  G4VPhysicalVolume* g4wv = G4TransportationManager::GetTransportationManager()->
-  GetNavigatorForTracking()->GetWorldVolume();
-  
-  G4GDMLWriter g4writer("../../../GDMLSchema/gdml.xsd", "g4writertest.gdml");
-  
-  try
-  {
-  g4writer.DumpGeometryInfo(g4wv);
-  }
-  catch(std::logic_error &lerr)
-  {
-  std::cout << "Caught an exception: " 
-  << lerr.what () << std::endl;
-  }
-  */
   
   // get the pointer to the UI manager and set verbosities
-  G4UImanager* UI = G4UImanager::GetUIpointer();
-
-  // G4UIterminal is a (dumb) terminal.
-  
-  G4UIsession * session = new G4UIterminal(new G4UItcsh);
-  
-  UI->ApplyCommand("/control/execute vis.mac"); 
+  G4UImanager* UI = G4UImanager::GetUIpointer();  
   UI->ApplyCommand("/control/execute run.mac"); 
 
   // start a run
   int numberOfEvent = 1;
   runManager->BeamOn(numberOfEvent);
 
-  session->SessionStart();
-
   // job termination
   delete runManager;
-  delete visManager;
   
   return 0;
 }

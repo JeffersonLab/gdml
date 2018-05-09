@@ -2,9 +2,11 @@
 # -*- Mode: Python -*-
 #
 from units import *
-import pyreflex
+import ROOT
+import PyCintex
 
-G4 = pyreflex.loadDictionary('G4classesDict')
+PyCintex.loadDictionary('G4classesDict')
+G4 = ROOT
 
 # helper definitions to convert from unicode do G4String and back
 def g4str(unistr):
@@ -55,14 +57,15 @@ class G4Binding:
     def medium(self, name, material):
 	return material
 
-    def logvolume(self, name, solid, medium):
+    def logvolume(self, name, solid, medium, reflex):
 	return G4.G4LogicalVolume(solid, medium, g4str(name))
 
     def assembly(self, name):
 	return G4.G4AssemblyVolume(name)
 
-    def physvolume(self, name, lv, motherlv, rot, pos):
-	return pyreflex.drop_ownership(G4.G4PVPlacement(rot, pos, lv, g4str(name), motherlv, False, 0))
+    def physvolume(self, name, lv, motherlv, rot, pos, reflex):
+        #	return G4.drop_ownership(G4.G4PVPlacement(rot, pos, lv, g4str(name), motherlv, False, 0))
+        return G4.G4PVPlacement(rot, pos, lv, g4str(name), motherlv, False, 0)
     
     def box(self, name, x, y, z):
 	return G4.G4Box(g4str(name), x, y, z)

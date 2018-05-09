@@ -1,8 +1,6 @@
 #include "Saxana/SAXComponentFactory.h"
 
-//extern "C" {
-
-  void GDMLSubscriberLibLoad() {
+void GDMLSubscriberLibLoad() {
     LOAD_COMPONENT(defineSubscriber)
     LOAD_COMPONENT(isotopeSubscriber)
     LOAD_COMPONENT(elementSubscriber)
@@ -25,9 +23,9 @@
     LOAD_COMPONENT(eltubeSubscriber)
     LOAD_COMPONENT(ellipsoidSubscriber)
     LOAD_COMPONENT(polyhedraSubscriber)
+    LOAD_COMPONENT(tessellatedSubscriber)
+    LOAD_COMPONENT(tetSubscriber)
     LOAD_COMPONENT(volumeSubscriber)
     LOAD_COMPONENT(assemblySubscriber)
     LOAD_COMPONENT(setupSubscriber)
-      //  }
-
-};
+}

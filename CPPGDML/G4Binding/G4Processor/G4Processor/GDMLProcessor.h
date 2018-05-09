@@ -7,7 +7,8 @@
 #include "G4ThreeVector.hh"
 #include "G4RotationMatrix.hh"
 
-#include "GDMLExpressionEvaluator.h"
+// Change GDMLExpressionEvaluator package. --JM Mar-27-2006
+#include "G4Evaluator/GDMLExpressionEvaluator.h"
 
 #include "G4VSolid.hh"
 #include "G4AssemblyVolume.hh"

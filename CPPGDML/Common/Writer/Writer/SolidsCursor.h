@@ -1,9 +1,10 @@
 // -*- C++ -*-
-// $Id: SolidsCursor.h,v 1.3 2006/02/09 10:58:25 witoldp Exp $
+// $Id: SolidsCursor.h,v 1.4 2006/07/05 13:46:13 witoldp Exp $
 #ifndef GDML_WRITER_SOLIDSCURSOR_H
 #define GDML_WRITER_SOLIDSCURSOR_H 1
 
 #include "Writer/Cursor.h"
+#include "Writer/Facet.h"
 #include <vector>
 
 namespace gdml
@@ -32,6 +33,36 @@ namespace gdml
       /// @param solidsElement The GDML materials tag reference in the document
       /// @param edReg         The document registry of unique IDs
       SolidsCursor( Element& solidsElement, EditableDocumentRegistry& edReg );
+      
+      /// Add GDML tessellated solid
+      /// @param id    Name of the solid
+      /// @param facet Vector containing all the facets
+      /// @param lunit Length unit, default [mm]
+      /// @param aunit Angle unit, default [radian]
+      /// @throws std::logic_error Exception if the box with the same id
+      ///                          already exists in the document
+      void addTessellated( const std::string&  id,
+                           std::vector<Facet>& facet, 
+                           const std::string& lunit="mm",      
+                           const std::string& aunit="radian");
+			   
+      /// Add GDML tetrahedron solid
+      /// @param id      Name of the solid
+      /// @param vertex1 String containing the name of the first vertex constant defined in the "define" section
+      /// @param vertex2 String containing the name of the second vertex constant defined in the "define" section
+      /// @param vertex3 String containing the name of the third vertex constant defined in the "define" section
+      /// @param vertex4 String containing the name of the fourth vertex constant defined in the "define" section
+      /// @param lunit   Length unit, default [mm]
+      /// @param aunit   Angle unit, default [radian]
+      /// @throws std::logic_error Exception if the box with the same id
+      ///                          already exists in the document
+      void addTetrahedron( const std::string& id,
+                           const std::string& vertex1,
+		           const std::string& vertex2,
+			   const std::string& vertex3,
+			   const std::string& vertex4, 
+                           const std::string& lunit="mm",      
+                           const std::string& aunit="radian");
 
       /// Add GDML box solid
       /// @param id    Name of the solid

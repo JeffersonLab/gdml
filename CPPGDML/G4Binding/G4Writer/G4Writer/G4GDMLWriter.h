@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: G4GDMLWriter.h,v 1.3 2005/08/03 09:44:13 witoldp Exp $
+// $Id: G4GDMLWriter.h,v 1.6 2006/07/13 08:01:28 witoldp Exp $
 #ifndef INCLUDE_G4GDMLWRITER_H 
 #define INCLUDE_G4GDMLWRITER_H 1
 
@@ -15,7 +15,11 @@
 #include "Writer/SetupCursor.h"
 
 #include "G4Writer/Utils.h"
+#include "Writer/Vertex.h"
+
 #include "Writer/Element.h"
+
+#include <vector>
 
 // Forward declaration
 class G4VPhysicalVolume;
@@ -42,8 +46,12 @@ public:
 private:
   void DumpMaterials();
   void DumpSolids();
+  void DumpTessellatedSolidsDefinitions();
+  void DumpTetrahedronSolidsDefinitions();
   void DumpGeoTree( G4VPhysicalVolume* );
   void getXYZ( const G4RotationMatrix* , double&, double&, double& ) const;
+  std::string processTessSolidVertex(double x, double y, double z);
+  std::string processTetVertex(double x, double y, double z);
 
 private:
   std::string                      schemaLocation;
@@ -55,6 +63,9 @@ private:
   gdml::writer::SetupCursor*       stpcur;
 
   std::vector<G4LogicalVolume*> lvlist;
+  std::vector<Vertex> tessellatedSolidsVertices;
+  std::vector<Vertex> tetrahedronSolidsVertices;
+  unsigned long int vertixCount;
 
   Utils* ut;
 };

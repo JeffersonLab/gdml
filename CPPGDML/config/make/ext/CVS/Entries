@@ -1,9 +1,6 @@
-/clhep.gmk/1.1/Wed May  4 02:14:33 2005//TGDML_2_5_0
-/geant4.gmk/1.3/Tue Aug 30 19:25:19 2005//TGDML_2_5_0
-/geant4_application.gmk/1.1/Tue Aug 30 19:25:19 2005//TGDML_2_5_0
-/geant4_global_libs.gmk/1.2/Thu Sep  1 14:09:06 2005//TGDML_2_5_0
-/geant4_granular_libs.gmk/1.2/Thu Mar  9 08:37:54 2006//TGDML_2_5_0
-/geant4_ui_libs.gmk/1.1/Wed May  4 02:14:33 2005//TGDML_2_5_0
-/geant4_vis_libs.gmk/1.3/Fri Jan 27 16:20:10 2006//TGDML_2_5_0
-/xercesc.gmk/1.1/Wed May  4 02:14:33 2005//TGDML_2_5_0
+/clhep.gmk/1.1/Wed May  4 02:14:33 2005//
+/geant4.gmk/1.4/Wed Mar 29 21:25:01 2006//
+/geant4_global_libs.gmk/1.2/Thu Sep  1 14:09:06 2005//
+/geant4_granular_libs.gmk/1.3/Wed Mar 29 19:13:58 2006//
+/xercesc.gmk/1.1/Wed May  4 02:14:33 2005//
 D

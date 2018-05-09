@@ -1,10 +1,10 @@
 // -*- C++ -*-
-// $Id: volumeSubscriber.cpp,v 1.12 2006/02/23 18:01:02 witoldp Exp $
+// $Id: volumeSubscriber.cpp,v 1.14 2006/03/29 00:45:34 jmccormi Exp $
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 
 #include "G4Processor/GDMLProcessor.h"
-#include "G4Processor/GDMLExpressionEvaluator.h"
+////#include "G4Processor/GDMLExpressionEvaluator.h"
 #include "G4Processor/MaterialLocator.h"
 #include "G4Processor/GenericPositionSizeParameterisation.h"
 
@@ -35,7 +35,7 @@
 #include "G4VPVParameterisation.hh"
 
 #include <iostream>
-#include <strstream>
+#include <sstream>
 
 class volumeSubscriber : virtual public SAXSubscriber
 {

@@ -1,4 +1,5 @@
 <lcgdict>
+<class name="test"/>
 <class name="DetConstruction"/>
 <class name="BuildG4Polycone"/>
 
@@ -13,7 +14,7 @@
 <!-- volumes -->
 <class name="G4VPhysicalVolume"/>
 <class name="G4PVPlacement"/>
-<class name="G4LogicalVolume"/>     
+<class name="G4LogicalVolume"/>
 <class name="G4PVReplica"/>
 <class name="G4PVParameterised"/>
 <class name="G4VPVParameterisation"/>
@@ -24,7 +25,9 @@
 <class name="std::vector<G4Element*>"/>
 <!-- solids -->
 <class name="G4VSolid"/>
+<class name="G4VCSGfaceted"/>
 <class name="G4CSGSolid"/>
+<class name="G4BooleanSolid"/>
 <class name="G4Cons"/>
 <class name="G4Sphere"/>
 <class name="G4Para"/>

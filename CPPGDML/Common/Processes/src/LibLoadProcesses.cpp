@@ -45,6 +45,10 @@
     LOAD_COMPONENT(polyhedraProcess)
     LOAD_COMPONENT(eltubeProcess)
     LOAD_COMPONENT(ellipsoidProcess)
+    LOAD_COMPONENT(tessellatedProcess)
+    LOAD_COMPONENT(tetProcess)
+    LOAD_COMPONENT(triangularProcess)
+    LOAD_COMPONENT(quadrangularProcess)
     LOAD_COMPONENT(volumeProcess)
     LOAD_COMPONENT(assemblyProcess)
     LOAD_COMPONENT(reflectedSolidProcess)
@@ -66,6 +70,6 @@
     LOAD_COMPONENT(volumerefProcess)
     LOAD_COMPONENT(worldProcess)    
     LOAD_COMPONENT(setupProcess)    
-      };
+      }
 
 //};

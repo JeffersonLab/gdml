@@ -1,10 +1,10 @@
 //
-// $Id: assemblySubscriber.cpp,v 1.2 2005/04/22 17:43:09 jmccormi Exp $
+// $Id: assemblySubscriber.cpp,v 1.4 2006/03/29 00:45:34 jmccormi Exp $
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 
 #include "G4Processor/GDMLProcessor.h"
-#include "G4Processor/GDMLExpressionEvaluator.h"
+////#include "G4Processor/GDMLExpressionEvaluator.h"
 
 #include "Schema/assembly.h"
 #include "Schema/physvol.h"
@@ -14,7 +14,7 @@
 #include "G4AssemblyVolume.hh"
 
 #include <iostream>
-#include <strstream>
+#include <sstream>
 
 class assemblySubscriber : virtual public SAXSubscriber
 {
@@ -36,28 +36,28 @@ class assemblySubscriber : virtual public SAXSubscriber
     virtual void Activate( const SAXObject* object )
     {
       //std::cout << "ASSEMBLY VOLUME SUBSCRIBER:: " << std::endl;
-    
+
       GDMLProcessor*           processor = GDMLProcessor::GetInstance();
       GDMLExpressionEvaluator* calc      = GDMLProcessor::GetInstance()->GetEvaluator();
-    
+
       const assembly* obj = 0;
-            
+
       if( object != 0 )
       {
         try
         {
           obj = dynamic_cast<const assembly*>( object );
-        
+
           if( obj != 0 )
           {
             //std::cout << "GOT ASSEMBLY VOLUME " << obj->get_name() << std::endl;
 
             // Let's analyze content model if volume
             const ContentSequence* seq = obj->get_content();
-            size_t count = seq->size();                
+            size_t count = seq->size();
 
             G4AssemblyVolume* anew = new G4AssemblyVolume;
-          
+
             for( size_t i = 0; i < count; i++ )
             {
               if( seq->content(i).tag == "physvol" )
@@ -66,7 +66,7 @@ class assemblySubscriber : virtual public SAXSubscriber
                 physvol* c = dynamic_cast<physvol*>( seq->content(i).object );
                 const ContentSequence* physvol_seq = c->get_content();
                 size_t ccount = physvol_seq->size();
-                
+
                 SinglePlacementType::volumeref*   vr   = 0;
                 SinglePlacementType::positionref* pr   = 0;
                 SinglePlacementType::rotationref* rr   = 0;
@@ -74,7 +74,7 @@ class assemblySubscriber : virtual public SAXSubscriber
                 G4LogicalVolume*                  plog = 0;
                 G4ThreeVector*                    ppos = 0;
                 G4RotationMatrix*                 prot = 0;
-                
+
                 for( size_t cidx = 0; cidx < ccount; cidx++ )
                 {
                   if( physvol_seq->content(cidx).tag == "volumeref" )
@@ -89,7 +89,7 @@ class assemblySubscriber : virtual public SAXSubscriber
                       std::cerr << "Assembly volume " << obj->get_name() << " can't be created!" << std::endl;
                       std::cerr << "Please, re-order your volumes or add the missing one..." << std::endl;
                       std::cerr << "\nNOTE! Assembly can't contain another assembly!\n" << std::endl;
-                      G4Exception( "Shutting-down due to error(s) in GDML input..." );                
+                      G4Exception( "Shutting-down due to error(s) in GDML input..." );
                     }
                   }
                   else if( physvol_seq->content(cidx).tag == "choice" )
@@ -146,7 +146,7 @@ class assemblySubscriber : virtual public SAXSubscriber
                                   << " can't be created!" << std::endl;
                         std::cerr << "Please, check your position definitions or add the missing one..."
                                   << std::endl;
-                        G4Exception( "Shutting-down due to error(s) in GDML input..." );                
+                        G4Exception( "Shutting-down due to error(s) in GDML input..." );
                       }
                     }
                     else if( avchoice->content().tag == "rotationref" ) {
@@ -160,9 +160,9 @@ class assemblySubscriber : virtual public SAXSubscriber
                                   << " can't be created!" << std::endl;
                         std::cerr << "Please, check your rotation definitions or add the missing one..."
                                   << std::endl;
-                        G4Exception( "Shutting-down due to error(s) in GDML input..." );                
+                        G4Exception( "Shutting-down due to error(s) in GDML input..." );
                       }
-                    } else { /* Should not happen */ } // end of ifs-over pos. and rot.                    
+                    } else { /* Should not happen */ } // end of ifs-over pos. and rot.
                   } else { /* Should not happen */ } // end of if-choice
                 } // end of for(;;)
 
@@ -170,7 +170,7 @@ class assemblySubscriber : virtual public SAXSubscriber
                 ptrp = new G4AssemblyTriplet( plog, *ppos, prot );
                 anew->AddPlacedVolume( plog, *ppos, prot );
                 processor->AddAssemblyVolume( obj->get_name(), anew );
-                
+
               } else { /* Should not happen */ } // end of if-physvol
             } // end of for(;;) over assembly content model items
           } // end of if-obj

@@ -17,6 +17,8 @@
   <position name="pos41" x="250" y="125"/>
   <rotation name="rotatebyx" x="HALFPI"/>
   <rotation name="rotatebyall" x="HALFPI" y="PI" z="TWOPI"/>
+  <position name="v1" x="10*mm" y    z   />
+
  </define>
  <materials>
   <define>
@@ -89,6 +91,16 @@
     <zplane z="10.0" rmin="1.0" rmax="5.0"/>
     <zplane z="100.0" rmin="10.0" rmax="30.0"/>
   </polycone>
+
+
+  <tessellated name="test">
+     <triangular vertex1="v1" vertex2="v2" vertex3="v3"/> 
+     <triangular vertex1="v4" vertex2="v5" vertex3="v6"/> 
+     <triangular vertex1="v7" vertex2="v8" vertex3="v9"/> 
+     <triangular vertex1="v10" vertex2="v11" vertex3="v12"/> 
+     <quadrangular vertex1="v13" vertex2="v14" vertex3="v15" vertex4="v16" /> 
+  </tessellated>
+
 
   <torus name="testtorus" rmin="0.0" rmax="20.0" rtor="800.0" startphi="0.0" deltaphi="TWOPI"/>
 

@@ -1,4 +1,4 @@
-// $Id: GenericPositionSizeParameterisation.h,v 1.1 2005/03/02 10:50:37 witoldp Exp $
+// $Id: GenericPositionSizeParameterisation.h,v 1.2 2006/03/14 17:42:00 witoldp Exp $
 #ifndef INCLUDE_GENERICPOSITIONSIZEPARAMETERISATION_H 
 #define INCLUDE_GENERICPOSITIONSIZEPARAMETERISATION_H 1
 
@@ -19,7 +19,8 @@
 #include "G4Polyhedra.hh"
 
 
-/** @class GenericPositionSizeParameterisation GenericPositionSizeParameterisation.h Processor/GenericPositionSizeParameterisation.h
+/** @class GenericPositionSizeParameterisation GenericPositionSizeParameterisation.h 
+ *  Processor/GenericPositionSizeParameterisation.h
  *  
  *
  *  @author Witold POKORSKI
@@ -52,7 +53,7 @@ public:
   
   virtual ~GenericPositionSizeParameterisation( ){}; ///< Destructor
   
-  void SetTransformation(int, HepRotation&, Hep3Vector&);
+  void SetTransformation(int, G4RotationMatrix&, G4ThreeVector&);
   void SetDimensions(int, double, double, double, double, double);
 
   void ComputeTransformation(const G4int, G4VPhysicalVolume*) const;
@@ -73,8 +74,8 @@ private:  // Dummy declarations to get rid of warnings ...
 
 private:
 
-  HepRotation* rotation;
-  Hep3Vector* translation;
+  G4RotationMatrix* rotation;
+  G4ThreeVector* translation;
   double* d1;
   double* d2;
   double* d3;

@@ -7,6 +7,8 @@ import ROOT
 import ROOTBinding
 import GDMLContentHandler
 
+ROOT.gSystem.Load("libGeom")
+
 gdmlhandler = GDMLContentHandler.GDMLContentHandler(ROOTBinding.ROOTBinding())
 
 filename = 'test.gdml'
@@ -18,8 +20,9 @@ geomgr = ROOT.gGeoManager
 
 geomgr.SetTopVolume(gdmlhandler.WorldVolume())
 geomgr.CloseGeometry()
+geomgr.DefaultColors()
 
-gdmlhandler.WorldVolume().Draw()
+gdmlhandler.WorldVolume().Draw("ogl")
 
 
 

@@ -1,6 +1,6 @@
 #
-if [ ! $GDMLROOT ]; then
-    export GDMLROOT=$PWD/../../
+if [ ! $GDMLBASE ]; then
+    export GDMLBASE=$PWD/../../
 fi
 #
 if [ ! $PLATFORM ]; then
@@ -14,9 +14,9 @@ if [ ! $PLATFORM ]; then
 fi
 #
 
-export PyGDMLBASE=$GDMLROOT/PyGDML 
+export PyGDMLBASE=$GDMLBASE/PyGDML 
 
-export ROOTSYS=/afs/cern.ch/sw/lcg/external/root/4.03.04a/$PLATFORM/root
+export ROOTSYS=/afs/cern.ch/sw/lcg/external/root/5.10.00/$PLATFORM/root
 
 export PYTHONPATH=$PYTHONPATH:$ROOTSYS/lib:$PyGDMLBASE/Common/python:$PyGDMLBASE/ROOTBinding/python
 

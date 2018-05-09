@@ -2,6 +2,7 @@
 # -*- Mode: Python -*-
 #
 from units import *
+from math import *
 
 class processes(object):    
 
@@ -10,12 +11,15 @@ class processes(object):
 
         self.define_dict = {}
         self.volumes_dict = {}
+        self.reflsolids_dict = {} 
         self.solids_dict = {}
         self.elements_dict = {}
 	self.isotopes_dict = {}
         self.materials_dict = {}
 	self.mediums_dict = {}
 
+        self.reflections = {} # map (reflected_solid_name, solid_name)
+        self.reflectedvols = {} # map (name of volume using reflected solid, solid)
         self.auxmap = {}
 
         self.world = 0
@@ -149,15 +153,21 @@ class processes(object):
 	med = self.bind.medium(elem[1]['name'], mat)
 	self.mediums_dict[elem[1]['name']] = med
         
-    def volume_proc(self,elem):          
+    def volume_proc(self,elem):
         auxpairs = []
+        reflex = 0
+        solidname = 0
 	for subele in elem[2]:
             if subele[0] == 'solidref':
 		if self.solids_dict.has_key(subele[1]['ref']):
 		    solid = self.solids_dict[subele[1]['ref']]
-		else:
+                elif self.reflsolids_dict.has_key(subele[1]['ref']):
+                    solid = self.reflsolids_dict[subele[1]['ref']]
+                    solidname = subele[1]['ref']
+                    reflex = self.solids_dict[self.reflections[subele[1]['ref']]]
+                else:
 		    print 'Solid ',subele[1]['ref'],' not defined yet!'
-	    elif subele[0] == 'materialref':
+            elif subele[0] == 'materialref':
 		if self.mediums_dict.has_key(subele[1]['ref']):
 		    medium = self.mediums_dict[subele[1]['ref']]
 		else:
@@ -165,26 +175,44 @@ class processes(object):
             elif subele[0] == 'auxiliary':
                 auxpairs.append((subele[1]['auxtype'], subele[1]['auxvalue']))
 
-	lvol = self.bind.logvolume(elem[1]['name'], solid, medium)
+        lvol = self.bind.logvolume(elem[1]['name'], solid, medium, reflex)
         self.volumes_dict[elem[1]['name']] = lvol
+        if reflex != 0:
+            self.reflectedvols[elem[1]['name']] = solidname
 
         if auxpairs != []:
             self.auxmap[lvol] = auxpairs
                           
         for subele in elem[2]:
             if subele[0] == 'physvol':
+                # we need this variable to tell physvol that we are dealing with reflection
+                reflected_vol = 0
                 pos = self.bind.position(0,0,0)
                 rot = self.bind.rotation(0,0,0)
                 for subsubel in subele[2]:
                     if subsubel[0] == 'volumeref':
                         lv = self.volumes_dict[subsubel[1]['ref']]
+                        if self.reflectedvols.has_key(subsubel[1]['ref']):
+                            reflected_vol = self.reflectedvols[subsubel[1]['ref']]
                     elif subsubel[0] == 'positionref':
                         pos = self.define_dict[subsubel[1]['ref']]
                     elif subsubel[0] == 'rotationref':
                         rot = self.define_dict[subsubel[1]['ref']]
 
 		self.bind.physvolume(elem[1]['name'], 
-				       lv, lvol, rot, pos)
+				       lv, lvol, rot, pos, reflected_vol)
+            elif subele[0] == 'divisionvol':
+                lun = '*'+elem[1].get('lunit','mm')
+                # we deal here with divisions
+                for subsubel in subele[2]:
+                    if subsubel[0] == 'volumeref':
+                        lv = self.volumes_dict[subsubel[1]['ref']]
+                self.bind.divisionvol(elem[1]['name'],
+                                      lv, lvol,
+                                      subele[1]['axis'],
+                                      eval(subele[1]['number']),
+                                      eval(subele[1]['width']+lun),
+                                      eval(subele[1]['offset']+lun))
                         
     def assembly_proc(self,elem):          
 	assem = self.bind.assembly(elem[1]['name'])
@@ -351,7 +379,7 @@ class processes(object):
 
 	polyh = self.bind.polyhedra(elem[1]['name'], 
 				    eval(elem[1]['startphi']+aun), 
-				    eval(elem[1]['totalphi']+aun), 
+				    eval(elem[1]['deltaphi']+aun), 
 				    int(eval(elem[1]['numsides'])), 
 				    zrs)
 
@@ -451,6 +479,15 @@ class processes(object):
 			     
 	self.solids_dict[elem[1]['name']] = inte
 
+    def reflection_proc(self, elem):
+        refl = self.bind.reflection(elem[1]['name'], elem[1]['solid'],
+                                    eval(elem[1]['sx']), eval(elem[1]['sy']), eval(elem[1]['sz']), 
+                                    eval(elem[1]['rx']), eval(elem[1]['ry']), eval(elem[1]['rz']), 
+                                    eval(elem[1]['dx']), eval(elem[1]['dy']), eval(elem[1]['dz']))
+        self.reflsolids_dict[elem[1]['name']] = refl
+        self.reflections[elem[1]['name']] = elem[1]['solid']
+        
+
 ### dictionary mapping element name to 'process method'
 
     gdmlel_dict = { 'gdml':gdml_proc, 'setup':setup_proc, 'constant':const_proc,
@@ -464,5 +501,6 @@ class processes(object):
 		    'orb':orb_proc, 'para':para_proc, 'torus':torus_proc,
 		    'polyhedra':polyhedra_proc, 'eltube':eltube_proc,
 		    'subtraction':subtraction_proc, 'union':union_proc,
-		    'intersection':intersection_proc }
+		    'intersection':intersection_proc,
+                    'reflectedSolid':reflection_proc}
 

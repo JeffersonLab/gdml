@@ -1,6 +1,6 @@
 #
-if [ ! $GDMLROOT ]; then
-    export GDMLROOT=$PWD/../../
+if [ ! $GDMLBASE ]; then
+    export GDMLBASE=$PWD/../../
 fi
 #
 if [ ! $PLATFORM ]; then
@@ -20,17 +20,10 @@ else
     export DEBUG=
 fi
 
-export PyGDMLBASE=$GDMLROOT/PyGDML 
+export PyGDMLBASE=$GDMLBASE/PyGDML 
 
-# seal variables
-if [ ! $SEALVER ]; then
-    export SEALVER=SEAL_1_6_2
-fi
-
-if [ ! $SEALBASE ]; then
-    export SEALBASE=/afs/cern.ch/sw/lcg/app/releases/SEAL/$SEALVER
-fi
-export SEALINCLUDES=$SEALBASE/include
+# root variables
+export ROOTSYS=/afs/cern.ch/sw/lcg/external/root/5.10.00/$PLATFORM/root
 
 # gccxml
 
@@ -39,23 +32,23 @@ if [ ! $GCCXMLPATH ]; then
 fi
 
 # CLHEP variables
-export CLHEPBASE=/afs/cern.ch/sw/lcg/external/clhep/1.9.1.2
+export CLHEPBASE=/afs/cern.ch/sw/lcg/external/clhep/1.9.2.2
 export CLHEPINC=$CLHEPBASE/$PLATFORM/include
 
 # G4 variables
-export G4VERSION=geant4.7.0
-export G4INSTALL=/afs/cern.ch/sw/geant4/releases/share
-export G4INCLUDES=$G4INSTALL/$G4VERSION/include
-export G4LIBS=/afs/cern.ch/sw/geant4/releases/specific/$PLATFORM/$G4VERSION/lib
+export G4VERSION=8.0.p01
+export G4INSTALL=/afs/cern.ch/sw/lcg/external/geant4
+export G4INCLUDES=$G4INSTALL/$G4VERSION/share/include
+export G4LIBS=${G4INSTALL}/${G4VERSION}/${PLATFORM}/lib
 
 #
-export PYTHONPATH=$PYTHONPATH:$SEALBASE/$PLATFORM$DEBUG/python:$PyGDMLBASE/Common/python:$PyGDMLBASE/G4Binding/$PLATFORM:$PyGDMLBASE/G4Binding/python
+export PYTHONPATH=$PYTHONPATH:$ROOTSYS/lib:$PyGDMLBASE/Common/python:$PyGDMLBASE/G4Binding/$PLATFORM:$PyGDMLBASE/G4Binding/python
 
 
 if [ $OSTYPE = 'darwin' ]; then
-    export DYLD_LIBRARY_PATH=$SEALBASE/$PLATFORM$DEBUG/lib:$G4LIBS:$CLHEPBASE/$PLATFORM/lib
+    export DYLD_LIBRARY_PATH=$ROOTSYS/lib:$G4LIBS:$CLHEPBASE/$PLATFORM/lib
 else
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SEALBASE/$PLATFORM$DEBUG/lib:$G4LIBS:$CLHEPBASE/$PLATFORM/lib
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ROOTSYS/lib:$G4LIBS:$CLHEPBASE/$PLATFORM/lib
 fi
 
 

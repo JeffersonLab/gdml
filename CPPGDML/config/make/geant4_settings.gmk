@@ -1,5 +1,0 @@
-# Local Geant4 Settings.
-G4VIS_NONE = 1
-CXXFLAGS += -DG4VIS_NONE
-G4UI_NONE = 1
-CXXFLAGS += -DG4UI_NONE

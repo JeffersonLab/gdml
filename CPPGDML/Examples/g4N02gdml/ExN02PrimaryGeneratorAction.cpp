@@ -16,7 +16,7 @@ ExN02PrimaryGeneratorAction::ExN02PrimaryGeneratorAction()
 // default particle
 
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleDefinition* particle = particleTable->FindParticle("proton");
+  G4ParticleDefinition* particle = particleTable->FindParticle("geantino");
   
   particleGun->SetParticleDefinition(particle);
   particleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));

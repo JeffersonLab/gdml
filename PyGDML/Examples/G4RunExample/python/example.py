@@ -3,9 +3,12 @@
 #
 import GDMLROOT
 import GDMLG4
-import pyreflex
+import ROOT
+import PyCintex
 
-G4Ex = pyreflex.loadDictionary('G4RunExampleDict')
+G4Ex = PyCintex.loadDictionary('G4RunExampleDict')
+
+G4Ex = ROOT
 
 def setSD(logvol, sdname):
     logvol.SetSensitiveDetector(SensDetMgr.FindSensitiveDetector(GDMLG4.G4Binding.g4str(sdname)))
@@ -30,6 +33,7 @@ SensDetMgr.AddNewDetector(muonSD)
 G4RunMgr.SetUserInitialization(GDMLG4.detconstr)
 G4RunMgr.SetUserInitialization(physlist)
 ggun = G4Ex.GeantinoGun()
+
 G4RunMgr.SetUserAction(ggun)
 
 auxil = GDMLG4.gdmlhandler.AuxiliaryData()
@@ -40,8 +44,8 @@ for logvol in auxil.keys():
     for auxdata in auxil[logvol]:
         auxproc[auxdata[0]](logvol, auxdata[1])
         
-vmgr = G4Ex.VisManager()
-vmgr.Initialize()
+#vmgr = G4Ex.VisManager()
+#vmgr.Initialize()
 
 G4RunMgr.Initialize()
 
@@ -60,7 +64,7 @@ uim.ApplyCommand('/tracking/verbose 1')
 ggun.SetDirection(0.12, 0.15, 1.0)
 
 G4RunMgr.SetNumberOfEventsToBeStored(1)
-G4RunMgr.BeamOn(1)
+G4RunMgr.BeamOn(3)
 
 ##
 event = G4RunMgr.GetPreviousEvent(1)

@@ -1,6 +1,6 @@
 //
 // $Id: divisionvolProcess.cpp,v 1.2 2006/02/09 10:58:24 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_5_0 $
+// GEANT4 tag $Name:  $
 #include "Processes/DivisionPlacementTypeProcess.h"
 
 #include "Schema/divisionvol.h"

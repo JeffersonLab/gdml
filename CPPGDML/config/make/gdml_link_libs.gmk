@@ -1,5 +1,7 @@
 LDFLAGS += -lG4Subscribers \
+           -lG4Evaluator \
            -lG4Processor \
+           -lG4Writer \
            -lSaxana \
            -lProcesses \
-	   -lWriter
+           -lWriter

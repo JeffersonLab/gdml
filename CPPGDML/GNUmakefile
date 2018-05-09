@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: GNUmakefile,v 1.21 2006/02/23 18:27:23 witoldp Exp $
+# $Id: GNUmakefile,v 1.25 2006/07/13 09:53:04 witoldp Exp $
 #
 # /\/\/\/\ C++ GDML Build System /\/\/\/\
 #
@@ -16,7 +16,11 @@ include $(CURDIR)/config/make/project.gmk
 include $(PROJECT_CONFIG)/local_settings.gmk
 
 # Define the list of all packages we have
-gdml_packages = Common/Saxana Common/Processes Common/Writer G4Binding/G4Processor G4Binding/G4Subscribers G4Binding/G4Writer
+ifeq ($(BUILDSTEP), yes)
+GDML_PACKAGES = Common/Saxana Common/Processes Common/Writer G4Binding/G4Evaluator G4Binding/G4Processor G4Binding/G4Subscribers G4Binding/G4Writer STEPBinding/STEPWriter
+else
+GDML_PACKAGES = Common/Saxana Common/Processes Common/Writer G4Binding/G4Evaluator G4Binding/G4Processor G4Binding/G4Subscribers G4Binding/G4Writer
+endif
 
 # Function to build a package.
 define MakePackage
@@ -29,7 +33,7 @@ define MakePackage
 endef
 
 # Define the list of all examples we have
-gdml_examples = Examples/g4gogdml Examples/g4N02gdml 
+gdml_examples = Examples/g4gogdml Examples/g4N02gdml
 
 # Function to build an application.
 define MakeApp
@@ -42,12 +46,12 @@ define MakeApp
 endef
 
 # Build Targets
-.PHONY: build_gdml 
-build_gdml: build_gdml_prolog build_gdml_libs # build_gdml_examples
+.PHONY: build_gdml
+build_gdml: build_gdml_prolog build_gdml_libs build_gdml_lib build_gdml_examples
 
 .PHONY: build_gdml_libs
 build_gdml_libs:
-	@$(foreach package,$(gdml_packages),$(call MakePackage,$(package)))
+	@$(foreach package,$(GDML_PACKAGES),$(call MakePackage,$(package)))
 
 .PHONY: build_gdml_examples
 build_gdml_examples:
@@ -57,22 +61,46 @@ build_gdml_examples:
 build_gdml_prolog:
 	@echo
 	@echo "Building CPPGDML for $(PLATFORM)"
-	@echo "for the following packages:"
+	@echo "with the following packages:"
 	@echo
-	@echo $(gdml_packages)
+	@echo $(GDML_PACKAGES)
 	@echo
+
+# all object files from package dirs
+OBJ = $(foreach package,$(GDML_PACKAGES),$(wildcard $(PROJECT_TOP)/build/$(PLATFORM)/$(package)/*.o))
+
+gdml_lib_target=
+
+ifeq ($(BUILD_SHARED_LIBS),yes)
+    gdml_lib_target += build_gdml_lib_shared
+endif
+
+ifeq ($(BUILD_STATIC_LIBS),yes)
+    gdml_lib_target += build_gdml_lib_static
+endif
+
+# wrapper to lib targets for user selections
+build_gdml_lib: $(gdml_lib_target)
+
+# build a single GDML shared library
+build_gdml_lib_shared:
+	@$(CXX) -shared -Wl,-soname,$(PLATFORM_LIB_PREFIX)gdml$(PLATFORM_SHLIB_SUFFIX) -o $(PROJECT_TOP)/build/$(PLATFORM)/lib/$(PLATFORM_LIB_PREFIX)gdml$(PLATFORM_SHLIB_SUFFIX) $(OBJ)
+
+# build a single GDML static library
+build_gdml_lib_static:
+	@ar crvs $(PROJECT_TOP)/build/$(PLATFORM)/lib/$(PLATFORM_LIB_PREFIX)gdml$(PLATFORM_LIB_SUFFIX) $(OBJ)
 
 # Clean Targets
 .PHONY: clean cleanall
 clean:
-	@$(foreach package,$(gdml_packages),\
+	@$(foreach package,$(GDML_PACKAGES),\
 	(cd $(package);make -s PROJECT_TOP=$(PROJECT_TOP) PLATFORM=$(PLATFORM) SUBSYSTEM=$(subst /,,$(dir $(package))) PACKAGE_NAME=$(notdir $(package)) $(notdir $(package))_clean);)
 	@$(foreach example,$(gdml_examples),\
 	(cd $(example);make -s PROJECT_TOP=$(PROJECT_TOP) PLATFORM=$(PLATFORM) SUBSYSTEM=$(subst /,,$(dir $(example))) APP_NAME=$(notdir $(example)) $(notdir $(example))_clean);)
 
 
 cleanall:
-	@$(foreach package,$(gdml_packages),\
+	@$(foreach package,$(GDML_PACKAGES),\
     (cd $(package);make -s PROJECT_TOP=$(PROJECT_TOP) PLATFORM=$(PLATFORM) SUBSYSTEM=$(subst /,,$(dir $(package))) PACKAGE_NAME=$(notdir $(package)) $(notdir $(package))_cleanall);)
 	@$(foreach example,$(gdml_examples),\
 	(cd $(example);make -s PROJECT_TOP=$(PROJECT_TOP) PLATFORM=$(PLATFORM) SUBSYSTEM=$(subst /,,$(dir $(example))) APP_NAME=$(notdir $(example)) $(notdir $(example))_cleanall);)
@@ -84,8 +112,8 @@ cleanall:
 install: install_lib install_bin install_include
 
 # install libraries
-install_lib:	
-	@if [ ! -d $(libdir) ]; then mkdir -p $(libdir); fi	
+install_lib:
+	@if [ ! -d $(libdir) ]; then mkdir -p $(libdir); fi
 	cp $(PROJECT_BUILD_AREA)/$(PLATFORM)/lib/*lib* $(libdir)
 
 # install binaries
@@ -95,7 +123,7 @@ install_bin:
 
 # install includes
 install_headers := $(shell find . -name *.h)
-install_include:		
+install_include:
 	for i in $(install_headers); do \
 		i_dir=`dirname $$i`; \
 		mkdir -p $(includedir)/$$i_dir; \

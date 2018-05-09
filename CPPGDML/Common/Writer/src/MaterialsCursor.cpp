@@ -20,7 +20,7 @@ namespace gdml
                                       double             a )     
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << z;      
       std::string sz = os.str(); os.str("");
@@ -58,7 +58,7 @@ namespace gdml
                                       double             a )    
     {
       std::ostringstream os;
-      os.precision(100);
+      ;
 
       os << z;
       std::string sz = os.str(); os.str("");
@@ -129,7 +129,7 @@ namespace gdml
                                        const std::string& state    ) 
     {
       std::ostringstream os;
-      os.precision(100);
+      ;
 
       os << z; std::string sz = os.str(); os.str("");
       os << a; std::string sa = os.str(); os.str("");
@@ -184,7 +184,7 @@ namespace gdml
                                        double             d )        
     {
       std::ostringstream os;
-      os.precision(100);
+      ;
 
       os << z; std::string sz = os.str(); os.str("");
       os << a; std::string sa = os.str(); os.str("");
@@ -229,7 +229,7 @@ namespace gdml
                                        const std::string& state    ) 
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << d; std::string sd = os.str(); os.str("");
       os << t; std::string st = os.str(); os.str("");
@@ -285,7 +285,7 @@ namespace gdml
                                        AtomsVector&       av)        
     {
       std::ostringstream os;
-      os.precision(100);
+      ;
 
       os << d; std::string sd = os.str(); os.str("");
       
@@ -331,7 +331,7 @@ namespace gdml
                                        const std::string& state    ) 
     {
       std::ostringstream os;
-      os.precision(100);
+      ;
 
       os << d; std::string sd = os.str(); os.str("");
       os << t; std::string st = os.str(); os.str("");
@@ -385,7 +385,7 @@ namespace gdml
                                        FractionsVector&  fv )        
     {
       std::ostringstream os;
-      os.precision(100);
+      ;
 
       os << d; std::string sd = os.str(); os.str("");
       
@@ -427,7 +427,7 @@ namespace gdml
     Element MaterialsCursor::buildFraction( FractionsVector::const_iterator& fit )
     {
       std::ostringstream os;
-      os.precision(100);
+      ;
 
       os << (*fit).second;
       
@@ -442,7 +442,7 @@ namespace gdml
     Element MaterialsCursor::buildComposite( AtomsVector::const_iterator& ait )
     {
       std::ostringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << (*ait).second;
       

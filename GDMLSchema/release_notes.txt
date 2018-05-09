@@ -1,3 +1,6 @@
+
+- added support for tessetated solids and tetrahedra
+
 09.03.2005 - GDMLSchema_2_3_0
 _____________________________
 

@@ -1,4 +1,4 @@
-# $Header: /cvs/simu/simu/GDML2/CPPGDML/config/make/local_settings.gmk.in,v 1.2 2005/05/12 20:36:37 jmccormi Exp $
+# $Header: /cvs/simu/simu/GDML2/CPPGDML/config/make/local_settings.gmk.in,v 1.5 2006/07/13 07:59:54 witoldp Exp $
 #
 # All the local settings for GDML build
 # defined by Autoconf configure script.
@@ -37,6 +37,8 @@ srcdir          := .
 BUILD_SHARED_LIBS := yes
 BUILD_STATIC_LIBS := no
 
+BUILDSTEP := no
+
 TARGET_LIB_PREFIX := 
 
 #
@@ -49,7 +51,7 @@ PLATFORM          := slc3_ia32_gcc323
 # gmk file to include
 PLATFORM_GMK_FILE := $(PROJECT_TOP)/config/make/platform/slc3_ia32_gcc323.gmk
 
-# include the platform file 
+# include the platform file
 include $(PLATFORM_GMK_FILE)
 
 #
@@ -63,37 +65,34 @@ COMPILER             := g++
 COMPILER_GMK_FILE    := $(PROJECT_TOP)/config/make/compiler/g++.gmk
 
 # include gmk for this compiler, which sets the main CXXFLAGS
-include $(COMPILER_GMK_FILE) 
+include $(COMPILER_GMK_FILE)
 
 # add in additional CXXFLAGS from configure plus the preprecessor DEFS
-CXXFLAGS             +=  -DPACKAGE_NAME=\"CPPGDML\" -DPACKAGE_TARNAME=\"cppgdml\" -DPACKAGE_VERSION=\"2.1.0\" -DPACKAGE_STRING=\"CPPGDML\ 2.1.0\" -DPACKAGE_BUGREPORT=\"jeremym@slac.stanford.edu\" -DGDML_VERBOSE=1 -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE__BOOL=1 -DHAVE_STDBOOL_H=1 
+CXXFLAGS             +=  -DPACKAGE_NAME=\"CPPGDML\" -DPACKAGE_TARNAME=\"cppgdml\" -DPACKAGE_VERSION=\"2.6.0\" -DPACKAGE_STRING=\"CPPGDML\ 2.6.0\" -DPACKAGE_BUGREPORT=\"jeremym@slac.stanford.edu\" -DGDML_VERBOSE=1 -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE__BOOL=1 -DHAVE_STDBOOL_H=1 
 
-# 
+#
 # External Dependencies
 #
 
 # Xerces-C++
-XERCESC_BASE       := /afs/cern.ch/sw/lcg/external/XercesC/2.3.0/slc3_ia32_gcc323
-XERCESC_INCLUDE    := /afs/cern.ch/sw/lcg/external/XercesC/2.3.0/slc3_ia32_gcc323/include
-XERCESC_LIBDIR     := /afs/cern.ch/sw/lcg/external/XercesC/2.3.0/slc3_ia32_gcc323/lib
+XERCESC_BASE       := /afs/cern.ch/sw/lcg/external/XercesC/2.7.0/slc3_ia32_gcc323
+XERCESC_INCLUDE    := /afs/cern.ch/sw/lcg/external/XercesC/2.7.0/slc3_ia32_gcc323/include
+XERCESC_LIBDIR     := /afs/cern.ch/sw/lcg/external/XercesC/2.7.0/slc3_ia32_gcc323/lib
 
 # name of Xerces library without prefix or extension
 XERCESC_LIBNAME    := xerces-c
 
 # CLHEP
-CLHEP_BASE         := /afs/cern.ch/sw/lcg/external/clhep/1.9.2.2/slc3_ia32_gcc323 
-CLHEP_INCLUDE      := /afs/cern.ch/sw/lcg/external/clhep/1.9.2.2/slc3_ia32_gcc323/include
-CLHEP_LIBDIR       := /afs/cern.ch/sw/lcg/external/clhep/1.9.2.2/slc3_ia32_gcc323/lib
+CLHEP_BASE         := /afs/cern.ch/sw/lcg/external/clhep/1.9.2.3/slc3_ia32_gcc323
+CLHEP_INCLUDE      := /afs/cern.ch/sw/lcg/external/clhep/1.9.2.3/slc3_ia32_gcc323/include
+CLHEP_LIBDIR       := /afs/cern.ch/sw/lcg/external/clhep/1.9.2.3/slc3_ia32_gcc323/lib
 
 # name of CLHEP library without prefix or extension
 CLHEP_LIBNAME      := CLHEP
 
 # Geant4
-GEANT4_BASE        := /afs/cern.ch/sw/lcg/external/geant4/8.0.p01/slc3_ia32_gcc323
-GEANT4_INCLUDE     := /afs/cern.ch/sw/lcg/external/geant4/8.0.p01/share/include
-GEANT4_LIBDIR      := /afs/cern.ch/sw/lcg/external/geant4/8.0.p01/slc3_ia32_gcc323/lib
-
-# Geant4 UI/Vis/Granular settings
-include $(PROJECT_TOP)/config/make/geant4_settings.gmk
+GEANT4_BASE        := /afs/cern.ch/sw/lcg/external/geant4/8.1/slc3_ia32_gcc323
+GEANT4_INCLUDE     := /afs/cern.ch/sw/lcg/external/geant4/8.1/share/include
+GEANT4_LIBDIR      := /afs/cern.ch/sw/lcg/external/geant4/8.1/slc3_ia32_gcc323/lib
 
 endif

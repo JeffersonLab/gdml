@@ -1,8 +1,8 @@
-# $Header: /cvs/simu/simu/GDML2/CPPGDML/configure.in,v 1.2 2005/11/24 02:13:01 jmccormi Exp $
+# $Header: /cvs/simu/simu/GDML2/CPPGDML/configure.in,v 1.4 2006/07/13 10:31:16 witoldp Exp $
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT(CPPGDML, 2.1.0, jeremym@slac.stanford.edu)
+AC_INIT(CPPGDML, 2.6.0, jeremym@slac.stanford.edu)
 
 # don't take defaults from this
 CXXFLAGS=""
@@ -42,8 +42,11 @@ AC_CHECK_FUNCS([sqrt])
 AC_SUBST(CXXFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(DEFS)
+#
+AC_SUBST(PWD)
 
 # All settings from Autoconf are put into this include file.
 AC_CONFIG_FILES([config/make/local_settings.gmk])
+AC_CONFIG_FILES([Examples/setup.csh])
 
 AC_OUTPUT

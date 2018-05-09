@@ -1,0 +1,21 @@
+14.07.2006 - GDML_2_6_0
+-----------------------
+
+The LCG release procedure for GDML has been simplified slightly. The
+separate tags for CPPGDML and GDMLSchema will not be used anymore. The
+common tag GDML_X_Y_Z will be the only one used. The Python GDML
+processors will not be release anymore together with the rest of GDML
+system. The GDML ROOT binding is now part of ROOT distribution and
+therefore will not be furthered committed to GDML CVS.
+
+This LCGReleaseNotes file will, from now on be the central 'release
+information' holder for LCG releases. 
+
+Main new elements in GDML_2_6_0 release:
+	- added support for tessellated solids and tetrahedra
+	- added (optional) STEPWriter enabling convertion form
+	intermediate ST-Viewer files to GDML
+	- several minor bugs fixed
+	- small change in the G4Writer: the names of the generated
+	GDML elements (solids, volumes, etc) are now appended with the
+	object address converted to long int (instead of hex)

@@ -3,7 +3,7 @@
 #include "Saxana/SAXComponentFactory.h"
 
 #include "G4Processor/GDMLProcessor.h"
-#include "G4Processor/GDMLExpressionEvaluator.h"
+//#include "G4Processor/GDMLExpressionEvaluator.h"
 #include "G4Subscribers/Util.h"
 
 #include "Schema/sphere.h"

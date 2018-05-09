@@ -1,6 +1,6 @@
 #
-if !(${?GDMLROOT}) then
-    setenv GDMLROOT ${PWD}/../../
+if !(${?GDMLBASE}) then
+    setenv GDMLBASE ${PWD}/../../
 endif
 #
 
@@ -15,9 +15,10 @@ if !(${?PLATFORM}) then
 endif
 #
 
-setenv PyGDMLBASE ${GDMLROOT}/PyGDML 
+setenv PyGDMLBASE ${GDMLBASE}/PyGDML 
 
-setenv ROOTSYS /afs/cern.ch/sw/lcg/external/root/4.03.04a/${PLATFORM}/root
+setenv ROOTSYS /work/root
+
 
 if (${?PYTHONPATH}) then
     setenv PYTHONPATH ${PYTHONPATH}:{$ROOTSYS}/lib:${PyGDMLBASE}/Common/python:${PyGDMLBASE}/ROOTBinding/python

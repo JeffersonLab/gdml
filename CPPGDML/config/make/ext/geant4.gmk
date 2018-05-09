@@ -36,16 +36,6 @@ else
   include $(GEANT4_CONFIG)/geant4_global_libs.gmk
 endif
 
-# UI not turned off?
-#ifndef G4UI_NONE
-#  include $(GEANT4_CONFIG)/geant4_ui_libs.gmk
-#endif
-
-# vis not turned off?
-#ifndef G4VIS_NONE
-#  include $(GEANT4_CONFIG)/geant4_vis_libs.gmk
-#endif
-
 # add Geant4 base lib dir to link flags
 LDFLAGS += -L$(GEANT4_LIBDIR)
 

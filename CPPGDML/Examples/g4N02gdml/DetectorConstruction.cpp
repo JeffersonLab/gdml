@@ -1,6 +1,5 @@
 // 
 #include "DetectorConstruction.hh"
-#include "ExN02ChamberParameterisation.hh"
 
 #include "G4Material.hh"
 #include "G4Box.hh"
@@ -15,30 +14,29 @@
 #include "G4ReflectedSolid.hh"
 #include "G4UserLimits.hh"
 
+#include "G4TessellatedSolid.hh"
+#include "G4QuadrangularFacet.hh"
+
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
 
 #include "G4ios.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
  
 DetectorConstruction::DetectorConstruction()
 {}
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
- 
 DetectorConstruction::~DetectorConstruction()
 {
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
  
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
 //--------- Material definition ---------
 
   G4double a, z;
-  G4double density, temperature, pressure;
+  G4double density;
   G4int nel;
 
   //Air
@@ -49,73 +47,32 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   Air->AddElement(N, 70*perCent);
   Air->AddElement(O, 30*perCent);
 
-  //Lead
-  G4Material* Pb = 
-  new G4Material("Lead", z=82., a= 207.19*g/mole, density= 11.35*g/cm3);
-    
-  //Xenon gas
-  G4Material* Xenon = 
-  new G4Material("XenonGas", z=54., a=131.29*g/mole, density= 5.458*mg/cm3,
-                 kStateGas, temperature= 293.15*kelvin, pressure= 1*atmosphere);
-
-  // Print all the materials defined.
-  //
-  G4cout << G4endl << "The materials defined are : " << G4endl << G4endl;
-  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
-
-//--------- Definitions of Solids, Logical Volumes, Physical Volumes ---------
-  
-  //------------------------------ 
-  // World
-  //------------------------------ 
-
   G4VSolid*  solidWorld= new G4Box("world",5000,5000,5000);
   G4LogicalVolume* logicWorld= new G4LogicalVolume( solidWorld, Air, "World", 0, 0, 0);
+  G4VPhysicalVolume* physiWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "World", 0, false, 0);              
   
-  //  Must place the World Physical volume unrotated at (0,0,0).
-  // 
-  G4VPhysicalVolume* physiWorld = new G4PVPlacement(0,               // no rotation
-                                 G4ThreeVector(), // at (0,0,0)
-                                 logicWorld,      // its logical volume
-                                 "World",         // its name
-                                 0,               // its mother  volume
-                                 false,           // no boolean operations
-                                 0);              // no field specific to volume
+  G4VSolid* solidDet = new G4Box("det",1000,1000,1000);
 
-  G4ThreeVector positionTracker = G4ThreeVector(0,0,0);
-  
-  G4VSolid* solidSubW = new G4Tubs("subw",0,3000,3000,0,6.3);
-  G4LogicalVolume* logicSubW = new G4LogicalVolume(solidSubW , Air, "SubW",0,0,0);  
+  /*
+  G4ThreeVector* v1 = new G4ThreeVector(10,10,0);
+  G4ThreeVector* v2 = new G4ThreeVector(-10,10,0);
+  G4ThreeVector* v3 = new G4ThreeVector(-10,-10,0);
+  G4ThreeVector* v4 = new G4ThreeVector(10,-10,0);
+  G4ThreeVector* v5 = new G4ThreeVector(0,0,20);
 
-  G4VPhysicalVolume* physiSubW = new G4PVPlacement(0,              // no rotation
-                                                   positionTracker, // at (x,y,z)
-                                                   logicSubW,    // its logical volume	
-                                                   "subW",       // its name
-                                                   logicWorld,      // its mother  volume
-                                                   false,           // no boolean operations
-                                                   0);              // no particular field 
-  
-  G4VSolid* solidDet = new G4Tubs("det",0,1000,1000, 0, 6.5);
+  G4TessellatedSolid* solidDet = new G4TessellatedSolid("det");
+  solidDet->AddFacet(new G4TriangularFacet(*v1, *v2, *v5, ABSOLUTE));
+  solidDet->AddFacet(new G4TriangularFacet(*v2, *v3, *v5 , ABSOLUTE));
+  solidDet->AddFacet(new G4TriangularFacet(*v3, *v4, *v5, ABSOLUTE));
+  solidDet->AddFacet(new G4TriangularFacet(*v4, *v1, *v5, ABSOLUTE));
+  solidDet->AddFacet(new G4QuadrangularFacet(*v4, *v3, *v2, *v1, ABSOLUTE));
+  */
+
   G4LogicalVolume* logicDet = new G4LogicalVolume(solidDet , Air, "Detector",0,0,0);  
-
-  G4VPhysicalVolume* physiDet = new G4PVPlacement(0,              // no rotation
-                                                  positionTracker, // at (x,y,z)
-                                                  logicDet,    // its logical volume	
-                                                  "det",       // its name
-                                                  logicSubW,      // its mother  volume
-                                                  false,           // no boolean operations
-                                                  0);              // no particular field 
-
-
-  G4VSolid* solidTracker = new G4Tubs("tracker",0,500,500,0,6.3);
-  G4LogicalVolume* logicTracker = new G4LogicalVolume(solidTracker , Air, "Tracker",0,0,0);  
-    
+  G4VPhysicalVolume* physiDet = new G4PVPlacement(0, G4ThreeVector(0,0,0), logicDet, "det",
+                                                  logicWorld, false, 0); 
   
-  G4PVDivision* div = new G4PVDivision("div",
-                                       logicTracker, logicDet, kZAxis, 3, 100.0, 0.0);
- 
   return physiWorld;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
  

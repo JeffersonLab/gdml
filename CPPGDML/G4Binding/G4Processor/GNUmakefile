@@ -9,9 +9,9 @@ REQUIRE_XERCESC  := any
 # Define package dependencies inside project
 # Make sure that the required packages get built before
 # and no circular requirement is written here
-REQUIRED_PACKAGES := Common/Saxana
+REQUIRED_PACKAGES := Common/Saxana G4Binding/G4Evaluator
 
-PROJECT_INCLUDES  += -I$(PROJECT_TOP)/Common/Schema
+PROJECT_INCLUDES  += -I$(PROJECT_TOP)/Common/Schema -I$(PROJECT_TOP)/G4Binding/G4Evaluator
 
 all: $(PACKAGE_NAME)_target
 

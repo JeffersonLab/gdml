@@ -46,3 +46,5 @@
 #include "G4VHitsCollection.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4VHit.hh"
+
+#undef __G4String

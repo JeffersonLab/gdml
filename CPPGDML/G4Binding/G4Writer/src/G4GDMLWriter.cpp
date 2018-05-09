@@ -1,8 +1,10 @@
-// $Id: G4GDMLWriter.cpp,v 1.8 2006/02/09 10:58:26 witoldp Exp $
+// $Id: G4GDMLWriter.cpp,v 1.12 2006/07/13 08:01:28 witoldp Exp $
 // Include files
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <stack>
+
 // G4
 #include "G4LogicalVolume.hh"
 #include "G4VPVParameterisation.hh"
@@ -23,11 +25,13 @@
 #include "G4Para.hh"
 #include "G4Trap.hh"
 #include "G4Trd.hh"
+#include "G4Tet.hh"
 #include "G4Hype.hh"
 #include "G4Torus.hh"
 #include "G4Orb.hh"
 #include "G4Polyhedra.hh"
 #include "G4EllipticalTube.hh"
+#include "G4TessellatedSolid.hh"
 
 #include "G4ReflectedSolid.hh"
 
@@ -38,7 +42,10 @@
 // local
 #include "G4Writer/G4GDMLWriter.h"
 
-#include <stack>
+// common
+#include "Writer/Facet.h"
+
+
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : G4GDMLWriter
@@ -54,6 +61,7 @@ G4GDMLWriter::G4GDMLWriter(  )
     outputFile("g4geo.gdml")
 {
   ut = new Utils();
+  vertixCount=0;
 }
 G4GDMLWriter::G4GDMLWriter(std::string schema,
                            std::string output)
@@ -61,6 +69,7 @@ G4GDMLWriter::G4GDMLWriter(std::string schema,
     outputFile(output)
 {
   ut = new Utils();
+  vertixCount=0;
 }
 //=============================================================================
 // Destructor
@@ -119,6 +128,44 @@ void G4GDMLWriter::DumpMaterials()
   }
 }
 
+std::string G4GDMLWriter::processTessSolidVertex(double x, double y, double z) // with searching
+{ 
+ std::string vertexName;
+ Vertex temp(x,y,z);
+ std::vector<Vertex>::iterator i = find(tessellatedSolidsVertices.begin(),tessellatedSolidsVertices.end(),temp);
+ if(i!=tessellatedSolidsVertices.end()) // Vertex found
+ {
+  return i->getName();
+ }
+ else // Vertex not found
+ {
+  std::stringstream ss;
+  std::string str;
+  ss << vertixCount;
+  ss >> str;
+  vertexName = "v" + str;
+  temp.setName(vertexName);
+  vertixCount++;
+  tessellatedSolidsVertices.push_back(temp);
+  return vertexName;
+ }  
+}
+
+std::string G4GDMLWriter::processTetVertex(double x, double y, double z) // without searching
+{ 
+ std::string vertexName;
+ Vertex temp(x,y,z);
+ std::stringstream ss;
+ std::string str;
+ ss << vertixCount;
+ ss >> str;
+ vertexName = "v" + str;
+ temp.setName(vertexName);
+ vertixCount++;
+ tetrahedronSolidsVertices.push_back(temp);
+ return vertexName; 
+}
+
 void G4GDMLWriter::DumpSolids()
 {
   // writing out solids
@@ -144,8 +191,55 @@ void G4GDMLWriter::DumpSolids()
     {
       tempsol = disp->GetConstituentMovedSolid();
     }
-
-    if( const G4Sphere* sphere = dynamic_cast<const G4Sphere*>(tempsol) )
+    
+    if( const G4TessellatedSolid* tessSolid = dynamic_cast<const G4TessellatedSolid*>(tempsol) )
+    {
+      int numberOfFacets = tessSolid->GetNumberOfFacets();
+      std::cout << "numberOfFacets: " << numberOfFacets << std::endl;
+      std::vector<gdml::writer::Facet> facets;
+      for(int i=0; i<numberOfFacets; i++)
+      {
+       G4VFacet *tempG4Facet = tessSolid->GetFacet(i);
+       int numberOfVertices = tempG4Facet->GetNumberOfVertices();
+       std::cout << "numberOfVertices: " << numberOfVertices << std::endl;
+       std::vector<std::string> verticesNames;
+       for(int j=0; j<numberOfVertices; j++)
+       {
+        G4ThreeVector currentVertex = tempG4Facet->GetVertex(j);
+	std::cout << "X: " << currentVertex.x()  << " Y: " << currentVertex.y()  << " Z: " << currentVertex.z() << std::endl;
+	verticesNames.push_back(processTessSolidVertex(currentVertex.x(),currentVertex.y(), currentVertex.z()));
+       }       
+       if(verticesNames.size()==3) //triangular facet
+       {
+        gdml::writer::Facet newFacet(verticesNames[0], verticesNames[1], verticesNames[2]);
+	facets.push_back(newFacet);
+       }
+       else if(verticesNames.size()==4) //quadrangular facet
+       {
+        gdml::writer::Facet newFacet(verticesNames[0], verticesNames[1], verticesNames[2], verticesNames[3]);
+	facets.push_back(newFacet);
+       }
+      }
+      solcur->addTessellated( ut->name(tessSolid),
+			      facets,
+                              "mm","degree");
+    }    
+    else if( const G4Tet* tet = dynamic_cast<const G4Tet*>(tempsol) )
+    {
+      std::vector<G4ThreeVector> tetVertices = tet->GetVertices();
+      std::string vertex1 = processTetVertex(tetVertices[0].x(),tetVertices[0].y(),tetVertices[0].z());
+      std::string vertex2 = processTetVertex(tetVertices[1].x(),tetVertices[1].y(),tetVertices[1].z());
+      std::string vertex3 = processTetVertex(tetVertices[2].x(),tetVertices[2].y(),tetVertices[2].z());
+      std::string vertex4 = processTetVertex(tetVertices[3].x(),tetVertices[3].y(),tetVertices[3].z());
+      
+      solcur->addTetrahedron( ut->name(tet),
+                              vertex1,
+			      vertex2,
+			      vertex3,
+			      vertex4,
+                              "mm","degree");
+    }
+    else if( const G4Sphere* sphere = dynamic_cast<const G4Sphere*>(tempsol) )
     {
       solcur->addSphere( ut->name(sphere),
                          sphere->GetInsideRadius()/mm,
@@ -426,14 +520,14 @@ void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
     G4VPhysicalVolume* pv = logvol->GetDaughter(licz);
     G4LogicalVolume* dlv = pv->GetLogicalVolume();
 
+    std::vector<G4LogicalVolume*>::const_reverse_iterator itlv = lvlist.rbegin();
+    std::vector<G4LogicalVolume*>::const_reverse_iterator enditlv = lvlist.rend();
 
-    std::vector<G4LogicalVolume*>::const_iterator itlv = lvlist.end();
-
-    while(itlv!=lvlist.begin() && *itlv!=dlv) itlv--;
-
-    if(itlv==lvlist.begin())
+    while(itlv!=enditlv && (*itlv)!=dlv) itlv++;
+ 
+    if(itlv==enditlv)
     {
-      lvlist.push_back(pv->GetLogicalVolume());
+      lvlist.push_back(dlv);
       DumpGeoTree(pv);
     }
     volstack.push( pv );
@@ -646,8 +740,23 @@ void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
     }
     volstack.pop();
   }
-};
+}
 
+void G4GDMLWriter::DumpTessellatedSolidsDefinitions()
+{
+ for(unsigned int i=0; i<tessellatedSolidsVertices.size(); i++)
+ {
+  defcur->addPosition(tessellatedSolidsVertices[i].getName(), tessellatedSolidsVertices[i].getX(), tessellatedSolidsVertices[i].getY(), tessellatedSolidsVertices[i].getZ());
+ }
+}
+
+void G4GDMLWriter::DumpTetrahedronSolidsDefinitions()
+{
+ for(unsigned int i=0; i<tetrahedronSolidsVertices.size(); i++)
+ {
+  defcur->addPosition(tetrahedronSolidsVertices[i].getName(), tetrahedronSolidsVertices[i].getX(), tetrahedronSolidsVertices[i].getY(), tetrahedronSolidsVertices[i].getZ());
+ }
+}
 
 void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV)
 {
@@ -666,6 +775,8 @@ void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV)
 
   DumpMaterials();
   DumpSolids();
+  DumpTessellatedSolidsDefinitions();
+  DumpTetrahedronSolidsDefinitions();
 
   // Traverse the geometry hierarchy and write it down to the file
   std::cout << "Examining the logical tree" << std::endl;
@@ -679,5 +790,5 @@ void G4GDMLWriter::DumpGeometryInfo(G4VPhysicalVolume* worldPV)
   db.WriteDocument();
   db.CloseDocument();
   std::cout << "Written out GDML file." << std::endl;
-};
+}
 

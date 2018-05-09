@@ -1,4 +1,4 @@
-// $Id: Utils.h,v 1.2 2006/01/27 16:20:10 witoldp Exp $
+// $Id: Utils.h,v 1.3 2006/07/13 08:52:10 witoldp Exp $
 #ifndef WRITERG4_UTILS_H 
 #define WRITERG4_UTILS_H 1
 
@@ -117,7 +117,7 @@ public:
     elename = ptr->GetName();
     elename = filter(elename);
     std::ostringstream os;
-    os << ptr;
+    os << "_" << (long int)ptr;
     std::string ssn = os.str();
      
     return elename+ssn;
@@ -153,7 +153,7 @@ public:
     matname = ptr->GetName();
     matname = filter(matname);
     std::ostringstream os;
-    os << ptr;
+    os << "_" << (long int)ptr;
     std::string ssn = os.str();
      
     return matname+ssn;
@@ -189,7 +189,7 @@ public:
     solname = ptr->GetName();
     solname = filter(solname);
     std::ostringstream os;
-    os << ptr;
+    os << "_" << (long int)ptr;
     std::string ssn = os.str();
      
     return solname+ssn;
@@ -230,7 +230,7 @@ public:
     pvolname = ptr->GetName();
     pvolname = filter(pvolname);
     std::ostringstream os;
-    os << ptr;
+    os << "_" << (long int)ptr;
     std::string ssn = os.str();
      
     return pvolname+ssn;
@@ -266,7 +266,7 @@ public:
     lvolname = ptr->GetName();
     pvolname = filter(pvolname);
     std::ostringstream os;
-    os << ptr;
+    os << "_" << (long int)ptr;
     std::string ssn = os.str();
      
     return lvolname+ssn;

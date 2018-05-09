@@ -5,7 +5,7 @@
 #include "Schema/reflectedSolid.h"
 
 #include "G4Processor/GDMLProcessor.h"
-#include "G4Processor/GDMLExpressionEvaluator.h"
+//#include "G4Processor/GDMLExpressionEvaluator.h"
 #include "G4Subscribers/Util.h"
 
 #include "G4VSolid.hh"

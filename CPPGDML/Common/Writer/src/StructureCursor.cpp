@@ -181,7 +181,7 @@ namespace gdml
       const Attributes& mvolAttrs = motherVolume.getAttributes();
       std::string uhint           = (*mvolAttrs.find( "name" )).second;
       std::stringstream  os;
-      os.precision(100);
+      os.precision(15);
 
       os << m_reg.size();
       uhint += os.str();
@@ -221,7 +221,7 @@ namespace gdml
                                          const std::string& uniquenessHint )
     {
       std::stringstream os;
-      os.precision(100);
+      os.precision(15);
       
       Element vref( "volumeref" );
       vref.addAttribute( "ref", idRef );
@@ -280,7 +280,7 @@ namespace gdml
       
       Element replica("replicavol");
       std::stringstream os; 
-      os.precision(100);
+      os.precision(15);
 
       os << ncopies;     
       std::string sncopies = os.str(); 
@@ -342,7 +342,7 @@ namespace gdml
       
       Element division("divisionvol");
       std::stringstream os; 
-      os.precision(100);
+      os.precision(15);
 
       os << ncopies;     
       std::string sncopies = os.str(); 
@@ -409,7 +409,7 @@ namespace gdml
       
       Element parameterised("paramvol");
       std::stringstream os; 
-      os.precision(100);
+      os.precision(15);
 
       os << ncopies;     
       std::string sncopies = os.str(); 
@@ -442,7 +442,7 @@ namespace gdml
                                                  double hz)
     {
       std::stringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << hx;    std::string shx    = os.str(); os.str( "" );
       os << hy;    std::string shy    = os.str(); os.str( "" );
@@ -478,7 +478,7 @@ namespace gdml
                                                   double DeltaPhi)
     {
       std::stringstream os;
-      os.precision(100);
+      os.precision(15);
 
       os << InR;    std::string sInR    = os.str(); os.str( "" );
       os << OutR;    std::string sOutR    = os.str(); os.str( "" );
@@ -513,7 +513,7 @@ namespace gdml
       
     {
       std::stringstream os;
-      os.precision(100);
+      os.precision(15);
       
       os << ncopy;
       std::string sncopy = os.str();

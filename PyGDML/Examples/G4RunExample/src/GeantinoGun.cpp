@@ -31,6 +31,8 @@ void GeantinoGun::GeneratePrimaries(G4Event* anEvent)
   G4int i = anEvent->GetEventID() % 3;
   G4ThreeVector v(x, y, z);
 
+  particleGun->SetParticlePosition(G4ThreeVector(0.0, i*1.0, 0));
+
   particleGun->SetParticleMomentumDirection(v);
   particleGun->GeneratePrimaryVertex(anEvent);
 }
