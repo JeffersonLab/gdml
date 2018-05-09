@@ -1,13 +1,20 @@
-# $Header: /cvs/simu/simu/GDML2/CPPGDML/configure.in,v 1.5 2006/09/05 16:15:11 witoldp Exp $
+# $Header: /cvs/simu/simu/GDML2/CPPGDML/configure.in,v 1.7 2007/03/14 14:28:55 witoldp Exp $
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT(CPPGDML, 2.8.0, jeremym@slac.stanford.edu)
+AC_INIT(CPPGDML, 2.9.0, jeremym@slac.stanford.edu)
 
 # don't take defaults from this
 CXXFLAGS=""
 
 AC_CONFIG_SRCDIR([G4Binding/G4Writer/src/G4GDMLWriter.cpp])
+
+AC_CANONICAL_HOST
+AC_SUBST(host)
+AC_SUBST(host_alias)
+AC_SUBST(host_cpu)
+AC_SUBST(host_vendor)
+AC_SUBST(host_os)
 
 # Checks for programs.
 AC_PROG_CXX

@@ -14,8 +14,8 @@
 ./configure --with-xercesc=$PRJ_EXTERN/xerces-c/v2-6-0 \
             --with-clhep=$PRJ_EXTERN/clhep/v1-9-1-2 \
             --with-geant4=$PRJ_EXTERN/geant4/geant4.7.1.p01 \
-            --enable-shared-libs=no \
-	    --enable-static-libs=yes \
+            --enable-shared=no \
+	    --enable-static=yes \
             --enable-geant4-vis=no \
             --enable-geant4-ui=no \
 	    --enable-geant4-granular-libs=yes \

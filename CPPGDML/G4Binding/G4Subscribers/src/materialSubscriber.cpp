@@ -3,7 +3,8 @@
 #include "Saxana/SAXComponentFactory.h"
 
 #include "G4Processor/GDMLProcessor.h"
-#include "G4Processor/MaterialLocator.h"
+//#include "G4Processor/MaterialLocator.h"
+#include "G4Subscribers/MaterialLocator.h"
 #include "G4Subscribers/Util.h"
 
 #include "Schema/material.h"
@@ -233,7 +234,7 @@ public:
               mnew->SetMaterialPropertiesTable(matprop);
             }
 
-            MatrixType& matrix =
+            const MatrixType& matrix =
               GDMLProcessor::GetInstance()->GetMatrix(obj->get_properties()[i]->get_ref());
                         
             G4MaterialPropertyVector* propvect = new G4MaterialPropertyVector(0,0,0);

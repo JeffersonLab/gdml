@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: GNUmakefile,v 1.25 2006/07/13 09:53:04 witoldp Exp $
+# $Id: GNUmakefile,v 1.28 2007/02/08 15:12:43 blloyd Exp $
 #
 # /\/\/\/\ C++ GDML Build System /\/\/\/\
 #
@@ -22,6 +22,9 @@ else
 GDML_PACKAGES = Common/Saxana Common/Processes Common/Writer G4Binding/G4Evaluator G4Binding/G4Processor G4Binding/G4Subscribers G4Binding/G4Writer
 endif
 
+COMMON_INC = Schema Saxana Writer Processes
+G4BIND_INC = G4Processor G4Subscribers G4Writer G4Evaluator
+
 # Function to build a package.
 define MakePackage
 	@echo
@@ -33,7 +36,7 @@ define MakePackage
 endef
 
 # Define the list of all examples we have
-gdml_examples = Examples/g4gogdml Examples/g4N02gdml
+gdml_examples = Examples/g4gogdml Examples/g4N02gdml Examples/SimpleExtension
 
 # Function to build an application.
 define MakeApp
@@ -71,24 +74,27 @@ OBJ = $(foreach package,$(GDML_PACKAGES),$(wildcard $(PROJECT_TOP)/build/$(PLATF
 
 gdml_lib_target=
 
-ifeq ($(BUILD_SHARED_LIBS),yes)
-    gdml_lib_target += build_gdml_lib_shared
+ifdef GDML_USE_SHARED_LIB
+gdml_lib_target += build_gdml_lib_shared
 endif
 
-ifeq ($(BUILD_STATIC_LIBS),yes)
-    gdml_lib_target += build_gdml_lib_static
+ifdef GDML_USE_STATIC_LIB
+gdml_lib_target += build_gdml_lib_static
 endif
 
 # wrapper to lib targets for user selections
 build_gdml_lib: $(gdml_lib_target)
 
-# build a single GDML shared library
-build_gdml_lib_shared:
-	@$(CXX) -shared -Wl,-soname,$(PLATFORM_LIB_PREFIX)gdml$(PLATFORM_SHLIB_SUFFIX) -o $(PROJECT_TOP)/build/$(PLATFORM)/lib/$(PLATFORM_LIB_PREFIX)gdml$(PLATFORM_SHLIB_SUFFIX) $(OBJ)
-
 # build a single GDML static library
 build_gdml_lib_static:
-	@ar crvs $(PROJECT_TOP)/build/$(PLATFORM)/lib/$(PLATFORM_LIB_PREFIX)gdml$(PLATFORM_LIB_SUFFIX) $(OBJ)
+	@echo "Building GDML static library ..."
+	@echo GDML_USE_STATIC_LIB=$(GDML_USE_STATIC_LIB)
+	ar crvs $(PROJECT_TOP)/build/$(PLATFORM)/lib/$(PLATFORM_LIB_PREFIX)gdml$(PLATFORM_LIB_SUFFIX) $(OBJ)
+
+# build a single GDML shared library
+build_gdml_lib_shared:
+	@echo "Building GDML shared library ..."
+	$(CXX) -o $(PROJECT_TOP)/build/$(PLATFORM)/lib/$(PLATFORM_SHLIB_PREFIX)gdml$(PLATFORM_SHLIB_SUFFIX) $(PLATFORM_SHLIB_FLAGS) $(CXXFLAGS) $(OBJ) $(LDFLAGS)
 
 # Clean Targets
 .PHONY: clean cleanall
@@ -123,9 +129,33 @@ install_bin:
 
 # install includes
 install_headers := $(shell find . -name *.h)
+
 install_include:
+
+ifeq ($(FLATINCLUDE), yes)
+
+	@echo "FLAT INCLUDE COPY SELECTED..."
+
+	test -d "$(includedir)" || mkdir -p $(includedir)
+
+	cd ${PROJECT_TOP} ; \
+
+	for pak in $(COMMON_INC); do \
+	  echo $$pak ;\
+	  cp -f -r Common/$$pak/$$pak $(includedir) ;\
+	done
+
+	cd ${PROJECT_TOP} ; \
+	for pak in $(G4BIND_INC);  do \
+	  cp -f -r G4Binding/$$pak/$$pak $(includedir) ;\
+	done
+endif
+
+ifeq ($(FLATINCLUDE), no)
+	@echo "NON-FLAT INCLUDE COPY SELECTED..."
 	for i in $(install_headers); do \
 		i_dir=`dirname $$i`; \
 		mkdir -p $(includedir)/$$i_dir; \
 		install $$i $(includedir)/$$i_dir; \
 	done
+endif

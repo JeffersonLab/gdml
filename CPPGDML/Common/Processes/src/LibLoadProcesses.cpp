@@ -72,9 +72,12 @@ void GDMLProcessLibLoad() {
     LOAD_COMPONENT(twistedtrapProcess)
     LOAD_COMPONENT(twistedtrdProcess)
     LOAD_COMPONENT(twistedtubsProcess)
+    LOAD_COMPONENT(auxiliaryProcess)
     LOAD_COMPONENT(opticalsurfaceProcess)
     LOAD_COMPONENT(skinsurfaceProcess)
     LOAD_COMPONENT(bordersurfaceProcess)
     LOAD_COMPONENT(setupProcess)    
+
+
     }
 

@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // $Id: ReplicaPlacementTypeProcess.h,v 1.2 2006/08/29 16:44:13 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_8_0 $
+// GEANT4 tag $Name: GDML_2_9_0 $
 #ifndef GDML_PROCESS_REPLICAPLACEMENTTYPEPROCESS_H
 #define GDML_PROCESS_REPLICAPLACEMENTTYPEPROCESS_H 1
 

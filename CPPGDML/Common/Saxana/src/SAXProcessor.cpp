@@ -1,5 +1,5 @@
 // $Id: SAXProcessor.cpp,v 1.4 2006/08/29 11:49:29 dkruse Exp $
-// GEANT4 tag $Name: GDML_2_8_0 $
+// GEANT4 tag $Name: GDML_2_9_0 $
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 

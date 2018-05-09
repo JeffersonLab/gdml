@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // $Id: IdentifiableVolumeType.h,v 1.1 2005/02/28 13:21:30 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_8_0 $
+// GEANT4 tag $Name: GDML_2_9_0 $
 #ifndef GDML_SCHEMA_IDENTIFIABLEVOLUMETYPE_H
 #define GDML_SCHEMA_IDENTIFIABLEVOLUMETYPE_H 1
 

@@ -2,76 +2,118 @@ dnl
 dnl GDML m4 macros
 dnl
 
-# macro that calls all the GDML setup macros in sequence
+# Macro that calls all the GDML setup macros in the correct sequence.
 AC_DEFUN(GDML_SETUP_GDML, [
 
 GDML_CHECK_OS
+
 GDML_CHECK_COMPILER
+
 GDML_ENABLE_COMPILE_VERBOSE
+
 GDML_WITH_PLATFORM
-GDML_SETUP_LIBS
-GDML_SETUP_INSTALL_DIRS
-GDML_ENABLE_GDML_VERBOSE
-GDML_ENABLE_BUILD_STEPWRT
-])
 
-# macro to set whether shared libs should be built
-AC_DEFUN(GDML_ENABLE_SHARED_LIBS, [
-
-AC_MSG_CHECKING(whether to build shared libs)
-
-AC_ARG_ENABLE(shared-libs,
-	AC_HELP_STRING([--enable-shared-libs], [enable building of shared libs]),
-	[BUILD_SHARED_LIBS=$enable_shared_libs],
-	[BUILD_SHARED_LIBS=yes])
-
-# default to not building shared libs
-if test -z "$BUILD_SHARED_LIBS"; then
-  BUILD_SHARED_LIBS=no
-fi
-
-AC_MSG_RESULT($BUILD_SHARED_LIBS)
-
-AC_SUBST(BUILD_SHARED_LIBS)
-
-])
-
-# macro to set whether static libs should be built
-AC_DEFUN(GDML_ENABLE_STATIC_LIBS, [
-
-AC_MSG_CHECKING(whether to build static libs)
-
-AC_ARG_ENABLE(static-libs,
-	AC_HELP_STRING([--enable-static-libs], [enable building of static libs]),
-	[BUILD_STATIC_LIBS=$enable_static_libs],
-	[BUILD_STATIC_LIBS=yes])
-
-# default to not building static libs
-if test -z "$BUILD_STATIC_LIBS"; then
-  BUILD_STATIC_LIBS=no
-fi
-
-AC_MSG_RESULT($BUILD_STATIC_LIBS)
-
-AC_SUBST(BUILD_STATIC_LIBS)
-
-])
-
-# libs setup
-AC_DEFUN(GDML_SETUP_LIBS, [
-
-GDML_ENABLE_SHARED_LIBS
-GDML_ENABLE_STATIC_LIBS
-
-if test "${BUILD_STATIC_LIBS}" = "no" && test "${BUILD_SHARED_LIBS}" = "no"; then
-  AC_MSG_ERROR([At least one of --enable-static-libs and --enable-shared-libs must be selected.])
-fi
+GDML_ENABLE_SHARED
+GDML_ENABLE_STATIC
+GDML_ENABLE_SINGLE
+GDML_ENABLE_GRANULAR
 
 GDML_WITH_LIBNAME_PREFIX
 
+GDML_SETUP_INSTALL_DIRS
+
+GDML_ENABLE_GDML_VERBOSE
+
+GDML_ENABLE_BUILD_STEPWRT
+
+GDML_ENABLE_FLAT_INCLUDE
 ])
 
-# macro to set lib name prefix
+# Macro to check whether to use shared libraries.
+AC_DEFUN(GDML_ENABLE_SHARED, [
+
+AC_MSG_CHECKING(whether to use shared libraries)
+
+AC_ARG_ENABLE([shared],
+              AC_HELP_STRING([--enable-shared],
+                             [Enable or disable building of shared libraries. (Default is enable.)])
+             )
+
+if test "$enable_shared" != "no"; then
+  GDML_USE_SHARED_LIB=1
+  AC_MSG_RESULT(yes)
+else  
+  AC_MSG_RESULT(no)
+fi
+
+AC_SUBST(GDML_USE_SHARED_LIB)
+
+])
+
+# Macro to check whether to use static libs.
+AC_DEFUN(GDML_ENABLE_STATIC, [
+
+AC_MSG_CHECKING(whether to use static libraries)
+
+AC_ARG_ENABLE([static],
+              AC_HELP_STRING([--enable-static],
+                             [Enable or disable building of static libraries. (Default is enable.)])
+             )
+
+if test "$enable_static" != "no"; then
+  GDML_USE_STATIC_LIB=1
+  AC_MSG_RESULT(yes)
+else  
+  AC_MSG_RESULT(no)
+fi
+
+AC_SUBST(GDML_USE_STATIC_LIB)
+
+])
+
+# Macro to check whether to use granular libs.
+AC_DEFUN(GDML_ENABLE_GRANULAR, [
+
+AC_MSG_CHECKING(whether to use granular libraries)
+
+AC_ARG_ENABLE([granular],
+              AC_HELP_STRING([--enable-granular],
+                             [Enable or disable usage of granular libraries. (Default is disable.)])
+             )
+
+if test "$enable_granular" == "yes"; then
+  GDML_USE_GRANULAR_LIB=1
+  AC_MSG_RESULT(yes)
+else  
+  AC_MSG_RESULT(no)
+fi
+
+AC_SUBST(GDML_USE_GRANULAR_LIB)
+
+])
+
+# Macro to check whether to use single libs.
+AC_DEFUN(GDML_ENABLE_SINGLE, [
+
+AC_MSG_CHECKING(whether to use single GDML library)
+
+AC_ARG_ENABLE([single],
+              AC_HELP_STRING([--enable-single],
+                             [Enable or disable usage of single libraries. (Default is enable.)])
+             )
+
+if test "$enable_single" != "no"; then
+  GDML_USE_SINGLE_LIB=1
+  AC_MSG_RESULT(yes)
+else  
+  AC_MSG_RESULT(no)
+fi
+
+AC_SUBST(GDML_USE_SINGLE_LIB)
+
+])
+
+# Macro to set lib name prefix.
 AC_DEFUN(GDML_WITH_LIBNAME_PREFIX, [
 
 AC_MSG_CHECKING(for libname prefix)
@@ -95,7 +137,7 @@ AC_SUBST(TARGET_LIB_PREFIX)
 
 ])
 
-# macro to check the OS and set host_os var
+# Macro to check the OS and set host_os var.
 AC_DEFUN(GDML_CHECK_OS, [
 
 AC_MSG_CHECKING(for supported OS)
@@ -122,7 +164,7 @@ fi
 
 ])
 
-# macro to check the compiler
+# Macro to check the compiler.
 AC_DEFUN(GDML_CHECK_COMPILER, [
 
 AC_MSG_CHECKING(the compiler setting)
@@ -154,7 +196,7 @@ AC_SUBST(COMPILER_GMK_FILE)
 
 ])
 
-# macro to set whether compile should be verbose
+# Macro to set whether compile should be verbose.
 AC_DEFUN( GDML_ENABLE_COMPILE_VERBOSE, [
 
 AC_SUBST(COMPILE_VERBOSE_USE)
@@ -178,7 +220,7 @@ fi
 
 ])
 
-# macro to set whether to build STEPWriter
+# Macro to set whether to build STEPWriter.
 AC_DEFUN(GDML_ENABLE_BUILD_STEPWRT, [
 
 AC_MSG_CHECKING(whether to build STEPWriter)
@@ -197,7 +239,26 @@ AC_SUBST(BUILD_STEPWRT)
 
 ])
 
-# macro for PLATFORM with arg or env var
+# Macro to set whether to build flat includes.
+AC_DEFUN(GDML_ENABLE_FLAT_INCLUDE, [
+
+AC_MSG_CHECKING(whether to copy includes in a flat structure)
+
+AC_ARG_ENABLE(flat-include,
+	AC_HELP_STRING([--enable-flat-include=<setting>], [Enable the copying of includes without full original path, yes or no]),
+	[FLAT_INCLUDE=$enable_flat_include],
+	[FLAT_INCLUDE=no])
+
+if test "$FLAT_INCLUDE" != yes && test "$FLAT_INCLUDE" != no; then
+  AC_MSG_ERROR([$FLAT_INCLUDE is not a valid setting for --enable-flat-include])
+fi
+
+AC_MSG_RESULT($FLAT_INCLUDE)
+AC_SUBST(FLAT_INCLUDE)
+
+])
+
+# Macro for PLATFORM with arg or env var.
 AC_DEFUN(GDML_WITH_PLATFORM, [
 
 AC_MSG_CHECKING([for PLATFORM setting])
@@ -228,7 +289,7 @@ AC_SUBST(PLATFORM_GMK_FILE)
 
 ])
 
-# macro to initialize some "global" variables
+# Macro to initialize some "global" variables.
 AC_DEFUN(GDML_INIT, [
 
 # make includes directories
@@ -239,7 +300,7 @@ make_ext_dir=${make_inc_dir}/ext
 
 ])
 
-# macro to set the build dir
+# Macro to set the build dir.
 AC_DEFUN(GDML_WITH_BUILDDIR, [
 
 AC_MSG_CHECKING(for build directory)
@@ -253,7 +314,7 @@ AC_SUBST(TARGET_BUILD_DIR)
 
 ])
 
-# macro to set the installation dirs
+# Macro to set the installation dirs.
 AC_DEFUN(GDML_SETUP_INSTALL_DIRS, [
 
 AC_MSG_CHECKING(for prefix)
@@ -273,7 +334,7 @@ AC_SUBST(includedir)
 
 ])
 
-# macro to enable/disable info messages from GDML
+# Macro to enable/disable info messages from GDML.
 AC_DEFUN(GDML_ENABLE_GDML_VERBOSE, [
 
 AC_MSG_CHECKING(whether to enable GDML diagnostic output)

@@ -10,14 +10,17 @@ Building GDML requires gcc/g++ and make (preferably gmake).
 
 NOTE: Cygwin does not have the 'gmake' command so use plain 'make' instead.
 
-To build CPPGDML:
+To build CPPGDML for the first time:
 
-	./configure [options]
-   	gmake
+	./GDMLSetup
 
-To install the libraries in some specific place (optional):
+To rebuild GDML:
 
-	gmake install
+	make
+
+To reinstall the libraries in the specific place (optional):
+
+	make install
 
 The default installation directory is /usr/local, and this is
 settable using the --prefix option.

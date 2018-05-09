@@ -10,7 +10,7 @@ export LCGEXT=/afs/cern.ch/sw/lcg/external
 
 # set the platform
 if [ ! $PLATFORM ]; then
-    export PLATFORM=slc3_ia32_gcc323
+    export PLATFORM=slc4_ia32_gcc34
 fi
 
 
@@ -20,14 +20,14 @@ fi
 # run configure with options
 ./configure --with-platform=${PLATFORM} \
 	    --with-xercesc=${LCGEXT}/XercesC/2.7.0/${PLATFORM} \
-            --with-clhep=${LCGEXT}/clhep/1.9.2.3/${PLATFORM} \
-            --with-geant4=${LCGEXT}/geant4/8.1.p01/${PLATFORM} \
-            --with-geant4-include=${LCGEXT}/geant4/8.1.p01/share/include \
-            --with-geant4-libdir=${LCGEXT}/geant4/8.1.p01/${PLATFORM}/lib \
-            --enable-shared-libs=yes \
-	    --enable-static-libs=no \
-	    --enable-geant4-granular-libs=no \
- 	    --enable-gdml-verbose=yes \
+            --with-clhep=${LCGEXT}/clhep/2.0.3.1/${PLATFORM} \
+            --with-geant4=${LCGEXT}/geant4/8.2.p01/${PLATFORM} \
+            --with-geant4-include=${LCGEXT}/geant4/8.2.p01/share/include \
+            --with-geant4-libdir=${LCGEXT}/geant4/8.2.p01/${PLATFORM}/lib \
+            --enable-shared=yes \
+	    --enable-static=no \
+	    --enable-granular=yes \
+ 	    --enable-gdml-verbose=no \
 	    --enable-compile-verbose=no 
 
 # print results

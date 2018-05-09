@@ -1,22 +1,28 @@
 // -*- C++ -*-
-// $Id: volumeSubscriber.cpp,v 1.20 2006/08/29 10:27:12 dkruse Exp $
+// $Id: volumeSubscriber.cpp,v 1.26 2007/03/14 14:28:55 witoldp Exp $
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 #include "Saxana/SAXProcessor.h"
 #include "Saxana/ProcessingConfigurator.h"
 
 #include "G4Processor/GDMLProcessor.h"
-#include "G4Processor/MaterialLocator.h"
-#include "G4Processor/GenericPositionSizeParameterisation.h"
+//#include "G4Processor/MaterialLocator.h"
+//#include "G4Processor/GenericPositionSizeParameterisation.h"
+
+#include "G4Subscribers/MaterialLocator.h"
+#include "G4Subscribers/GenericPositionSizeParameterisation.h"
+
 
 #include "G4Subscribers/Util.h"
 
+#include "Schema/loop.h"
 #include "Schema/volume.h"
 #include "Schema/physvol.h"
 #include "Schema/replicavol.h"
 #include "Schema/divisionvol.h"
 #include "Schema/replicate_along_axis.h"
 #include "Schema/paramvol.h"
+#include "Schema/auxiliary.h"
 #include "Schema/parameterised_position_size.h"
 #include "Schema/parameters.h"
 #include "Schema/box_dimensions.h"
@@ -35,12 +41,15 @@
 #include "G4PVDivision.hh"
 #include "G4VPVParameterisation.hh"
 
+#include <vector>
 #include <iostream>
 #include <sstream>
 
 class volumeSubscriber : virtual public SAXSubscriber
 {
 public:
+
+
   virtual const SAXComponentObject* Build() const {
     return this;
   }
@@ -60,7 +69,8 @@ public:
 
     GDMLProcessor*           processor = GDMLProcessor::GetInstance();
     GDMLExpressionEvaluator* calc      = GDMLProcessor::GetInstance()->GetEvaluator();
-
+    std::vector< std::pair<std::string, std::string> > aux; //auxilliary vector
+    int loopflag = 0;
     const volume* obj = 0;
 
     if( object != 0 )
@@ -83,8 +93,10 @@ public:
 
           for( size_t i = 0; i < count; i++ )
           {
+		    
             if( seq->content(i).tag == "materialref" )
             {
+
               // Check & retrieve material
               VolumeType::materialref*
                 mref = dynamic_cast<VolumeType::materialref*>( seq->content(i).object );
@@ -141,7 +153,8 @@ public:
               bool doAssemblyInprint                 = false;
               bool externalFile                      = false;
               std::string                       efwvn; //external_file_world_volume_name
-
+	      std::string vol_refName; 
+	      
               /*
                 std::cout << "debug AA" << std::endl;
                 for( size_t cidx = 0; cidx < ccount; cidx++ )
@@ -158,14 +171,32 @@ public:
                   // Check & retrieve volume
                   vr = dynamic_cast<SinglePlacementType::volumeref*>
                     ( physvol_volchoice->content(cidx).object );
+		  
+                vol_refName = vr->get_ref();
+
                   plog = const_cast<G4LogicalVolume*>
-                    (processor->GetLogicalVolume( vr->get_ref()));
+                    (processor->GetLogicalVolume( vol_refName+"_"+processor->GetLoopNum()));
+
+		  if(plog != 0)
+		    {
+		      //std::cout << "plog: " << plog->GetName() << std::endl;
+
+		      vol_refName =  vol_refName+"_"+processor->GetLoopNum();
+		      loopflag = 1;
+		    }
+		  else 
+		    {
+		      plog = const_cast<G4LogicalVolume*> (processor->GetLogicalVolume(vol_refName));
+		    }
+		  
+		  //std::cout << "the plog returned: " << plog << " loop number: " << processor->GetLoopNum() << " final vol name: " << vol_refName << std::endl;
+
                   if( plog == 0 ) {
                     // Let's check if an assembly request was ment
-                    alog = const_cast<G4AssemblyVolume*>(processor->GetAssemblyVolume( vr->get_ref()));
+                    alog = const_cast<G4AssemblyVolume*>(processor->GetAssemblyVolume( vol_refName));
 
                     if( alog == 0 ) {
-                      std::cerr << "VOLUME SUBSCRIBER:: physvol volume " << vr->get_ref()
+                      std::cerr << "VOLUME SUBSCRIBER:: physvol volume " << vol_refName
                                 << " not found!" << std::endl;
                       std::cerr << "Volume " << obj->get_name() << " can't be created!" << std::endl;
                       std::cerr << "Please, re-order your volumes or add the missing one..."
@@ -303,6 +334,8 @@ public:
                   } else { /* should not happen */ }  // end of if-positionref
                 } else { /* should not happen */ }    // end of if-choice
               }                                       // end-for-loop over physvol's items
+
+
               // At this point we should have everything ready to create a physvol
               if( doAssemblyInprint && !externalFile)
               {
@@ -314,7 +347,18 @@ public:
               else if (!doAssemblyInprint && !externalFile)
               {
                 std::stringstream pvname;
-                pvname << "pv_" << vr->get_ref() << "_" << (i-2);
+		
+		if(loopflag == 0){
+		  
+		  //std::cout << "LOOP NOT SEEN" << std::endl;
+		  pvname << "pv_" << vr->get_ref() << "_" << (i-2);
+		  vol_refName = vr->get_ref();
+		}
+		else if(loopflag == 1){
+		  //std::cout << "LOOP SEEN" << std::endl;
+		  pvname << "pv_" << vol_refName << "_" << (i-2);
+		}
+
                 if (nameattr=="") nameattr = pvname.str();
 
                 /* Got a null position so use identity position = (0,0,0) from GDMLProcessor. --JM */
@@ -322,7 +366,7 @@ public:
                   ppos = processor->getIdentityPosition();
                 }
 
-                vphysvol = new G4PVPlacement(prot, *ppos, plog, Util::generateName(vr->get_ref()), vnew, false, (i-2));
+                vphysvol = new G4PVPlacement(prot, *ppos, plog, Util::generateName(vol_refName), vnew, false, (i-2));
                 processor->AddPhysicalVolume( nameattr, vphysvol );
               }
               else if (!doAssemblyInprint && externalFile)
@@ -659,17 +703,31 @@ public:
 
 
               processor->AddPhysicalVolume( pvname.str(), vparamvol );
-            } //end of paramvol
-              //else
-              //{
-              //  std::cout << "Something went wrong in volumeSubscriber..." << std::endl;
-              //}
+            }
+	     //end of paramvol
+
+	    //START of AUXiliary
+	    else if( seq->content(i).tag == "auxiliary" )
+	      {
+              // Get auxiliary's content
+              auxiliary* c = dynamic_cast<auxiliary*>( seq->content(i).object );
+	      aux.push_back( std::pair<std::string, std::string>( c->get_auxval(), c->get_auxtype() ));
+	      }
           }                                           // end-for-loop over volume's items
+
+	  //CHECK FOR AUXPAIRS -> IF FOUND ADD TO AUXMAP
+	  if(aux.size() != 0)
+	    {
+	      processor->AddAuxiliaryVector(vnew, aux);
+	    }
+
         }                                             // end of if-obj
+
       } catch(...) { std::cerr << "VOLUME SUBSCRIBER:: GOT INTO BAD_CAST TROUBLE!" << std::endl; }
     } else { std::cerr << "VOLUME SUBSCRIBER:: GOT ZERO DATA POINTER!" << std::endl; }
 
     ////delete object;
+      
   }                                                   // end-of-Activate-method
 };
 

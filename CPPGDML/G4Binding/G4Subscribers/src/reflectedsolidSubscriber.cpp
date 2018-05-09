@@ -5,7 +5,7 @@
 #include "Schema/reflectedSolid.h"
 
 #include "G4Processor/GDMLProcessor.h"
-//#include "G4Processor/GDMLExpressionEvaluator.h"
+#include "G4Evaluator/GDMLExpressionEvaluator.h"
 #include "G4Subscribers/Util.h"
 
 #include "G4VSolid.hh"
@@ -13,6 +13,9 @@
 #include "G4Transform3D.hh"
 
 #include <iostream>
+
+namespace CLHEP {}
+using namespace CLHEP;
 
 class reflectedSolidSubscriber : public SAXSubscriber
 {

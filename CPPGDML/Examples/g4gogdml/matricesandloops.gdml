@@ -45,6 +45,7 @@
    <box aunit="radian" lunit="mm" name="LoopBox" x="k[i]/2" y="la[i]" z="i*3" />
   </loop>
  </solids>
+
  <structure>
   <loop for="ll" to="26" step="2">
    <volume name="LoopVol" >

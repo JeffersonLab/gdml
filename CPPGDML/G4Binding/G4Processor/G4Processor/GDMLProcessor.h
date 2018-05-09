@@ -42,6 +42,7 @@ public:
   typedef std::map<std::string,G4LogicalVolume*>   LogicalVolumes;
   typedef std::map<std::string,G4AssemblyVolume*>  AssemblyVolumes;
   typedef std::map<std::string,G4VPhysicalVolume*> PhysicalVolumes;
+  typedef std::map<G4LogicalVolume*, std::vector< std::pair<std::string, std::string> > > AuxiliaryPairs;
 
   static GDMLProcessor* GetInstance();
   void SetDuplicationWarning(const std::string& firstFileName);
@@ -80,6 +81,9 @@ public:
   
   void AddParsedFile( const std::string& name, G4VPhysicalVolume* p );
   void AddParsedFile( const char* name, G4VPhysicalVolume* p );
+
+  void AddAuxiliaryVector(G4LogicalVolume* auxvol, std::vector< std::pair<std::string, std::string> >& auxpairs);
+  void AddLoopNum(std::string loopnumber);
 
   const G4ThreeVector*    GetPosition( const std::string& name );
   const G4ThreeVector*    GetPosition( const char* name );
@@ -122,6 +126,12 @@ public:
   {
     return WorldVolumes[i];
   }
+
+  GDMLProcessor::AuxiliaryPairs* GetAuxiliaryMap();
+
+  const std::vector< std::pair<std::string, std::string> >* GetAuxiliaryVector(G4LogicalVolume* auxvol);
+
+  std::string GetLoopNum();
 
   void SetWorldVolume( G4VPhysicalVolume* newWorldVolume )
   {
@@ -194,11 +204,13 @@ private:
   GDMLProcessor::Rotations       fRTable;
   GDMLProcessor::Matrices        fMTable;
   GDMLProcessor::Solids          fSolids;
+  GDMLProcessor::AuxiliaryPairs  fAux;
   GDMLProcessor::Surfaces        fSurfaces;
   GDMLProcessor::LogicalVolumes  fLVolumes;
   GDMLProcessor::AssemblyVolumes fAVolumes;
   GDMLProcessor::PhysicalVolumes fPVolumes;
   G4VPhysicalVolume*             fWorldVolume;
+  std::string loopnum;
   
   bool duplicationWarning;
   std::map<std::string,std::string> SolidNames_FileNames_Map;

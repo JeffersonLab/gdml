@@ -1,3 +1,34 @@
+2007-02-09 Ben Lloyd <ben.lloyd@cern.ch>
+        * config/make/ext/geant4_granular_libs.gmk: Update for Geant4 8.2
+        * Examples: Slight modification to README instructions.
+
+2007-02-08 Ben Lloyd <ben.lloyd@cern.ch>
+	* CPPGDML: new configure switch 'enable-flat-include' to allow flat structure copying of includes.
+
+2007-02-01 Ben Lloyd <ben.lloyd@cern.ch>
+	* CPPGDML: New Fresh build installation script added: GDMLSetup, automated generation of MyConfigure script
+
+2006-11-30 Jeremy McCormick <jeremym@slac.stanford.edu>
+    * CPPGDML: moved a few classes from G4Processer to G4Subscribers to fix static linking problem with granular libs
+    * CPPGDML: fixed broken build of static examples; static application target now uses absolute paths to the static libraries
+    * CPPGDML: added new switches for library configuration: 
+               'enable-shared-lib' is replaced by 'enable-shared';
+               'enable-static-lib' is replaced by 'enable-static';
+               'enable-granular' will make examples link to package libs;
+               'enable-single' will build a single GDML library and examples will link to it
+               The default is shared + static + single.  Use all four switches to get the configuration you want.
+    * CPPGDML: updated CERNConfigure.sh and SLACConfigure.sh with new switches
+    * CPPGDML: rewrote config/make/gdml_link_libs.gmk for setting of library configuration variables
+
+2006-11-28 Jeremy McCormick <jeremym@slac.stanford.edu>
+    * CPPGDML: trivial updates for CLHEP 2 compat
+
+2006-11-29 Ben Lloyd <ben.lloyd@cern.ch>
+	* CPPGDML: added support for the 'auxiliary' tag to be used in volumes
+
+2006-11-23 Ben Lloyd <ben.lloyd@cern.ch>
+	* CPPGDML: Physvol volumeref's within volume loops can now be any volume previously defined.
+	
 2006-09-05 Witek Pokorski <Witold.Pokorski@cern.ch>
      *added support for material properties sheets
 

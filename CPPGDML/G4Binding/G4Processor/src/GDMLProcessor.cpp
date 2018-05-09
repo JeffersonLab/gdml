@@ -215,6 +215,16 @@ void GDMLProcessor::AddPhysicalVolume( const char* name, G4VPhysicalVolume* p )
   AddPhysicalVolume( key, p );
 }
 
+void GDMLProcessor::AddAuxiliaryVector(G4LogicalVolume* auxvol, std::vector< std::pair<std::string, std::string> >& auxpairs)
+{
+  fAux[auxvol] = auxpairs;
+}
+
+void GDMLProcessor::AddLoopNum(std::string loopnumber)
+{
+  loopnum = loopnumber;
+}
+
 const G4ThreeVector*    GDMLProcessor::GetPosition( const std::string& name )
 {
   return fPTable[name+file_name_stack.top()];
@@ -312,6 +322,21 @@ const G4VPhysicalVolume* GDMLProcessor::GetWorldVolumeOfParsedFile( const char* 
 {
   std::string key = name;
   return GetWorldVolumeOfParsedFile( key );
+}
+
+GDMLProcessor::AuxiliaryPairs* GDMLProcessor::GetAuxiliaryMap()
+{
+  return &fAux;
+}
+
+const std::vector< std::pair<std::string, std::string> >* GDMLProcessor::GetAuxiliaryVector(G4LogicalVolume* auxvol)
+{
+  return &fAux[auxvol];
+}
+
+std::string GDMLProcessor::GetLoopNum()
+{
+  return loopnum;
 }
 
 GDMLProcessor::GDMLProcessor()

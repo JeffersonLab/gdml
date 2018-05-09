@@ -1,3 +1,21 @@
+14.03.2007 - GDML_2_9_0
+-----------------------
+
+Improved 'loop' machinery. Now, any volume can be used in a loop (and
+not only those created in another loop).
+
+Added installation script facilitating the installation of the package
+for the new users.
+
+Added support for 'auxiliary' volume information and extended
+'g4gogdml' to demonstrate the use of 'auxiliary' tag.
+
+Added 'SimpleExtension' example showing how to extend GDML with
+custom elements. The README of the example discusses in detail the
+procedure one has to follow in order to makes extensions of GDML. 
+
+Removed obsolete PyGDML package.
+
 06.09.2006 - GDML_2_8_0
 -----------------------
 
@@ -21,7 +39,7 @@ Added support for optical surfaces as well as material property sheets
 (see opticalsurfaces.gdml file in g4gogdml example).
 
 Improved handling of modular GDML files. It is now possible to choose
-a specific volume from the included file to be position (with all its
+a specific volume from the included file to be positioned (with all its
 daughter volumes) in the mother volume.
 Added 'namespaces' for module files avoiding clashes of names.
 

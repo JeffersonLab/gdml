@@ -118,7 +118,7 @@ AC_MSG_RESULT([$ac_g4_use_granular])
 if test "${ac_g4_use_granular}" = "yes"; then
 #  echo "G4LIB_USE_GRANULAR := 1" >> $g4config_file
 #  SET_G4LIB_USE_GRANULAR=1
-#  AC_SUBST(SET_G4LIB_USE_GRANULAR)
+  AC_SUBST(ac_g4_use_granular)
 #  G4LIB_USE_GRANULAR = 1
   AC_DEFINE(G4LIB_USE_GRANULAR)
 fi

@@ -11,6 +11,8 @@
 
 #include "G4Processor/GDMLProcessor.h"
 
+#include "G4LogicalVolume.hh"
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -64,7 +66,6 @@ class loopSubscriber : virtual public SAXSubscriber
    if(!(loop_el->is_from_set()))
    {
     loop_el->set_from(initial_loop_var_value);
-    //std::cout<<"loop variable: "<< loop_variable <<" value: "<< initial_loop_var_value <<std::endl;
    }
    loop_el->reset();
    loop_el->next(); //this is done to prevent the first event of the loop to be duplicated!
@@ -88,12 +89,15 @@ class loopSubscriber : virtual public SAXSubscriber
       std::string::size_type loc = vol_name.find_last_of('_');
       vol_name = vol_name.substr(0,loc);
       vol->set_name(vol_name+"_"+str);
+
       VolumeType::solidref* sol_ref = dynamic_cast<VolumeType::solidref*> (vol->get_sol_ref());
       std::string sol_refName = sol_ref->get_ref();
       std::string::size_type loc2 = sol_refName.find_last_of('_');
       sol_refName = sol_refName.substr(0,loc2);
-      sol_ref->set_ref(sol_refName+"_"+str);      
+      sol_ref->set_ref(sol_refName+"_"+str); 
+
       const SAXSubscriberPool::Subscribers* actors = fPool->GetSubscribers( temp_tag );
+
       if( actors != 0 )
       {
        SAXSubscriberPool::Subscribers::const_iterator subscriberRef;
@@ -101,7 +105,10 @@ class loopSubscriber : virtual public SAXSubscriber
        {
         if( (*subscriberRef)->GetSubscriptions()->size() == 1 )
         {
-         (*subscriberRef)->Activate( temp_so );	      	      
+	 GDMLProcessor* temp = GDMLProcessor::GetInstance();
+	 temp->AddLoopNum(str);
+         (*subscriberRef)->Activate( temp_so );	     
+	 temp->AddLoopNum("0");
         }
        } 
        delete actors;
@@ -352,11 +359,13 @@ class loopSubscriber : virtual public SAXSubscriber
        std::string::size_type loc2 = vol_refName.find_last_of('_');
        vol_refName = vol_refName.substr(0,loc2);
        vol_ref->set_ref(vol_refName);
+       //this command above is the one that sets the final physvol name OF THE FIRST ONE
        ph_vol_new->set_vol_ref(vol_ref);
        loop_el->add_to_physvols( ph_vol_new );
       
        first_physvol_done = true;
       }//FIRST PHYSVOL!!!
+
       calc->RegisterVariable( loop_el->get_var(), loop_el->get_current() );
       physvol* ph_vol_pointer = dynamic_cast<physvol*>(temp_so);
       physvol* ph_vol_new = new physvol;
@@ -600,7 +609,23 @@ class loopSubscriber : virtual public SAXSubscriber
       std::string str;
       ss << loop_el->get_current_step();
       ss >> str;
-      vol_ref->set_ref(vol_refName+"_"+str);
+
+      //PHYSVOL NAME USED HERE
+      GDMLProcessor* processor = GDMLProcessor::GetInstance();
+      G4LogicalVolume* plog = 0;      
+      plog = const_cast<G4LogicalVolume*>(processor->GetLogicalVolume(vol_refName+"_"+str));
+      
+      //CHECK TO SEE IF THE VOLUME EXISTS, IF IT DOESNT - USE THE UN-APPENDED VOLUME NAME
+
+      if(plog != 0)
+	{
+	  vol_ref->set_ref(vol_refName+"_"+str);
+	}
+      else
+	{
+	  vol_ref->set_ref(vol_refName);
+	}
+
       ph_vol_new->set_vol_ref(vol_ref);
       loop_el->add_to_physvols( ph_vol_new );
      }

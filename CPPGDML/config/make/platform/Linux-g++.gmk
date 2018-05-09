@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: Linux-g++.gmk,v 1.1 2005/06/15 23:06:49 jmccormi Exp $
+# $Id: Linux-g++.gmk,v 1.3 2007/03/07 22:55:44 mccormi Exp $
 
 # Settings for linux.  Verbatim copy from SLC gmk. --JM
 
@@ -17,6 +17,8 @@
 #                                 -O2 -g1
 
 CXXFLAGS += -D_GNU_SOURCE
+
+#CXXFLAGS += -fPIC
 
 ifdef TARGET_LIB_PREFIX
 PLATFORM_LIB_PREFIX           := lib$(TARGET_LIB_PREFIX)

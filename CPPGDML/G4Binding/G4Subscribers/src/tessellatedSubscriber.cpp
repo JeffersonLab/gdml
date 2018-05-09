@@ -92,7 +92,7 @@ class tessellatedSubscriber : public SAXSubscriber
             ((G4TessellatedSolid*)newobj)->AddFacet(facet);
           }
           ((G4TessellatedSolid*)newobj)->SetSolidClosed(true);
-          ((G4TessellatedSolid*)newobj)->DumpInfo();
+          //          ((G4TessellatedSolid*)newobj)->DumpInfo();
           processor->AddSolid( name, newobj );      
         } catch(...) {
           std::cerr << "GOT INTO BAD_CAST TROUBLE!" << std::endl;

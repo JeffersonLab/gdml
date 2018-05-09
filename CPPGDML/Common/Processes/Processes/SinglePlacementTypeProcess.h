@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // $Id: SinglePlacementTypeProcess.h,v 1.2 2006/07/19 14:57:49 dkruse Exp $
-// GEANT4 tag $Name: GDML_2_8_0 $
+// GEANT4 tag $Name: GDML_2_9_0 $
 #ifndef GDML_PROCESS_SINGLEPLACEMENTTYPEPROCESS_H
 #define GDML_PROCESS_SINGLEPLACEMENTTYPEPROCESS_H 1
 

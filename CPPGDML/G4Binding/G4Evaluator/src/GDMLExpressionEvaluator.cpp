@@ -7,6 +7,9 @@
 #include <cctype>
 #include <cstring>
 
+namespace CLHEP {}
+using namespace CLHEP;
+
 GDMLExpressionEvaluator::GDMLExpressionEvaluator()
 {
   fCalc.clear();

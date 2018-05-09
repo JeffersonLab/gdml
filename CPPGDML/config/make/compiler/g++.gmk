@@ -4,4 +4,5 @@ CXXFLAGS += -pipe -ansi -pedantic -W -Wall \
             -Wwrite-strings -Wpointer-arith \
             -Woverloaded-virtual -ftemplate-depth-256 \
             -fmessage-length=0 \
-            -O2 -g
+            -O2 -g \
+            -fPIC 

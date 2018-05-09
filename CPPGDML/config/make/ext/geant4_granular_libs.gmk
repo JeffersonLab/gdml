@@ -29,6 +29,7 @@ GEANT4_LIBLIST += -lG4geomdivision \
 	-lG4hepnumerics \
 	-lG4volumes \
 	-lG4geometrymng \
+	-lG4geombias \
 	-lG4materials \
 	-lG4partman \
 	-lG4intercoms \

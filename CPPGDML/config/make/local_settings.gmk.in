@@ -1,4 +1,4 @@
-# $Header: /cvs/simu/simu/GDML2/CPPGDML/config/make/local_settings.gmk.in,v 1.5 2006/07/13 07:59:54 witoldp Exp $
+# $Header: /cvs/simu/simu/GDML2/CPPGDML/config/make/local_settings.gmk.in,v 1.8 2007/02/08 15:12:44 blloyd Exp $
 #
 # All the local settings for GDML build
 # defined by Autoconf configure script.
@@ -31,17 +31,6 @@ bindir          := @bindir@
 srcdir          := @srcdir@
 
 #
-# Library Settings
-#
-
-BUILD_SHARED_LIBS := @BUILD_SHARED_LIBS@
-BUILD_STATIC_LIBS := @BUILD_STATIC_LIBS@
-
-BUILDSTEP := @BUILD_STEPWRT@
-
-TARGET_LIB_PREFIX := @TARGET_LIB_PREFIX@
-
-#
 # Platform Settings
 #
 
@@ -53,6 +42,23 @@ PLATFORM_GMK_FILE := $(PROJECT_TOP)/@PLATFORM_GMK_FILE@
 
 # include the platform file
 include $(PLATFORM_GMK_FILE)
+
+#
+# Library Settings
+#
+
+GDML_USE_SINGLE_LIB   := @GDML_USE_SINGLE_LIB@
+GDML_USE_GRANULAR_LIB := @GDML_USE_GRANULAR_LIB@
+GDML_USE_STATIC_LIB   := @GDML_USE_STATIC_LIB@
+GDML_USE_SHARED_LIB   := @GDML_USE_SHARED_LIB@
+
+# Override the configuration setting for shared libs
+# if the platform does not support them.
+ifndef PLATFORM_SUPPORTS_SHARED_LIBS
+GDML_USE_SHARED_LIB := 
+endif
+
+TARGET_LIB_PREFIX := @TARGET_LIB_PREFIX@
 
 #
 # Compiler Settings
@@ -94,5 +100,13 @@ CLHEP_LIBNAME      := @CLHEP_LIBNAME@
 GEANT4_BASE        := @GEANT4_PREFIX@
 GEANT4_INCLUDE     := @GEANT4_INCLUDE@
 GEANT4_LIBDIR      := @GEANT4_LIBDIR@
+
+#
+# STEP writer
+#
+BUILDSTEP := @BUILD_STEPWRT@
+
+#Use flat structure for copied includes
+FLATINCLUDE := @FLAT_INCLUDE@
 
 endif
