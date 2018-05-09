@@ -1,3 +1,12 @@
+26.11.2013 - GDML_3_1_0
+-----------------------
+
+- Updated GDML schema:
+  o Added MultiUnion structure and 'generic' Polycone and Polyhedra;
+  o Added parameterisation for Ellipsoid;
+  o Added parameterisation of Polycone and Polyhedra.
+- Updated documentation accordingly (GDML Guide v.2.3).
+
 27.9.2011 - GDML_3_0_1
 ----------------------
 
