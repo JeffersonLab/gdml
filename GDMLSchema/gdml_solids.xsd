@@ -54,6 +54,34 @@
   </xs:complexType>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
+  <xs:element name="reflectedSolid" substitutionGroup="Solid">
+    <xs:annotation>
+      <xs:documentation>Reflected solid: 
+        sx, sy, sz are scale components (containing reflection),
+        rx, ry, rz are rotation angles around given axes and 
+        dx, dy, dz is the translation.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+	<xs:extension base="SolidType">
+	  <xs:attribute name="solid" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute default="1.0" name="sx" type="ExpressionOrIDREFType"></xs:attribute>
+	  <xs:attribute default="1.0" name="sy" type="ExpressionOrIDREFType"></xs:attribute>
+	  <xs:attribute default="1.0" name="sz" type="ExpressionOrIDREFType"></xs:attribute>
+	  <xs:attribute default="0.0" name="rx" type="ExpressionOrIDREFType"></xs:attribute>
+	  <xs:attribute default="0.0" name="ry" type="ExpressionOrIDREFType"></xs:attribute>
+	  <xs:attribute default="0.0" name="rz" type="ExpressionOrIDREFType"></xs:attribute>
+	  <xs:attribute default="0.0" name="dx" type="ExpressionOrIDREFType"></xs:attribute>
+	  <xs:attribute default="0.0" name="dy" type="ExpressionOrIDREFType"></xs:attribute>
+	  <xs:attribute default="0.0" name="dz" type="ExpressionOrIDREFType"></xs:attribute>
+	</xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
   <!--
       <xs:element name="BooleanSolid" abstract="true">
 	<xs:annotation>
@@ -405,7 +433,7 @@
 	  </xs:sequence>
 	  
 	  <xs:attribute name="startphi" type="ExpressionOrIDREFType" use="required"></xs:attribute>
-	  <xs:attribute name="totalphi" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+	  <xs:attribute name="deltaphi" type="ExpressionOrIDREFType" use="required"></xs:attribute>
 	  <xs:attribute name="numsides" type="ExpressionOrIDREFType" use="required"></xs:attribute>
 	</xs:extension>
       </xs:complexContent>

@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: volumeSubscriber.cpp,v 1.9 2005/11/24 02:12:01 jmccormi Exp $
+// $Id: volumeSubscriber.cpp,v 1.12 2006/02/23 18:01:02 witoldp Exp $
 #include "Saxana/SAXSubscriber.h"
 #include "Saxana/SAXComponentFactory.h"
 
@@ -13,6 +13,7 @@
 #include "Schema/volume.h"
 #include "Schema/physvol.h"
 #include "Schema/replicavol.h"
+#include "Schema/divisionvol.h"
 #include "Schema/replicate_along_axis.h"
 #include "Schema/paramvol.h"
 #include "Schema/parameterised_position_size.h"
@@ -30,6 +31,7 @@
 #include "G4PVPlacement.hh"
 #include "G4PVReplica.hh"
 #include "G4PVParameterised.hh"
+#include "G4PVDivision.hh"
 #include "G4VPVParameterisation.hh"
 
 #include <iostream>
@@ -345,6 +347,95 @@ public:
 
               processor->AddPhysicalVolume( pvname.str(), vreplivol );
             } // end of replicavol
+            else if( seq->content(i).tag == "divisionvol" )
+            {
+              // Analyze each divisionvol's content
+              divisionvol* c = dynamic_cast<divisionvol*>( seq->content(i).object );
+              const ContentSequence* divisionvol_seq = c->get_content();
+              size_t ccount = divisionvol_seq->size();
+
+              ////////////////////// ?????????????????????????????????????
+              SinglePlacementType::volumeref*   vr   = 0;
+              G4LogicalVolume*                  plog = 0;
+              G4AssemblyVolume*                 alog = 0;
+              G4PVDivision* vreplivol = 0;
+              bool doAssemblyInprint                 = false;
+              double width = 0;
+              double offset = 0;
+              EAxis ax = kZAxis;
+              for( size_t cidx = 0; cidx < ccount; cidx++ )
+              {
+                if( divisionvol_seq->content(cidx).tag == "volumeref" )
+                {
+                  // Check & retrieve volume
+                  vr = dynamic_cast<SinglePlacementType::volumeref*>
+                    ( divisionvol_seq->content(cidx).object );
+
+                  plog = const_cast<G4LogicalVolume*>
+                    (processor->GetLogicalVolume( vr->get_ref()));
+                  if( plog == 0 )
+                  {
+                    // Let's check if an assembly request was ment
+                    alog = const_cast<G4AssemblyVolume*>(processor->GetAssemblyVolume( vr->get_ref()));
+
+                    if( alog == 0 )
+                    {
+                      std::cerr << "VOLUME SUBSCRIBER:: physvol volume " << vr->get_ref()
+                                << " not found!" << std::endl;
+                      std::cerr << "Volume " << obj->get_name() << " can't be created!" << std::endl;
+                      std::cerr << "Please, re-order your volumes or add the missing one..."
+                                << std::endl;
+                      G4Exception( "Shutting-down due to error(s) in GDML input..." );
+                    }
+                    doAssemblyInprint = true;
+                  }
+                }
+              }
+              
+              std::string saxis(c->get_axis());
+              if (saxis=="kXAxis")
+              {
+                ax = kXAxis;
+              }
+              else if (saxis=="kYAxis")
+              {
+                ax = kYAxis;
+              }
+              else if (saxis=="kZAxis")
+              {
+                ax = kZAxis;
+              }
+              else if (saxis=="kRho")
+              {
+                ax = kRho;
+              }
+              else if (saxis=="kPhi")
+              {
+                ax = kPhi;
+              }
+              
+              std::stringstream pvname;
+              pvname  << vr->get_ref() << "_" << (i-2);
+
+              std::string  sval = c->get_width();
+              sval += "*";
+              sval += c->get_unit();
+
+              width = calc->Eval( sval );
+              
+              sval = c->get_offset();
+              sval += "*";
+              sval += c->get_unit();
+
+              offset = calc->Eval( sval );
+
+              vreplivol = new G4PVDivision(Util::generateName(vr->get_ref()), plog, vnew, ax,
+                                          (int)calc->Eval(c->get_number().c_str()), 
+                                           width, 
+                                           offset);
+
+              processor->AddPhysicalVolume( pvname.str(), vreplivol );
+            } // end of divisionvol
             else if( seq->content(i).tag == "paramvol" )
             {
               //G4VPVParameterisation* paralg=0;

@@ -21,7 +21,7 @@ public:
     polyhedra* polyhedra_element = new polyhedra;
     
     polyhedra_element->set_startphi( attrs.getValue( "startphi" ) );
-    polyhedra_element->set_totalphi( attrs.getValue( "totalphi" ) );
+    polyhedra_element->set_deltaphi( attrs.getValue( "deltaphi" ) );
     polyhedra_element->set_numsides( attrs.getValue( "numsides" ) );
     
     m_obj = polyhedra_element;

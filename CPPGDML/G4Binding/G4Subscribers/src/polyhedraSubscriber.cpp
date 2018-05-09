@@ -47,9 +47,9 @@ class polyhedraSubscriber : public SAXSubscriber
           sval += "*"+aunit;
           double startphi = calc->Eval( sval );
 
-          sval = obj->get_totalphi();
+          sval = obj->get_deltaphi();
           sval += "*"+aunit;
-          double totalphi = calc->Eval( sval );
+          double deltaphi = calc->Eval( sval );
 
           sval = obj->get_numsides();
           int numsides = (int)calc->Eval( sval );
@@ -71,7 +71,7 @@ class polyhedraSubscriber : public SAXSubscriber
             rmaxs[i] = calc->Eval( zpl->get_rmax() + "*" + lunit );
           }
 
-          G4VSolid* newobj = new G4Polyhedra(Util::generateName(name), startphi, totalphi, numsides,
+          G4VSolid* newobj = new G4Polyhedra(Util::generateName(name), startphi, deltaphi, numsides,
                                              numberofz, zets, rmins, rmaxs);          
           
           GDMLProcessor::GetInstance()->AddSolid( name, newobj );      

@@ -19,8 +19,8 @@ public:
   const std::string& get_startphi() const {
     return m_startphi;
   }
-  const std::string& get_totalphi() const {
-    return m_totalphi;
+  const std::string& get_deltaphi() const {
+    return m_deltaphi;
   }
   const std::string& get_numsides() const {
     return m_numsides;
@@ -29,8 +29,8 @@ public:
   void set_startphi( const std::string& startphi ) {
     m_startphi = startphi;
   }
-  void set_totalphi( const std::string& totalphi ) {
-    m_totalphi = totalphi;
+  void set_deltaphi( const std::string& deltaphi ) {
+    m_deltaphi = deltaphi;
   }
   void set_numsides( const std::string& numsides ) {
     m_numsides = numsides;
@@ -47,7 +47,7 @@ public:
   
 private:
   std::string m_startphi;
-  std::string m_totalphi;
+  std::string m_deltaphi;
   std::string m_numsides;
   
   ContentSequence m_sequence;

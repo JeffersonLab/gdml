@@ -7,8 +7,6 @@ import ROOT
 import ROOTBinding
 import GDMLContentHandler
 
-ROOT.gSystem.Load("libGeom")
-
 gdmlhandler = GDMLContentHandler.GDMLContentHandler(ROOTBinding.ROOTBinding())
 
 filename = 'test.gdml'

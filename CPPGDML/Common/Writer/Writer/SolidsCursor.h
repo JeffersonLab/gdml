@@ -1,9 +1,10 @@
 // -*- C++ -*-
-// $Id: SolidsCursor.h,v 1.1 2005/03/01 09:17:12 witoldp Exp $
+// $Id: SolidsCursor.h,v 1.3 2006/02/09 10:58:25 witoldp Exp $
 #ifndef GDML_WRITER_SOLIDSCURSOR_H
 #define GDML_WRITER_SOLIDSCURSOR_H 1
 
 #include "Writer/Cursor.h"
+#include <vector>
 
 namespace gdml
 {
@@ -234,8 +235,8 @@ namespace gdml
                          double totalphi,
                          int numsides,
                          double* z,
-                         double* rmin,   
-                         double* rmax,   
+                         std::vector<double>& rmin,   
+                         std::vector<double>& rmax,   
                          const std::string& lunit="mm",
                          const std::string& aunit="radian" );
       
@@ -264,6 +265,16 @@ namespace gdml
                      double startphi, double deltaphi,
                      const std::string& lunit="mm",
                      const std::string& aunit="radian" );
+
+      // Add reflected solid
+
+      void addReflected(const std::string& id,
+                        const std::string& solid,
+                        double xx, double yy, double zz,
+                        double rx, double ry, double rz,
+                        double dx, double dy, double dz,
+                        const std::string& lunit="mm",
+                        const std::string& aunit="radian" );
 
     /// Add GDML boolean solid using references only.
     /// The position and rotation references can be empty which results into

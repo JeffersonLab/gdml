@@ -29,6 +29,21 @@
     </xs:sequence>
   </xs:complexType>
   <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  <xs:complexType name="DivisionPlacementType">
+    <xs:annotation>
+      <xs:documentation>Represents a division of the associated logical volume
+        in geometrical hierarchy</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="volumeref" type="ReferenceType"/>
+    </xs:sequence>
+    <xs:attribute name="axis" type="xs:string" use="required"></xs:attribute>
+    <xs:attribute name="number" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+    <xs:attribute name="width" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+    <xs:attribute name="offset" type="ExpressionOrIDREFType" use="required"></xs:attribute>
+    <xs:attribute default="mm" name="unit" type="xs:string"></xs:attribute>
+  </xs:complexType>
+  <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
   <xs:complexType name="VolumeType">
     <xs:annotation>
       <xs:documentation>Represents a top of a geometrical sub-hierarchy not placed in space
@@ -43,6 +58,7 @@
 	  <xs:element name="solidref" type="ReferenceType"/>
 	  <xs:choice minOccurs="0">
 	    <xs:element maxOccurs="unbounded" name="physvol" type="SinglePlacementType"/>
+	    <xs:element maxOccurs="1" minOccurs="1" name="divisionvol" type="DivisionPlacementType"/>
 	    <xs:element maxOccurs="1" minOccurs="1" ref="replicavol"/>
 	    <xs:element maxOccurs="1" minOccurs="1" name="paramvol" type="ParameterisedPlacementType"/>
 	  </xs:choice>
@@ -115,7 +131,7 @@
 	  </xs:complexType>
 	</xs:element>
       </xs:sequence>
-      <xs:attribute fixed="2.1.0" name="version" type="xs:string">
+      <xs:attribute fixed="2.3.0" name="version" type="xs:string">
 	<xs:annotation>
 	  <xs:documentation>The GDML Schema version consists of 3 digits X.Y.Z
             where these mean:

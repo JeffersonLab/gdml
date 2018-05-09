@@ -1,3 +1,15 @@
+09.03.2005 - GDMLSchema_2_3_0
+_____________________________
+
+- added support for reflections and divisions
+
+
+15.12.2005 - GDMLSchema_2_2_0
+_____________________________
+
+- improved support for replicas
+
+
 22.02.2005 - GDMLSchema_2_1_0
 ______________________________
 

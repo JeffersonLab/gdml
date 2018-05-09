@@ -1,8 +1,8 @@
-if !(${?GDMLBASE}) then
-    setenv GDMLBASE ${PWD}/../../../
+if !(${?GDMLROOT}) then
+    setenv GDMLROOT ${PWD}/../../../
 endif
 
-source $GDMLBASE/PyGDML/ROOTBinding/rootsetup.csh
-source $GDMLBASE/PyGDML/G4Binding/g4setup.csh
+source $GDMLROOT/PyGDML/ROOTBinding/rootsetup.csh
+source $GDMLROOT/PyGDML/G4Binding/g4setup.csh
 
 setenv PYTHONPATH ${PYTHONPATH}:${PWD}/${PLATFORM}

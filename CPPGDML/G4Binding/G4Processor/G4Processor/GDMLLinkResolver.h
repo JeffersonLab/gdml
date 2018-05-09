@@ -22,7 +22,7 @@
 //
 //
 // $Id: GDMLLinkResolver.h,v 1.1 2005/03/02 10:50:37 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_4_0 $
+// GEANT4 tag $Name: GDML_2_5_0 $
 //
 // 
 // --------------------------------------------------------------

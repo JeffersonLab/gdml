@@ -8,10 +8,10 @@ setenv GDML_BASE ${PWD}/../../build/
 setenv PLATFORM slc3_ia32_gcc323
 
 # CLHEP location
-setenv CLHEP_BASE /afs/cern.ch/sw/lcg/external/clhep/1.9.2.1/slc3_ia32_gcc323
+setenv CLHEP_BASE /afs/cern.ch/sw/lcg/external/clhep/1.9.2.2/slc3_ia32_gcc323
 
 # G4 installation on AFS
-setenv G4VERSION 7.1.p01
+setenv G4VERSION 8.0
 setenv G4BASE /afs/cern.ch/sw/lcg/external/geant4/${G4VERSION}
 setenv G4INSTALL ${G4BASE}/share
 setenv G4INCLUDE ${G4INSTALL}/include

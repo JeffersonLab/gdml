@@ -1,6 +1,6 @@
 #
-if !(${?GDMLBASE}) then
-    setenv GDMLBASE ${PWD}/../../
+if !(${?GDMLROOT}) then
+    setenv GDMLROOT ${PWD}/../../
 endif
 #
 
@@ -15,7 +15,7 @@ if !(${?PLATFORM}) then
 endif
 #
 
-setenv PyGDMLBASE ${GDMLBASE}/PyGDML 
+setenv PyGDMLBASE ${GDMLROOT}/PyGDML 
 
 setenv ROOTSYS /afs/cern.ch/sw/lcg/external/root/4.03.04a/${PLATFORM}/root
 

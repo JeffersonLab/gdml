@@ -8,4 +8,5 @@ GEANT4_LIBLIST += -lG4FR \
 	-lG4Tree \
 	-lG4vis_management \
 	-lG4modeling \
-	-lz
+	-lz \
+	-lG4OpenGL

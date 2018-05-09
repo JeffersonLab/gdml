@@ -1,40 +1,8 @@
-//
-// ********************************************************************
-// * DISCLAIMER                                                       *
-// *                                                                  *
-// * The following disclaimer summarizes all the specific disclaimers *
-// * of contributors to this software. The specific disclaimers,which *
-// * govern, are listed with their locations in:                      *
-// *   http://cern.ch/geant4/license                                  *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.                                                             *
-// *                                                                  *
-// * This  code  implementation is the  intellectual property  of the *
-// * GEANT4 collaboration.                                            *
-// * By copying,  distributing  or modifying the Program (or any work *
-// * based  on  the Program)  you indicate  your  acceptance of  this *
-// * statement, and all its terms.                                    *
-// ********************************************************************
-//
-//
-// $Id: ellipsoid.h,v 1.1 2005/07/12 08:26:08 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_4_0 $
-//
-// 
-// --------------------------------------------------------------
-// Comments
 //                G.GUERRIERI - 26.06.2005
-// --------------------------------------------------------------
-//
 #ifndef ELLIPSOID_H
 #define ELLISPOID_H 1
 
 #include "Saxana/SAXObject.h"
-
 #include "Schema/SolidType.h"
 
 class ellipsoid : public SAXObject, public SolidType
@@ -43,6 +11,7 @@ class ellipsoid : public SAXObject, public SolidType
     ellipsoid() {
     }
     virtual ~ellipsoid() {
+      std::cout << "destructor of ellipsoid" << std::endl;
     }
     virtual SAXObject::Type type() {
       return SAXObject::element;

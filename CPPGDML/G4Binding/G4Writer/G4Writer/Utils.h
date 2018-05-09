@@ -1,4 +1,4 @@
-// $Id: Utils.h,v 1.1 2005/03/02 10:50:37 witoldp Exp $
+// $Id: Utils.h,v 1.2 2006/01/27 16:20:10 witoldp Exp $
 #ifndef WRITERG4_UTILS_H 
 #define WRITERG4_UTILS_H 1
 
@@ -115,7 +115,7 @@ public:
   std::string name(const G4Element* ptr, std::string oname="")
   {
     elename = ptr->GetName();
-    //    elename = filter(elename);
+    elename = filter(elename);
     std::ostringstream os;
     os << ptr;
     std::string ssn = os.str();
@@ -151,7 +151,7 @@ public:
   std::string name(const G4Material* ptr, std::string oname="")
   {
     matname = ptr->GetName();
-    //    matname = filter(matname);
+    matname = filter(matname);
     std::ostringstream os;
     os << ptr;
     std::string ssn = os.str();
@@ -187,7 +187,7 @@ public:
   std::string name(const G4VSolid* ptr)
   {
     solname = ptr->GetName();
-    //    solname = filter(solname);
+    solname = filter(solname);
     std::ostringstream os;
     os << ptr;
     std::string ssn = os.str();
@@ -228,7 +228,7 @@ public:
     //    std::string scpnb(cpnb.str());
 
     pvolname = ptr->GetName();
-    //   pvolname = filter(pvolname);
+    pvolname = filter(pvolname);
     std::ostringstream os;
     os << ptr;
     std::string ssn = os.str();
@@ -264,7 +264,7 @@ public:
   std::string name(const G4LogicalVolume* ptr, std::string oname="")
   {
     lvolname = ptr->GetName();
-    //   pvolname = filter(pvolname);
+    pvolname = filter(pvolname);
     std::ostringstream os;
     os << ptr;
     std::string ssn = os.str();

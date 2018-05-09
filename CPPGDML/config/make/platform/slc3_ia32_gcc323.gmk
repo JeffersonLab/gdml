@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: slc3_ia32_gcc323.gmk,v 1.1 2005/06/06 16:55:47 witoldp Exp $
+# $Id: slc3_ia32_gcc323.gmk,v 1.2 2006/02/09 10:58:26 witoldp Exp $
 
 # Settings for slc3_ia32_gcc323.  Verbatim copy from SLC gmk. --WP
 
@@ -16,7 +16,7 @@
 #                                 -pthread -fmessage-length=0 \
 #                                 -O2 -g1
 
-CXXFLAGS += -D_GNU_SOURCE
+CXXFLAGS += -D_GNU_SOURCE 
 
 ifdef TARGET_LIB_PREFIX
 PLATFORM_LIB_PREFIX           := lib$(TARGET_LIB_PREFIX)

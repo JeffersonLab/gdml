@@ -14,14 +14,14 @@
 # Create a scene handler for a specific graphics system
 # (Edit the next line(s) to choose another graphic system)
 #
-#/vis/open OGLIX
+/vis/open OGLIXm
 #
-/vis/open DAWNFILE
+#/vis/open DAWNFILE
 #
 # draw scene
 #
-/vis/viewer/set/viewpointThetaPhi 90 180 deg
-/vis/viewer/zoom 1.4
+/vis/viewer/set/viewpointThetaPhi 45 45 deg
+/vis/viewer/zoom 1.0
 /vis/viewer/flush
 #
 # for drawing the tracks

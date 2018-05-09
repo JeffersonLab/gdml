@@ -1,34 +1,4 @@
-//
-// ********************************************************************
-// * DISCLAIMER                                                       *
-// *                                                                  *
-// * The following disclaimer summarizes all the specific disclaimers *
-// * of contributors to this software. The specific disclaimers,which *
-// * govern, are listed with their locations in:                      *
-// *   http://cern.ch/geant4/license                                  *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.                                                             *
-// *                                                                  *
-// * This  code  implementation is the  intellectual property  of the *
-// * GEANT4 collaboration.                                            *
-// * By copying,  distributing  or modifying the Program (or any work *
-// * based  on  the Program)  you indicate  your  acceptance of  this *
-// * statement, and all its terms.                                    *
-// ********************************************************************
-//
-//
-// $Id: ExN02PrimaryGeneratorAction.cpp,v 1.1 2005/03/02 17:59:25 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_4_0 $
-//
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 #include "ExN02PrimaryGeneratorAction.hh"
-#include "ExN02DetectorConstruction.hh"
 
 #include "G4Event.hh"
 #include "G4ParticleGun.hh"
@@ -38,9 +8,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-ExN02PrimaryGeneratorAction::ExN02PrimaryGeneratorAction(
-                                               ExN02DetectorConstruction* myDC)
-:myDetector(myDC)
+ExN02PrimaryGeneratorAction::ExN02PrimaryGeneratorAction()
 {
   G4int n_particle = 1;
   particleGun = new G4ParticleGun(n_particle);
@@ -66,7 +34,7 @@ ExN02PrimaryGeneratorAction::~ExN02PrimaryGeneratorAction()
 
 void ExN02PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 { 
-  G4double position = -0.5*(myDetector->GetWorldFullLength());
+  G4double position = -500;
   particleGun->SetParticlePosition(G4ThreeVector(0.*cm,0.*cm,position));
   
   particleGun->GeneratePrimaryVertex(anEvent);

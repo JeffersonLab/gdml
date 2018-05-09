@@ -21,8 +21,8 @@
 // ********************************************************************
 //
 //
-// $Id: gogdmlPrimaryGeneratorAction.cpp,v 1.2 2005/03/10 18:18:00 witoldp Exp $
-// GEANT4 tag $Name: GDML_2_4_0 $
+// $Id: gogdmlPrimaryGeneratorAction.cpp,v 1.3 2006/01/27 16:20:10 witoldp Exp $
+// GEANT4 tag $Name: GDML_2_5_0 $
 //
 
 #include "gogdmlPrimaryGeneratorAction.h"
@@ -55,7 +55,7 @@ void gogdmlPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   switch(i)
   {
     case 0:
-      UI->ApplyCommand("/gun/direction 0.0 0.0 0.1");
+      UI->ApplyCommand("/gun/direction 0.3 0.3 0.3");
       break;
     case 1:
       UI->ApplyCommand("/gun/direction 1.0 0.1 0.0");

@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 
-#include "ExN02DetectorConstruction.hh"
+#include "DetectorConstruction.hh"
 #include "ExN02PhysicsList.hh"
 #include "ExN02PrimaryGeneratorAction.hh"
 #include "ExN02RunAction.hh"
@@ -20,7 +20,11 @@
 #include "G4Sphere.hh"
 
 #ifdef G4VIS_USE
-#include "ExN02VisManager.hh"
+
+#define G4VIS_USE_OPENGLX 
+#define G4VIS_USE_OPENGLXM
+#include "G4VisExecutive.hh"
+
 #endif
 
 //g4 writer
@@ -38,19 +42,17 @@ int main(int argc,char** argv) {
 
   // UserInitialization classes (mandatory)
 
-  runManager->SetUserInitialization(new ExN02DetectorConstruction);
-  //  runManager->SetUserInitialization(new ExN04DetectorConstruction);
+  runManager->SetUserInitialization(new DetectorConstruction);
 
   runManager->SetUserInitialization(new ExN02PhysicsList);
   
 #ifdef G4VIS_USE
   // Visualization, if you choose to have it!
-  G4VisManager* visManager = new ExN02VisManager;
+  G4VisManager* visManager = new G4VisExecutive;
   visManager->Initialize();
 #endif
    
   // UserAction classes
-  //  runManager->SetUserAction(new ExN02PrimaryGeneratorAction(ExN02detector));
   runManager->SetUserAction(new ExN02RunAction);  
   runManager->SetUserAction(new ExN02EventAction);
   runManager->SetUserAction(new ExN02SteppingAction);

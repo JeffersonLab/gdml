@@ -20,10 +20,10 @@ fi
 # run configure with options
 ./configure --with-platform=${PLATFORM} \
 	    --with-xercesc=${LCGEXT}/XercesC/2.3.0/${PLATFORM} \
-            --with-clhep=${LCGEXT}/clhep/1.9.2.1/${PLATFORM} \
-            --with-geant4=${LCGEXT}/geant4/7.1/${PLATFORM} \
-            --with-geant4-include=${LCGEXT}/geant4/7.1/share/include \
-            --with-geant4-libdir=${LCGEXT}/geant4/7.1/${PLATFORM}/lib \
+            --with-clhep=${LCGEXT}/clhep/1.9.2.2/${PLATFORM} \
+            --with-geant4=${LCGEXT}/geant4/8.0.p01/${PLATFORM} \
+            --with-geant4-include=${LCGEXT}/geant4/8.0.p01/share/include \
+            --with-geant4-libdir=${LCGEXT}/geant4/8.0.p01/${PLATFORM}/lib \
             --enable-shared-libs=yes \
 	    --enable-static-libs=no \
             --enable-geant4-vis=no \

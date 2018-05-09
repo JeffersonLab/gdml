@@ -1,5 +1,5 @@
-// $Id: SAXProcessor.cpp,v 1.2 2005/04/22 17:50:27 jmccormi Exp $
-// GEANT4 tag $Name: GDML_2_4_0 $
+// $Id: SAXProcessor.cpp,v 1.3 2006/02/09 10:58:25 witoldp Exp $
+// GEANT4 tag $Name: GDML_2_5_0 $
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 
@@ -20,8 +20,8 @@
 #include <iostream>
 
 SAXProcessor::SAXProcessor()
-: fMap( 0 ), fPool( 0 ), fStack( 0 ), fNotifyStack( 0 ),
-  fConfig( 0 ), fCurrentEvent( 0 ), fIgnoring( false )
+  : fMap( 0 ), fPool( 0 ), fStack( 0 ), fNotifyStack( 0 ),
+    fConfig( 0 ), fCurrentEvent( 0 ), fIgnoring( false )
 {
   fMap         = new StateProcessMap();
   fPool        = new SAXSubscriberPool();
@@ -134,7 +134,7 @@ StatusCode SAXProcessor::Configure( ProcessingConfigurator* config )
 StatusCode SAXProcessor::Run()
 {
   StatusCode sc;
-//   SAXEventGun saxgun( this );
+  //   SAXEventGun saxgun( this );
   SAX2EventGun saxgun( this );
   
   saxgun.Configure( fConfig );
@@ -177,7 +177,7 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
     const SAXEventStartElement* ev = dynamic_cast<const SAXEventStartElement*>(event);
 
     std::string tagname = ev->Name();
-    //std::cout << "SXP::PE:: Got start element event for tag: " << tagname << std::endl;
+    //    std::cout << "SXP::PE:: Got start element event for tag: " << tagname << std::endl;
         
     if( fMap->Check( ev->Name() ) )
     {
@@ -196,9 +196,9 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
       }
       else
       {
-	StateStack::State notifystate = top;
-	fNotifyStack->Push( notifystate );
-	fStack->Push( state );
+        StateStack::State notifystate = top;
+        fNotifyStack->Push( notifystate );
+        fStack->Push( state );
       }
 
       process->StartElement( tagname, ev->Attributes() );
@@ -213,10 +213,10 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
     const SAXEventEndElement* ev = dynamic_cast<const SAXEventEndElement*>(event);
 
     std::string name = ev->Name();
-    //std::cout << "SXP::PE:: Got end element event for tag: " << name << std::endl;
+    //  std::cout << "SXP::PE:: Got end element event for tag: " << name << std::endl;
 
     if( !fStack->Empty() ) {
-        if( ev->Name() == top->GetProcess()->State() ) {
+      if( ev->Name() == top->GetProcess()->State() ) {
         // Activate state process
         SAXStateProcess* process = top->GetProcess();
         process->EndElement( ev->Name() );
@@ -224,12 +224,12 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
         // Grab a new object from the stack and play with it a bit
         objectRef = top->GetObjectRef();
 
-	//std::cout << "*objectRef: " << *objectRef << std::endl;
+        //        std::cout << "*objectRef: " << *objectRef << std::endl;
 
         // Locate the subcriber(s) and send them the created object
         const SAXSubscriberPool::Subscribers* actors = fPool->GetSubscribers( ev->Name() );
 
-	bool didSub = false;
+        bool didSub = false;
 
         if( actors != 0 ) {
           // There are some guys waiting out there for a gift
@@ -238,13 +238,13 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
           for( subscriberRef = actors->begin(); subscriberRef != actors->end(); subscriberRef++ ) {
             // Now we call only subscribers processing only this single element
             if( (*subscriberRef)->GetSubscriptions()->size() == 1 ) {
-              //std::cout << "SXP::PE:: Executing subscriber(s) for element: " << ev->Name() << std::endl;
+              //              std::cout << "SXP::PE:: Executing subscriber(s) for element: " << ev->Name() << std::endl;              
               (*subscriberRef)->Activate( *objectRef );	      	      
-	      didSub = true;
+              didSub = true;
             }
-          }
-
+          } 
           delete actors;
+
         }
 
         if( !fNotifyStack->Empty() ) {
@@ -264,10 +264,10 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
 
             for( subscriberRef = actors->begin(); subscriberRef != actors->end(); subscriberRef++ ) {
               if( (*subscriberRef)->IsSubscribedTo( ev->Name() ) ) {
-                //std::cout << "SXP::PE:: Executing PARENT subscriber(s) for: "
-                //         << ParentTag << " for element: " << ev->Name() << std::endl;
+                //                std::cout << "SXP::PE:: Executing PARENT subscriber(s) for: "
+                //                         << ParentTag << " for element: " << ev->Name() << std::endl;
                 (*subscriberRef)->Activate( *objectRef );
-		didSub = true;
+                didSub = true;
               }
             }
             
@@ -278,20 +278,20 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
           fNotifyStack->Pop();
         }
 
-	// delete the object because all subscribers should have been called 
-	if ( didSub ) {
-	  //std::cout << "deleting object <" << ev->Name() << "> = *objectRef: " << *objectRef << std::endl;	
-	  delete *objectRef;
-	}
+        // delete the object because all subscribers should have been called 
+        if ( didSub ) {
+          //	  std::cout << "deleting object <" << ev->Name() << "> = *objectRef: " << *objectRef << std::endl;	
+          delete *objectRef;
+        }
 
-	// delete the object reference
+        // delete the object reference
         if( objectRef != 0 ) {
-	  //std::cout << "deleting objectRef: " << objectRef << std::endl;
+          //	  std::cout << "deleting objectRef: " << objectRef << std::endl;
           delete objectRef;
         }
 
         fStack->Pop();
-        //std::cout << "--------------------------------------------------------------" << std::endl;
+        //        std::cout << "--------------------------------------------------------------" << std::endl;
       }
     }
   }
@@ -299,31 +299,31 @@ void SAXProcessor::ProcessEvent( const SAXEvent* const event )
   {
     switch( event->Type() )
     {
-      case SAXEvent::eCharacters :
+    case SAXEvent::eCharacters :
       {
         if( !fIgnoring ) {
           const SAXEventCharacters* ev = dynamic_cast<const SAXEventCharacters*>(event);
-          //std::cout << "SXP::PE:: Got characters event >>" << ev->Data() << "<<" << std::endl;
+          //          std::cout << "SXP::PE:: Got characters event >>" << ev->Data() << "<<" << std::endl;
           if( !fStack->Empty() ) {
             top->GetProcess()->Characters( ev->Data() );
           }
         }
       }
-                                    break;
-      case SAXEvent::ePI         :
+    break;
+    case SAXEvent::ePI         :
       {
       }
-                                    break;
-      case SAXEvent::eWarning    :
-      case SAXEvent::eError      :
-      case SAXEvent::eFatalError :
+    break;
+    case SAXEvent::eWarning    :
+    case SAXEvent::eError      :
+    case SAXEvent::eFatalError :
       {
         const SAXErrorEventBase* ev = dynamic_cast<const SAXErrorEventBase*>(event);
         std::cerr << ev->Message() << std::endl;
       }
-                                    break;
-      default                    :
-                                    break;
+    break;
+    default                    :
+      break;
     };
   }
 }

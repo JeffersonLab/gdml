@@ -408,11 +408,11 @@ namespace gdml
     void SolidsCursor::addPolyhedra( const std::string& id,
                                      int numberofz,
                                      double startphi, 
-                                     double totalphi,
+                                     double deltaphi,
                                      int numsides,
                                      double* z,
-                                     double* rmin,
-				     double* rmax,
+                                     std::vector<double>& rmin,
+                                     std::vector<double>& rmax, 
                                      const std::string& lunit,
                                      const std::string& aunit )
     {
@@ -421,8 +421,8 @@ namespace gdml
 
       os << startphi;
       std::string sstartphi = os.str(); os.str("");
-      os << totalphi;      
-      std::string stotalphi = os.str(); os.str("");
+      os << deltaphi;      
+      std::string sdeltaphi = os.str(); os.str("");
       os << numsides;      
       std::string snumsides = os.str(); os.str("");
  
@@ -441,7 +441,7 @@ namespace gdml
 
       s.addAttribute( "name"    , id        );
       s.addAttribute( "startphi", sstartphi );
-      s.addAttribute( "totalphi", stotalphi );
+      s.addAttribute( "deltaphi", sdeltaphi );
       s.addAttribute( "numsides", snumsides );
       s.addAttribute( "lunit"   , lunit     );
       s.addAttribute( "aunit"   , aunit     );
@@ -642,8 +642,65 @@ namespace gdml
       m_cursor.appendChild( s );
       }
     }
-    
 
+
+
+    void SolidsCursor::addReflected(const std::string& id,
+                                     const std::string& solid,
+                                     double xx, double yy, double zz,
+                                     double rx, double ry, double rz,
+                                    double dx, double dy, double dz,
+                                    const std::string& lunit,
+                                    const std::string& aunit )
+
+    {
+      
+      std::ostringstream os;
+      os.precision(100);
+      
+      os << xx;
+      std::string sxx = os.str(); os.str("");
+      os << yy;
+      std::string syy = os.str(); os.str("");
+      os << zz;
+      std::string szz = os.str(); os.str("");
+      os << rx;
+      std::string srx = os.str(); os.str("");
+      os << ry;
+      std::string sry = os.str(); os.str("");
+      os << rz;
+      std::string srz = os.str(); os.str("");
+      os << dx;      
+      std::string sdx = os.str(); os.str("");
+      os << dy;      
+      std::string sdy = os.str(); os.str("");
+      os << dz;      
+      std::string sdz = os.str(); os.str("");
+      
+      if( ok( id ) )
+      {
+        add( id );
+        Element s( "reflectedSolid" );
+        
+        s.addAttribute( "name", id);
+        s.addAttribute( "solid", solid);
+        s.addAttribute( "sx", sxx);
+        s.addAttribute( "sy", syy);
+        s.addAttribute( "sz", szz);
+        s.addAttribute( "rx", srx);
+        s.addAttribute( "ry", sry);
+        s.addAttribute( "rz", srz);
+        s.addAttribute( "dx", sdx);
+        s.addAttribute( "dy", sdy);
+        s.addAttribute( "dz", sdz);
+        s.addAttribute( "lunit" , lunit   );
+        s.addAttribute( "aunit" , aunit   );
+        
+        m_cursor.appendChild( s );
+      }      
+    }
+    
+    
     void SolidsCursor::addBoolean( const std::string& id,
                                    const std::string& typ,
                                    const std::string& first,

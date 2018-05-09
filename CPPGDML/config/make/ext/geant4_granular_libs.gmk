@@ -1,7 +1,6 @@
 GEANT4_LIBLIST += -lG4persistency \
 	-lG4gflash \
 	-lG4readout \
-	-lG4trdmodels \
 	-lG4geomdivision \
 	-lG4brep \
 	-lG4geomBoolean \

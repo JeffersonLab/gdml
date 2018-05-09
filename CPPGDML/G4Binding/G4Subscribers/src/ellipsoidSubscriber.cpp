@@ -12,7 +12,7 @@
 #include "Schema/ellipsoid.h"
 
 #include "G4VSolid.hh"
-//#include "G4Ellipsoid.hh"
+#include "G4Ellipsoid.hh"
 
 #include <iostream>
 
@@ -23,7 +23,7 @@ class ellipsoidSubscriber : public SAXSubscriber
       return this;
     }
 
-  public:
+public:
     ellipsoidSubscriber() {
       Subscribe( "ellipsoid" );
     }
@@ -33,19 +33,19 @@ class ellipsoidSubscriber : public SAXSubscriber
     // The activation callback invoked by SAXG4Processor whenever it has
     // a new object created from XML and a corresponding subcriber exists
     virtual void Activate( const SAXObject* object ) {
-      //std::cout << "ELLIPSOID SUBSCRIBER:: ";
+      //      std::cout << "ELLIPSOID SUBSCRIBER:: ";
       if( object != 0 ) {
         try {
           const ellipsoid* obj = dynamic_cast<const ellipsoid*>( object );    
         
-          //std::cout << "GOT ELLIPSOID " << obj->get_name() << std::endl;
+          //  std::cout << "GOT ELLIPSOID " << obj->get_name() << std::endl;
       
           GDMLExpressionEvaluator* calc = GDMLProcessor::GetInstance()->GetEvaluator();
       
           std::string lunit = obj->get_lunit();
           std::string aunit = obj->get_aunit();
           const std::string& name = obj->get_name();
-        
+          
           std::string sval = obj->get_ax();
           sval += "*"+lunit;
           double ax = calc->Eval( sval );
@@ -62,12 +62,9 @@ class ellipsoidSubscriber : public SAXSubscriber
           sval += "*"+aunit;
           double zcut2 = calc->Eval( sval );
         
-
-          std::cerr << "G4Ellipsoid not available yet!" << std::endl;
-
-          //          G4VSolid* newobj = new G4Ellipsoid( name, ax, by, cz,
-          //                                              zcut1, zcut2);
-          //          GDMLProcessor::GetInstance()->AddSolid( name, newobj );      
+          G4VSolid* newobj = new G4Ellipsoid( name, ax, by, cz,
+                                              zcut1, zcut2);
+          GDMLProcessor::GetInstance()->AddSolid( name, newobj );      
 
         } catch(...) {
           std::cerr << "GOT INTO BAD_CAST TROUBLE!" << std::endl;
@@ -75,7 +72,6 @@ class ellipsoidSubscriber : public SAXSubscriber
       } else {
         std::cerr << "GOT ZERO DATA POINTER!" << std::endl;
       }
-      delete object;
     }
 };
 

@@ -1,3 +1,6 @@
+2005-03-09 Witek Pokorski <Witold.Pokorski@cern.ch>
+	* CPPGDML: added support for division and reflections, improved support for replicas, added G4ellipsoid
+
 2005-11-04 Witek Pokorski <Witold.Pokorski@cern.ch>
         * CPPGDML/Common/Writer: major bug corrected... we forgot to setprecision for the 
 	ostringstreams that we were using to convert doubles into std::strings... All the GDML files

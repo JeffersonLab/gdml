@@ -1,6 +1,6 @@
 #
-if !(${?GDMLBASE}) then
-    setenv GDMLBASE ${PWD}/../../
+if !(${?GDMLROOT}) then
+    setenv GDMLROOT ${PWD}/../../
 endif
 #
 if !(${?PLATFORM}) then
@@ -20,7 +20,7 @@ else
     setenv DEBUG
 endif
 
-setenv PyGDMLBASE ${GDMLBASE}/PyGDML 
+setenv PyGDMLBASE ${GDMLROOT}/PyGDML 
 
 # seal variables
 if !(${?SEALVER}) then

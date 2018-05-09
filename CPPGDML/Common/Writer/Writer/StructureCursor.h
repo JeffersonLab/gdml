@@ -1,5 +1,5 @@
 // -*- C++ -*-
-// $Id: StructureCursor.h,v 1.2 2005/11/03 11:22:34 witoldp Exp $
+// $Id: StructureCursor.h,v 1.4 2006/02/09 10:58:25 witoldp Exp $
 #ifndef GDML_WRITER_STRUCTURECURSOR_H
 #define GDML_WRITER_STRUCTURECURSOR_H 1
 
@@ -145,7 +145,22 @@ namespace gdml
                           const std::string& volumeRef,
                           int ncopies, int axis, 
                           double width, double offset);
-      
+
+      //Add a division with name volumeRef into the motherVolume Element.
+      /// The mother volume can be obtained by calling findVolume() method.
+      /// @param motherVolume    The mother volume Element reference
+      /// @param volumeRef       The IDREF of the volume to become a child volume
+      /// @param ncopies         The number of copies
+      /// @param axis            Axis of replication (x:1, y:2, z:3)
+      /// @param width           Width of slices
+      /// @param offset          Offset of slices
+      /// @throws std::logic_error Exception if volumeRef does not exist in the document
+      Element& addDivision(const std::string& motherVolume,
+                           const std::string& volumeRef,
+                           int ncopies, int axis, 
+                           double width, double offset,
+                           const std::string& unit);
+
       /// Add a parameterised with name volumeRef into the motherVolume Element.
       /// The mother volume can be obtained by calling findVolume() method.
       /// @param motherVolume    The mother volume Element reference

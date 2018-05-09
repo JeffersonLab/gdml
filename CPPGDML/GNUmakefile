@@ -1,5 +1,5 @@
 # -*-Makefile-*-
-# $Id: GNUmakefile,v 1.19 2005/11/11 10:57:31 witoldp Exp $
+# $Id: GNUmakefile,v 1.21 2006/02/23 18:27:23 witoldp Exp $
 #
 # /\/\/\/\ C++ GDML Build System /\/\/\/\
 #

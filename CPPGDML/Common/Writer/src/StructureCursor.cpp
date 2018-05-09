@@ -332,6 +332,67 @@ namespace gdml
       return *(mvol.appendChild(replica));
     }
     
+    Element& StructureCursor::addDivision(const std::string& motherVolume,
+                                          const std::string& volumeRef,
+                                          int ncopies, int axis,
+                                          double width, double offset,
+                                          const std::string& unit)
+    {
+      Element& mvol = findVolume( motherVolume );      
+      
+      Element division("divisionvol");
+      std::stringstream os; 
+      os.precision(100);
+
+      os << ncopies;     
+      std::string sncopies = os.str(); 
+      os.str( "" );
+
+      os << width;     
+      std::string swidth = os.str(); 
+      os.str( "" );
+
+      os << offset;     
+      std::string soffset = os.str(); 
+      
+      division.addAttribute("number", sncopies);
+      division.addAttribute("width", swidth);
+      division.addAttribute("offset", soffset);
+
+      std::string saxis;
+
+      if(axis==1)
+      {
+        saxis = "kXAxis";
+      }
+      else if (axis==2)
+      {
+        saxis = "kYAxis";
+      }
+      else if (axis==3)
+      {
+        saxis = "kZAxis";
+      } 
+      else if (axis==4)
+      {
+        saxis = "kRho";
+      } 
+      else if (axis==5)
+      {
+        saxis = "kPhi";
+      } 
+
+      division.addAttribute("axis", saxis);      
+
+      division.addAttribute("unit", unit);      
+
+      Element vref("volumeref");
+      vref.addAttribute("ref", volumeRef);  
+      division.appendChild(vref);
+            
+      return *(mvol.appendChild(division));
+    }
+    
     Element& StructureCursor::addParameterised(const std::string& motherVolume,
                                                const std::string& volumeRef,
                                                int ncopies)

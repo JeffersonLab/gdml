@@ -29,7 +29,7 @@ G4VPhysicalVolume* gogdmlDetectorConstruction::Construct()
   
   fWorld =  (G4VPhysicalVolume *)GDMLProcessor::GetInstance()->GetWorldVolume();
 
-  fWorld->GetLogicalVolume()->SetVisAttributes (G4VisAttributes::Invisible);
+//  fWorld->GetLogicalVolume()->SetVisAttributes (G4VisAttributes::Invisible);
 
   
   if( fWorld == 0 ) {

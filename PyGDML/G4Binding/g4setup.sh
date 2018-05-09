@@ -1,6 +1,6 @@
 #
-if [ ! $GDMLBASE ]; then
-    export GDMLBASE=$PWD/../../
+if [ ! $GDMLROOT ]; then
+    export GDMLROOT=$PWD/../../
 fi
 #
 if [ ! $PLATFORM ]; then
@@ -20,7 +20,7 @@ else
     export DEBUG=
 fi
 
-export PyGDMLBASE=$GDMLBASE/PyGDML 
+export PyGDMLBASE=$GDMLROOT/PyGDML 
 
 # seal variables
 if [ ! $SEALVER ]; then

@@ -1,8 +1,8 @@
-// $Id: G4GDMLWriter.cpp,v 1.5 2005/11/03 11:22:34 witoldp Exp $
+// $Id: G4GDMLWriter.cpp,v 1.8 2006/02/09 10:58:26 witoldp Exp $
 // Include files
 #include <iostream>
 #include <sstream>
-
+#include <vector>
 // G4
 #include "G4LogicalVolume.hh"
 #include "G4VPVParameterisation.hh"
@@ -12,6 +12,8 @@
 #include "G4MaterialTable.hh"
 #include "G4VSolid.hh"
 #include "G4SolidStore.hh"
+#include "G4PVDivision.hh"
+#include "G4PVParameterised.hh"
 
 #include "G4Cons.hh"
 #include "G4Box.hh"
@@ -26,6 +28,8 @@
 #include "G4Orb.hh"
 #include "G4Polyhedra.hh"
 #include "G4EllipticalTube.hh"
+
+#include "G4ReflectedSolid.hh"
 
 #include "G4BooleanSolid.hh"
 #include "G4SubtractionSolid.hh"
@@ -273,16 +277,49 @@ void G4GDMLWriter::DumpSolids()
     }
     else if( const G4Polyhedra* polyh = dynamic_cast<const G4Polyhedra*>(tempsol) )
     {
+      
+      std::vector<double> rIn;
+      std::vector<double> rOut;
+      rIn.resize(polyh->GetOriginalParameters()->Num_z_planes);
+      rOut.resize(polyh->GetOriginalParameters()->Num_z_planes);
+
+      double convertRad = std::cos(0.5*polyh->GetOriginalParameters()->Opening_angle/
+                                   polyh->GetOriginalParameters()->numSide);
+
+      for (int i=0;i<polyh->GetOriginalParameters()->Num_z_planes;i++)
+      {
+        rIn[i] = (polyh->GetOriginalParameters()->Rmin)[i] * convertRad;
+        rOut[i] = (polyh->GetOriginalParameters()->Rmax)[i] * convertRad;          
+      }
+      
       solcur->addPolyhedra(ut->name(polyh),
                            polyh->GetOriginalParameters()->Num_z_planes,
                            polyh->GetOriginalParameters()->Start_angle/deg,
                            polyh->GetOriginalParameters()->Opening_angle/deg,
                            polyh->GetOriginalParameters()->numSide,
                            polyh->GetOriginalParameters()->Z_values,
-                           polyh->GetOriginalParameters()->Rmin,
-                           polyh->GetOriginalParameters()->Rmax,
+                           rIn,
+                           rOut,
                            "mm",
                            "degree");
+    }
+    else if(const G4ReflectedSolid* refl = dynamic_cast<const G4ReflectedSolid*>(tempsol) )
+    {
+      double rx, ry, rz;
+      G4Scale3D  scale;
+      G4Rotate3D rotation;
+      G4Translate3D  translation;
+
+      refl->GetTransform3D().getDecomposition(scale, rotation, translation);
+
+      getXYZ( &(rotation.getRotation()), rx, ry, rz );
+      
+      solcur->addReflected(ut->name(refl),
+                           ut->name(refl->GetConstituentMovedSolid()),
+                           scale.xx(), scale.yy(), scale.zz(),
+                           rx, ry, rz,
+                           translation.dx()/mm, translation.dy()/mm, translation.dz()/mm,
+                           "mm","degree");      
     }
     else if( const G4BooleanSolid* boo = dynamic_cast<const G4BooleanSolid*>(tempsol) )
     {
@@ -422,61 +459,110 @@ void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
     
     if(pv->IsParameterised())
     {
-      gdml::writer::Element& param =
-        strcur->addParameterised(lvname,// mother volume
-                                 ut->name(pv->GetLogicalVolume()),// parametrised volume
-                                 pv->GetMultiplicity());// number of copies
+      if(dynamic_cast<G4PVParameterised*>(pv))
+      {
+        gdml::writer::Element& param =
+          strcur->addParameterised(lvname,// mother volume
+                                   ut->name(pv->GetLogicalVolume()),// parametrised volume
+                                   pv->GetMultiplicity());// number of copies
       
-      G4VSolid* solid = logvol->GetSolid();
+        G4VSolid* solid = logvol->GetSolid();
       
-      for(int cpiter=1;cpiter!=pv->GetMultiplicity()+1;cpiter++)
-	    {
-        
-	      pv->GetParameterisation()->ComputeTransformation(cpiter-1,pv);
-        
-	      const G4RotationMatrix* r = pv->GetFrameRotation();
-        
-	      double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
-	      if(r) getXYZ( r, rx, ry, rz );
-        
-	      if( G4Box* box = dynamic_cast<G4Box*>(solid) )
+        for(int cpiter=1;cpiter!=pv->GetMultiplicity()+1;cpiter++)
         {
-          pv->GetParameterisation()->ComputeDimensions(*box,cpiter-1,pv);
+        
+          pv->GetParameterisation()->ComputeTransformation(cpiter-1,pv);
+        
+          const G4RotationMatrix* r = pv->GetFrameRotation();
+        
+          double rx=0.0, ry=0.0, rz=0.0; // axis rotation angles
+          if(r) getXYZ( r, rx, ry, rz );
+        
+          if( G4Box* box = dynamic_cast<G4Box*>(solid) )
+          {
+            pv->GetParameterisation()->ComputeDimensions(*box,cpiter-1,pv);
           
-          strcur->addBoxParameterisation(ut->name(pv->GetLogicalVolume()),
-                                         param,  // volume
-                                         cpiter,                            // copy number
-                                         pv->GetObjectTranslation().getX(), // position
-                                         pv->GetObjectTranslation().getY(),
-                                         pv->GetObjectTranslation().getZ(),
-                                         rx, ry, rz, // rotation
-                                         box->GetXHalfLength(),
-                                         box->GetYHalfLength(),
-                                         box->GetZHalfLength()); // half-lengths
-        }
-	      else if( G4Tubs* tubs = dynamic_cast<G4Tubs*>(solid) )
-        {
-          pv->GetParameterisation()->ComputeDimensions(*tubs,cpiter-1,pv);
+            strcur->addBoxParameterisation(ut->name(pv->GetLogicalVolume()),
+                                           param,  // volume
+                                           cpiter,                            // copy number
+                                           pv->GetObjectTranslation().getX(), // position
+                                           pv->GetObjectTranslation().getY(),
+                                           pv->GetObjectTranslation().getZ(),
+                                           rx, ry, rz, // rotation
+                                           box->GetXHalfLength(),
+                                           box->GetYHalfLength(),
+                                           box->GetZHalfLength()); // half-lengths
+          }
+          else if( G4Tubs* tubs = dynamic_cast<G4Tubs*>(solid) )
+          {
+            pv->GetParameterisation()->ComputeDimensions(*tubs,cpiter-1,pv);
           
-          strcur->addTubeParameterisation(ut->name(pv->GetLogicalVolume()),
-                                          param,// volume
-                                          cpiter,// copy number
-                                          pv->GetObjectTranslation().getX(),// position
-                                          pv->GetObjectTranslation().getY(),
-                                          pv->GetObjectTranslation().getZ(),
-                                          rx, ry, rz,// rotation
-                                          tubs->GetInnerRadius(),
-                                          tubs->GetOuterRadius(),
-                                          2*tubs->GetZHalfLength(),
-                                          tubs->GetStartPhiAngle()/deg,
-                                          tubs->GetDeltaPhiAngle()/deg);
+            strcur->addTubeParameterisation(ut->name(pv->GetLogicalVolume()),
+                                            param,// volume
+                                            cpiter,// copy number
+                                            pv->GetObjectTranslation().getX(),// position
+                                            pv->GetObjectTranslation().getY(),
+                                            pv->GetObjectTranslation().getZ(),
+                                            rx, ry, rz,// rotation
+                                            tubs->GetInnerRadius(),
+                                            tubs->GetOuterRadius(),
+                                            2*tubs->GetZHalfLength(),
+                                            tubs->GetStartPhiAngle()/deg,
+                                            tubs->GetDeltaPhiAngle()/deg);
+          }
+          else
+          {
+            std::cout << "Trying to parameterise unknown solid - it will not work!"
+                      << std::endl;
+          }
         }
-	      else
-        {
-          std::cout << "Trying to parameterise unknown solid - it will not work!"
-                    << std::endl;
-        }
-	    }
+      }
+      else if(dynamic_cast<G4PVDivision*>(pv))
+      {
+      EAxis ax;
+      int nDiv;
+      double width;
+      double offset;
+      bool cons;
+
+      pv->GetReplicationData(ax, nDiv, width, offset, cons);
+
+      int axi=0;
+      
+      if(ax==kXAxis)
+      {
+        axi=1;
+      }
+      else if(ax==kYAxis)
+      {
+        axi=2;
+      }
+      else if(ax==kZAxis)
+      {
+        axi=3;
+      }
+      else if(ax==kRho)
+      {
+        axi=4;
+      }
+      else if(ax==kPhi)
+      {
+        axi=5;
+      }
+
+      std::string unit("mm");
+
+      // converting into degrees      
+      if(axi==4 || axi==5)
+      {
+        width = width/deg;
+        offset = offset/deg;
+        unit = "degree";
+      }      
+      strcur->addDivision(lvname,// mother volume
+                          ut->name(pv->GetLogicalVolume()),// divided volume
+                          nDiv, axi, width, offset, unit);
+      }
     }
     else if(pv->IsReplicated())
     {
@@ -502,7 +588,7 @@ void G4GDMLWriter::DumpGeoTree(G4VPhysicalVolume* physvol)
       {
         axi=3;
       }
-      
+
       strcur->addReplica(lvname,// mother volume
                          ut->name(pv->GetLogicalVolume()),// replicated volume
                          nrep, axi, width, offset);
