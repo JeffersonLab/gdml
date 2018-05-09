@@ -1,3 +1,10 @@
+22.06.2017 - GDML_3_1_5
+-----------------------
+
+- Updated GDML schema:
+  o Fix for replicas along angular axis.
+  o Added general optical surface properties block.
+
 02.06.2016 - GDML_3_1_4
 -----------------------
 
