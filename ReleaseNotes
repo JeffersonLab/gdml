@@ -1,3 +1,10 @@
+27.9.2011 - GDML_3_0_1
+----------------------
+
+- Updated GDML schema:
+  o included ionisation potential (mean excitation energy) property
+    to materials.
+
 19.12.2008 - GDML_3_0_0
 -----------------------
 
