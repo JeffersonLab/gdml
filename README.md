@@ -1,4 +1,4 @@
-# gdml-schema
+# gdml
 
 Schema for Geometry Description Markup Language (GDML)
 
